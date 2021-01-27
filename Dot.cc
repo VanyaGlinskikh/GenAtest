@@ -60,7 +60,7 @@ void Dot::handleEvent( SDL_Event& e)
     }
 }
 
-void Dot::move(EnemyBullet& enemyBullet[])
+void Dot::move(const EnemyBullet &enemyBullet)
 {
 
 

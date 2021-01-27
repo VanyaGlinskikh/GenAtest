@@ -19,7 +19,7 @@ class Dot
 
 		void handleEvent( SDL_Event& e);
 
-		void move(const EnemyBullet &enemyBullet[]);
+		void move(const EnemyBullet &enemyBullet);
 
 		void render();
 

@@ -17,9 +17,8 @@ EnemyBullet::EnemyBullet()
 	    mVelY = 0;
 }
 
-void EnemyBullet::move( Enemy enemy)
+void EnemyBullet::move(const Enemy &enemy)
 {
-
 		if (mPosY == -50){
 			mPosX = enemy.getMPosX();
 			mPosY = enemy.getMPosY();

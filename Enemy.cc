@@ -26,10 +26,10 @@ int Enemy::getMPosY()
 	return mPosY;
 }
 
-void Enemy::move(Bullet &bullet)
+void Enemy::move(const Bullet &bullet)
 {
-	if(mPosY < 100)
-		mPosY += mVelY;
+//	if(mPosY < 100)
+//		mPosY += mVelY;
 	if ( (bullet.getMPosX()+20 > mPosX &&  bullet.getMPosX() < mPosX+ 20) && bullet.getMPosY() < mPosY)
 	{
 		mPosX = rand() % 620 + 1;

@@ -7,12 +7,9 @@
 #include "Bullet.h"
 Bullet::Bullet()
 {
-	//Initialize the offsets
-
 	    mPosX = 0;
 	    mPosY = 1000;
 
-	    //Initialize the velocity
 	    mVelX = 0;
 	    mVelY = 0;
 }
@@ -27,7 +24,7 @@ int Bullet::getMPosY()
 	return mPosY;
 }
 
-void Bullet::handleEvent(SDL_Event& e, Dot dot)
+void Bullet::handleEvent(SDL_Event& e,const Dot &dot)
 {
 
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
@@ -42,7 +39,7 @@ void Bullet::handleEvent(SDL_Event& e, Dot dot)
 	    }
 }
 
-void Bullet::move(Dot dot)
+void Bullet::move(const Dot &dot)
 {
 
 

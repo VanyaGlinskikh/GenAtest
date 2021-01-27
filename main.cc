@@ -1,6 +1,6 @@
-//#include "global.h"
-#include "Enemy.h"
-#include "EnemyBullet.h"
+#include "global.h"
+//#include "Enemy.h"
+//#include "EnemyBullet.h"
 //#include "LTexture.h"
 #include "LTexGlobal.h"
 SDL_Window* gWindow = NULL;
@@ -9,6 +9,12 @@ LTexture gEnemyBulletTexture;
 LTexture gBulletTexture;
 LTexture gEnemyTexture;
 LTexture gBGTexture;
+
+class LTexture;
+class Bullet;
+class Dot;
+class EnemyBullet;
+class Enemy;
 
 bool init();
 
@@ -138,12 +144,12 @@ int main( int argc, char* args[] )
 			bool quit = false;
 
 			SDL_Event e;
-
+			Enemy enemy[4];
 			Dot dot;
 			Bullet bullet;
-			EnemyBullet enemyBullet[4];
+			EnemyBullet enemyBullet;
 
-			Enemy enemy[4];
+
 
 			int scrollingOffset = 0;
 
@@ -160,9 +166,9 @@ int main( int argc, char* args[] )
 				}
 				bullet.move(dot);
 				for (int i = 0; i < 4; ++i) {
-					enemyBullet[i].move(enemy[i]);
+					enemyBullet.move(enemy[i]);
 					enemy[i].move(bullet);
-					dot.move(enemyBullet[i]);
+					dot.move(enemyBullet);
 				}
 
 				++scrollingOffset;
@@ -181,10 +187,10 @@ int main( int argc, char* args[] )
 
 				bullet.render();
 				dot.render();
-
+				enemyBullet.render();
 				for (int i = 0; i < 4; ++i) {
 					enemy[i].render();
-					enemyBullet[i].render();
+
 
 				}
 

@@ -9,6 +9,8 @@
 #define BULLET_H_
 
 //#include "Dot.h"
+#include "LTexGlobal.h"
+#include "global.h"
 class Dot;
 class Bullet
 {
