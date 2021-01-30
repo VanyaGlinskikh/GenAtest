@@ -19,11 +19,15 @@ class Enemy
 		static const int DOT_WIDTH = 20;
 		static const int DOT_HEIGHT = 20;
 		static const int DOT_VEL = 10;
+
+
 		Enemy();
 
-		void move(const Bullet &bullet);
+		void move(Bullet &bullet);
 
 		void render();
+
+		void funk();
 
 		int getMPosX();
 		int getMPosY();

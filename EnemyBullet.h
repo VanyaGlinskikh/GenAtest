@@ -15,7 +15,7 @@ class EnemyBullet
 {
     public:
 		EnemyBullet();
-		void move(const Enemy &enemy);
+		void move(Enemy &enemy);
 
 
 		static const int BULLET_WIDTH = 20;

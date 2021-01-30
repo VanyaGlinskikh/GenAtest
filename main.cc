@@ -1,8 +1,13 @@
 #include "global.h"
-//#include "Enemy.h"
-//#include "EnemyBullet.h"
-//#include "LTexture.h"
+#include "Enemy.h"
+#include "EnemyBullet.h"
+#include "LTexture.h"
+#include "Dot.h"
+#include "Bullet.h"
 #include "LTexGlobal.h"
+
+#include "Sensor.h"
+#include "VisionEnemySensor.h"
 SDL_Window* gWindow = NULL;
 
 LTexture gEnemyBulletTexture;
@@ -10,11 +15,6 @@ LTexture gBulletTexture;
 LTexture gEnemyTexture;
 LTexture gBGTexture;
 
-class LTexture;
-class Bullet;
-class Dot;
-class EnemyBullet;
-class Enemy;
 
 bool init();
 
@@ -147,7 +147,9 @@ int main( int argc, char* args[] )
 			Enemy enemy[4];
 			Dot dot;
 			Bullet bullet;
-			EnemyBullet enemyBullet;
+			EnemyBullet enemyBullet[4];
+
+			VisionSensor visionSensor;
 
 
 
@@ -166,9 +168,9 @@ int main( int argc, char* args[] )
 				}
 				bullet.move(dot);
 				for (int i = 0; i < 4; ++i) {
-					enemyBullet.move(enemy[i]);
+					enemyBullet[i].move(enemy[i]);
 					enemy[i].move(bullet);
-					dot.move(enemyBullet);
+					dot.move(enemyBullet[i]);
 				}
 
 				++scrollingOffset;
@@ -187,10 +189,13 @@ int main( int argc, char* args[] )
 
 				bullet.render();
 				dot.render();
-				enemyBullet.render();
+
 				for (int i = 0; i < 4; ++i) {
 					enemy[i].render();
-
+					enemyBullet[i].render();
+					visionSensor.location(enemy[i], dot);
+//					std::cout<<"противник "<<i<<" находится по координатам x= "<<enemy[i].getMPosX()<<" y= "<<enemy[i].getMPosY()<<std::endl;
+//					std::cout<<"пуля "<<i<<" находится по координатам x= "<<enemyBullet[i].getMPosX()<<" y= "<<enemyBullet[i].getMPosY()<<std::endl;
 
 				}
 

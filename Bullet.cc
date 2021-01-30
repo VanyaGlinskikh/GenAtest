@@ -5,6 +5,7 @@
  *      Author: vanya
  */
 #include "Bullet.h"
+#include "Dot.h"
 Bullet::Bullet()
 {
 	    mPosX = 0;
@@ -14,17 +15,8 @@ Bullet::Bullet()
 	    mVelY = 0;
 }
 
-int Bullet::getMPosX()
-{
-	return mPosX;
-}
 
-int Bullet::getMPosY()
-{
-	return mPosY;
-}
-
-void Bullet::handleEvent(SDL_Event& e,const Dot &dot)
+void Bullet::handleEvent(SDL_Event& e, Dot &dot)
 {
 
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
@@ -39,7 +31,19 @@ void Bullet::handleEvent(SDL_Event& e,const Dot &dot)
 	    }
 }
 
-void Bullet::move(const Dot &dot)
+int Bullet::getMPosX()
+{
+	return mPosX;
+}
+
+int Bullet::getMPosY()
+{
+	return mPosY;
+}
+
+
+
+void Bullet::move(Dot &dot)
 {
 
 

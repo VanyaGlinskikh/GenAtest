@@ -6,6 +6,7 @@
  */
 
 #include "Dot.h"
+#include "EnemyBullet.h"
 
 LTexture gDotTexture;
 Dot::Dot()
@@ -60,7 +61,7 @@ void Dot::handleEvent( SDL_Event& e)
     }
 }
 
-void Dot::move(const EnemyBullet &enemyBullet)
+void Dot::move(EnemyBullet &enemyBullet)
 {
 
 
@@ -82,6 +83,13 @@ void Dot::move(const EnemyBullet &enemyBullet)
     {
         //Move back
         mPosY -= mVelY;
+    }
+
+
+    if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
+    {
+    	std::cout<<"тебя убили"<<std::endl;
+    	mPosX = -100;
     }
 }
 

@@ -5,6 +5,7 @@
  *      Author: vanya
  */
 #include "EnemyBullet.h"
+#include "Enemy.h"
 EnemyBullet::EnemyBullet()
 {
 	//Initialize the offsets
@@ -17,24 +18,46 @@ EnemyBullet::EnemyBullet()
 	    mVelY = 0;
 }
 
-void EnemyBullet::move(const Enemy &enemy)
+void EnemyBullet::move(Enemy &enemy)
 {
 		if (mPosY == -50){
 			mPosX = enemy.getMPosX();
 			mPosY = enemy.getMPosY();
 		}
 
-		mPosY+=2;
+
 
 		if(mPosY >= SCREEN_HEIGHT){
 			mPosX = enemy.getMPosX();
 			mPosY = enemy.getMPosY();
 		}
+		if (enemy.getMPosY() <= 0)
+		{
+			mPosX = enemy.getMPosX();
+			mPosY = enemy.getMPosY();
+			mVelX = 0;
+		}
 
 
+		if (enemy.getMPosY() == 0)
+		{
+			mPosX = enemy.getMPosX();
+			mPosY = enemy.getMPosY();
+			mVelX = 2;
+		}
 
 
+		mPosY+=mVelX;
 
+}
+int EnemyBullet::getMPosX()
+{
+	return mPosX;
+}
+
+int EnemyBullet::getMPosY()
+{
+	return mPosY;
 }
 
 void EnemyBullet::render()

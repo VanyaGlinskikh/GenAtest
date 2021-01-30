@@ -13,13 +13,13 @@ class Dot
 		static const int DOT_WIDTH = 20;
 		static const int DOT_HEIGHT = 20;
 
-		static const int DOT_VEL = 10;
+		static const int DOT_VEL = 2;
 
 		Dot();
 
 		void handleEvent( SDL_Event& e);
 
-		void move(const EnemyBullet &enemyBullet);
+		void move(EnemyBullet &enemyBullet);
 
 		void render();
 

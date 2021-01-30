@@ -22,9 +22,9 @@ class Bullet
 
 		Bullet();
 
-		void handleEvent( SDL_Event& e, const Dot &dot );
+		void handleEvent( SDL_Event& e, Dot &dot );
 
-		void move(const Dot &dot);
+		void move(Dot &dot);
 
 		void render();
 
