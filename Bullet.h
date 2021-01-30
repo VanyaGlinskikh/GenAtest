@@ -16,13 +16,13 @@ class Bullet
 {
     public:
 		static const int BULLET_WIDTH = 20;
-		static const int BULLET = 20;
+		static const int BULLET_HEIGHT = 20;
 
 		static const int BULLET_VEL = 10;
 
 		Bullet();
 
-		void handleEvent( SDL_Event& e, Dot &dot );
+		void handleEvent( SDL_Event &e, Dot &dot );
 
 		void move(Dot &dot);
 

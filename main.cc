@@ -8,6 +8,7 @@
 
 #include "Sensor.h"
 #include "VisionEnemySensor.h"
+#include "VisionDotBulletSensor.h"
 SDL_Window* gWindow = NULL;
 
 LTexture gEnemyBulletTexture;
@@ -149,7 +150,11 @@ int main( int argc, char* args[] )
 			Bullet bullet;
 			EnemyBullet enemyBullet[4];
 
-			VisionSensor visionSensor;
+			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
+			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
+			std::vector<std::shared_ptr<Sensor>> sensors;
+			sensors.push_back(std::make_shared<VisionEnemySensor>());
+			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
 
 
 
@@ -171,6 +176,7 @@ int main( int argc, char* args[] )
 					enemyBullet[i].move(enemy[i]);
 					enemy[i].move(bullet);
 					dot.move(enemyBullet[i]);
+					enemy[i].funk(sensors, enemy[i], bullet);
 				}
 
 				++scrollingOffset;
@@ -190,10 +196,14 @@ int main( int argc, char* args[] )
 				bullet.render();
 				dot.render();
 
+
 				for (int i = 0; i < 4; ++i) {
 					enemy[i].render();
 					enemyBullet[i].render();
-					visionSensor.location(enemy[i], dot);
+//					visionDotBulletSensor->location(enemy[i], bullet);
+//					visionEnemySensor->location(enemy[i], dot);
+//					visionEnemySensor.location(enemy[i], dot);
+//					visionDotBulletSensor.location(enemy[i], bullet);
 //					std::cout<<"противник "<<i<<" находится по координатам x= "<<enemy[i].getMPosX()<<" y= "<<enemy[i].getMPosY()<<std::endl;
 //					std::cout<<"пуля "<<i<<" находится по координатам x= "<<enemyBullet[i].getMPosX()<<" y= "<<enemyBullet[i].getMPosY()<<std::endl;
 

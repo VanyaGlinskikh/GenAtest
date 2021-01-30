@@ -11,7 +11,20 @@
 class Sensor
 {
 public:
-	Sensor(){}
+	Sensor(){
+		centerEnemyPosX =0;
+		centerEnemyPosY=0;
+		visionEnemyPosX=0;
+		visionEnemyPosY=0;
+	}
+
+	static const int VISION_WIDTH = 120;
+	static const int VISION_HEIGHT = 120;
+
+	int centerEnemyPosX;
+	int centerEnemyPosY;
+	int visionEnemyPosX;
+	int visionEnemyPosY;
 
 
 };

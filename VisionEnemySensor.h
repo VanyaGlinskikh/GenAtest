@@ -15,22 +15,10 @@ class Dot;
 class VisionEnemySensor: public Sensor
 {
 public:
-	static const int VISION_WIDTH = 120;
-	static const int VISION_HEIGHT = 120;
 
-	VisionEnemySensor() : Sensor(){
-		centerEnemyPosX =0;
-		centerEnemyPosY=0;
-		visionEnemyPosX=0;
-		visionEnemyPosY=0;
-	}
+	VisionEnemySensor() : Sensor(){}
 
 	void location(Enemy &enemy, Dot &dot);
-private:
-	int centerEnemyPosX;
-	int centerEnemyPosY;
-	int visionEnemyPosX;
-	int visionEnemyPosY;
 };
 
 

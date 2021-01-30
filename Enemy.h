@@ -11,7 +11,10 @@
 //#include "Bullet.h"
 #include "global.h"
 #include "LTexGlobal.h"
+#include "vector"
+#include "memory"
 
+class Sensor;
 class Bullet;
 class Enemy
 {
@@ -27,7 +30,7 @@ class Enemy
 
 		void render();
 
-		void funk();
+		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet);
 
 		int getMPosX();
 		int getMPosY();

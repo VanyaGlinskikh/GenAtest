@@ -6,6 +6,8 @@
  */
 #include "Enemy.h"
 #include "Bullet.h"
+#include "VisionDotBulletSensor.h"
+#include "VisionEnemySensor.h"
 Enemy::Enemy()
 {
 
@@ -27,9 +29,13 @@ int Enemy::getMPosY()
 	return mPosY;
 }
 
-void Enemy::funk()
+void Enemy::funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet)
 {
-
+	std::cout<<"проверка работы 0 "<<sensors[0]<<std::endl;
+	std::cout<<"проверка работы 1 "<<sensors[1]<<std::endl;
+	if (auto vdbs = std::dynamic_pointer_cast<VisionDotBulletSensor>(sensors[1])) {
+	  vdbs->location(enemy, bullet);
+	}
 }
 
 void Enemy::move(Bullet &bullet)
