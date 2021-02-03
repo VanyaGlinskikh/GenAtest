@@ -16,6 +16,7 @@
 
 class Sensor;
 class Bullet;
+class Dot;
 class Enemy
 {
     public:
@@ -30,7 +31,7 @@ class Enemy
 
 		void render();
 
-		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet);
+//		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot);
 
 		int getMPosX();
 		int getMPosY();

@@ -18,6 +18,8 @@ public:
 
 	VisionDotBulletSensor() : Sensor(){}
 
+	virtual ~VisionDotBulletSensor(){};
+
 	void location(Enemy &enemy, Bullet &bullet);
 };
 

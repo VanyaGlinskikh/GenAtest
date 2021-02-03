@@ -8,19 +8,26 @@
 #ifndef SENSOR_H_
 #define SENSOR_H_
 
+class Enemy;
+class Dot;
 class Sensor
 {
 public:
 	Sensor(){
 		centerEnemyPosX =0;
 		centerEnemyPosY=0;
+		centerDotPosX =0;
+		centerDotPosY=0;
 		visionEnemyPosX=0;
 		visionEnemyPosY=0;
 	}
+	virtual ~Sensor(){};
 
 	static const int VISION_WIDTH = 120;
 	static const int VISION_HEIGHT = 120;
 
+	int centerDotPosX;
+	int centerDotPosY;
 	int centerEnemyPosX;
 	int centerEnemyPosY;
 	int visionEnemyPosX;

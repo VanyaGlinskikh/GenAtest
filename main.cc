@@ -5,10 +5,14 @@
 #include "Dot.h"
 #include "Bullet.h"
 #include "LTexGlobal.h"
+#include "FiniteStateMachine.h"
 
 #include "Sensor.h"
 #include "VisionEnemySensor.h"
 #include "VisionDotBulletSensor.h"
+#include "CheckTeammatesSensor.h"
+#include "Azimuth.h"
+
 SDL_Window* gWindow = NULL;
 
 LTexture gEnemyBulletTexture;
@@ -149,14 +153,17 @@ int main( int argc, char* args[] )
 			Dot dot;
 			Bullet bullet;
 			EnemyBullet enemyBullet[4];
+			FiniteStateMachine finiteStateMachine;
 
 			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
+			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
+			Azimuth *azimuthSensor = new Azimuth;
 			std::vector<std::shared_ptr<Sensor>> sensors;
 			sensors.push_back(std::make_shared<VisionEnemySensor>());
 			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
-
-
+			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
+			sensors.push_back(std::make_shared<Azimuth>());
 
 			int scrollingOffset = 0;
 
@@ -176,7 +183,7 @@ int main( int argc, char* args[] )
 					enemyBullet[i].move(enemy[i]);
 					enemy[i].move(bullet);
 					dot.move(enemyBullet[i]);
-					enemy[i].funk(sensors, enemy[i], bullet);
+					finiteStateMachine.funk(sensors, enemy[i], bullet, dot, enemy);
 				}
 
 				++scrollingOffset;
