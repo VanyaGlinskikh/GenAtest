@@ -73,6 +73,7 @@ void Enemy::move(Bullet &bullet)
 
 void Enemy::render(double an)
 {
+
 	gEnemyTexture.render( mPosX, mPosY, NULL, an);
 }
 

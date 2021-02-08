@@ -42,15 +42,15 @@ void FiniteStateMachine::funk(std::vector<std::shared_ptr<Sensor>> sensors, Enem
 
 bool FiniteStateMachine::predCheckBulletRight(int posXBull, int posXEnemy)
 {
-	if ((posXBull ==  posXEnemy || posXBull+20 > posXEnemy) && posXBull > 0)
+	if ((posXBull ==  posXEnemy || posXBull+20 > posXEnemy) && posXBull > 0 && posXBull < posXEnemy)
 		return 1;
 	return 0;
 }
 
 bool FiniteStateMachine::predCheckBulletLeft(int posXBull, int posXEnemy)
 {
-//	if ((posXBull ==  posXEnemy || posXBull < posXEnemy+20 ) && posXBull > 0)
-//			return 1;
-		return 0;
+	if (posXBull < posXEnemy+20  && posXBull > 0 && posXBull > posXEnemy)
+		return 1;
+	return 0;
 }
 

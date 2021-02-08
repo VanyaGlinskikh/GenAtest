@@ -168,6 +168,7 @@ int main( int argc, char* args[] )
 			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
 			sensors.push_back(std::make_shared<Azimuth>());
 			double an = 0;
+			int ves = 0;
 			int scrollingOffset = 0;
 
 			while( !quit )
@@ -209,7 +210,8 @@ int main( int argc, char* args[] )
 
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 					an = azimuthSensor->checkA(enemy[i], dot);
-					enemy[i].render(180+an);
+
+					enemy[i].render(180+an, );
 					enemyBullet[i].render();
 //					visionDotBulletSensor->location(enemy[i], bullet);
 //					visionEnemySensor->location(enemy[i], dot);
