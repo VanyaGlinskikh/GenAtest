@@ -29,7 +29,12 @@ class Enemy
 
 		void move(Bullet &bullet);
 
-		void render();
+		void render(double an);
+
+		void moveStraight();
+		void moveRight();
+		void moveLeft();
+
 
 //		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot);
 

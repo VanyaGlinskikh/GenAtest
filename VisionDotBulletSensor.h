@@ -20,7 +20,7 @@ public:
 
 	virtual ~VisionDotBulletSensor(){};
 
-	void location(Enemy &enemy, Bullet &bullet);
+	int location(Enemy &enemy, Bullet &bullet);
 };
 
 

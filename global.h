@@ -18,6 +18,10 @@
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+const int NUMBEROFOPPONENTS = 4;
+
+const int NUMBEROFENEMYBULLETS = NUMBEROFOPPONENTS;
+
 //The window we'll be rendering to
 extern SDL_Window* gWindow;
 

@@ -24,7 +24,7 @@ void Bullet::handleEvent(SDL_Event& e, Dot &dot)
 	        //Adjust the velocity
 	        switch( e.key.keysym.sym )
 	        {
-	        case SDLK_k: mPosY = dot.getMPosY();
+	        case SDLK_z: mPosY = dot.getMPosY();
 			 	 	 	 mPosX = dot.getMPosX();
 			 	 	 	 mVelY -= BULLET_VEL; break;
 	        }

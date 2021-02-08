@@ -13,7 +13,7 @@ class Dot
 		static const int DOT_WIDTH = 20;
 		static const int DOT_HEIGHT = 20;
 
-		static const int DOT_VEL = 2;
+		static const int DOT_VEL = 1;
 
 		Dot();
 

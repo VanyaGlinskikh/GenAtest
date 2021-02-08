@@ -20,7 +20,7 @@ public:
 
 	virtual ~Azimuth(){};
 
-	void checkA(Enemy &enemy, Dot &dot);
+	double checkA(Enemy &enemy, Dot &dot);
 };
 
 

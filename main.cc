@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "LTexGlobal.h"
 #include "FiniteStateMachine.h"
+//#include "vector";
 
 #include "Sensor.h"
 #include "VisionEnemySensor.h"
@@ -98,7 +99,7 @@ bool loadMedia()
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	if( !gEnemyTexture.loadFromFile( "enemy.bmp" ) )
+	if( !gEnemyTexture.loadFromFile( "enemy1.bmp" ) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
@@ -149,10 +150,12 @@ int main( int argc, char* args[] )
 			bool quit = false;
 
 			SDL_Event e;
-			Enemy enemy[4];
+			std::vector<Enemy> enemy(NUMBEROFOPPONENTS);
+//			Enemy enemy[4];
 			Dot dot;
 			Bullet bullet;
-			EnemyBullet enemyBullet[4];
+			std::vector<EnemyBullet> enemyBullet(NUMBEROFENEMYBULLETS);
+//			EnemyBullet enemyBullet[4];
 			FiniteStateMachine finiteStateMachine;
 
 			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
@@ -164,7 +167,7 @@ int main( int argc, char* args[] )
 			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
 			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
 			sensors.push_back(std::make_shared<Azimuth>());
-
+			double an = 0;
 			int scrollingOffset = 0;
 
 			while( !quit )
@@ -179,7 +182,7 @@ int main( int argc, char* args[] )
 					bullet.handleEvent(e, dot);
 				}
 				bullet.move(dot);
-				for (int i = 0; i < 4; ++i) {
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 					enemyBullet[i].move(enemy[i]);
 					enemy[i].move(bullet);
 					dot.move(enemyBullet[i]);
@@ -204,8 +207,9 @@ int main( int argc, char* args[] )
 				dot.render();
 
 
-				for (int i = 0; i < 4; ++i) {
-					enemy[i].render();
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+					an = azimuthSensor->checkA(enemy[i], dot);
+					enemy[i].render(180+an);
 					enemyBullet[i].render();
 //					visionDotBulletSensor->location(enemy[i], bullet);
 //					visionEnemySensor->location(enemy[i], dot);

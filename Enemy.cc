@@ -17,7 +17,7 @@ Enemy::Enemy()
     mPosX = rand() % 620 + 1;
     mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 
-    mVelX = 0;
+    mVelX = 5;
     mVelY = 1;
 }
 
@@ -31,25 +31,28 @@ int Enemy::getMPosY()
 	return mPosY;
 }
 
-//void Enemy::funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot)
-//{
-////	std::cout<<"проверка работы 0 "<<sensors[0]<<std::endl;
-////	std::cout<<"проверка работы 1 "<<sensors[1]<<std::endl;
-//	if (auto vdbs = std::dynamic_pointer_cast<VisionDotBulletSensor>(sensors[1])) {
-//		vdbs->location(enemy, bullet);
-//	}
-//	if (auto ves = std::dynamic_pointer_cast<VisionEnemySensor>(sensors[0])) {
-//		ves->location(enemy, dot);
-//	}
-////	if (auto cts = std::dynamic_pointer_cast<CheckTeammatesSensor>(sensors[2])) {
-//
-////	}
-//}
+void Enemy::moveStraight()
+{
+
+	mPosY += mVelY;
+}
+
+void Enemy::moveRight()
+{
+	mPosX += mVelX;
+}
+
+void Enemy::moveLeft()
+{
+	mPosX -= mVelX;
+
+}
 
 void Enemy::move(Bullet &bullet)
 {
-//	if(mPosY < 100)
-		mPosY += mVelY;
+//	std::cout<<"координата противника X "<<getMPosX()<<"координата противника Y "<<getMPosY()<<std::endl;
+	if(mPosY < 100)
+		moveStraight();
 	if ( (bullet.getMPosX()+20 > mPosX &&  bullet.getMPosX() < mPosX+ 20) && bullet.getMPosY() < mPosY)
 	{
 		mPosX = rand() % 620 + 1;
@@ -68,9 +71,9 @@ void Enemy::move(Bullet &bullet)
 
 }
 
-void Enemy::render()
+void Enemy::render(double an)
 {
-	gEnemyTexture.render( mPosX, mPosY);
+	gEnemyTexture.render( mPosX, mPosY, NULL, an);
 }
 
 

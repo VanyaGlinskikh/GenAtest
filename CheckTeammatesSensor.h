@@ -9,6 +9,7 @@
 #define CHECKTEAMMATESSENSOR_H_
 
 #include "Sensor.h"
+#include "vector"
 
 class Enemy;
 class CheckTeammatesSensor : public Sensor
@@ -18,7 +19,7 @@ public:
 
 	virtual ~CheckTeammatesSensor(){};
 
-	void checkT(Enemy *enemy[]);
+	void checkT(std::vector<Enemy> &enemy);
 };
 
 #endif /* CHECKTEAMMATESSENSOR_H_ */
