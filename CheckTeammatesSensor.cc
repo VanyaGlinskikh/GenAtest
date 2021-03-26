@@ -8,7 +8,7 @@
 #include "CheckTeammatesSensor.h"
 #include "Enemy.h"
 
-void CheckTeammatesSensor::checkT(std::vector<Enemy> &enemy)
+int CheckTeammatesSensor::checkT(std::vector<Enemy> &enemy)
 {
 //	if (enemy[0].getMPosX() +enemy[0].DOT_WIDTH > enemy[1].getMPosX() && enemy[0].getMPosX() < enemy[1].getMPosX()+ enemy[1].DOT_WIDTH )
 //		std::cout<<" противник 0 находится над противником  1"<<std::endl;
@@ -19,6 +19,7 @@ void CheckTeammatesSensor::checkT(std::vector<Enemy> &enemy)
 			}
 		}
 	}
+	return 1;
 
 }
 

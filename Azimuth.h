@@ -13,6 +13,7 @@
 
 class Enemy;
 class Dot;
+class Genome;
 class Azimuth : public Sensor
 {
 public:

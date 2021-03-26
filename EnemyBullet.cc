@@ -23,6 +23,7 @@ void EnemyBullet::move(Enemy &enemy)
 		if (mPosY == -50){
 			mPosX = enemy.getMPosX();
 			mPosY = enemy.getMPosY();
+
 		}
 
 

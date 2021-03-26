@@ -19,7 +19,7 @@ public:
 
 	virtual ~CheckTeammatesSensor(){};
 
-	void checkT(std::vector<Enemy> &enemy);
+	int checkT(std::vector<Enemy> &enemy);
 };
 
 #endif /* CHECKTEAMMATESSENSOR_H_ */

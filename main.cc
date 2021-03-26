@@ -14,6 +14,8 @@
 #include "CheckTeammatesSensor.h"
 #include "Azimuth.h"
 
+#include <functional>
+
 SDL_Window* gWindow = NULL;
 
 LTexture gEnemyBulletTexture;
@@ -99,7 +101,7 @@ bool loadMedia()
 		printf( "Failed to load dot texture!\n" );
 		success = false;
 	}
-	if( !gEnemyTexture.loadFromFile( "enemy1.bmp" ) )
+	if( !gEnemyTexture.loadFromFile( "enemy.bmp" ) )
 	{
 		printf( "Failed to load dot texture!\n" );
 		success = false;
@@ -150,25 +152,61 @@ int main( int argc, char* args[] )
 			bool quit = false;
 
 			SDL_Event e;
-			std::vector<Enemy> enemy(NUMBEROFOPPONENTS);
-//			Enemy enemy[4];
-			Dot dot;
-			Bullet bullet;
-			std::vector<EnemyBullet> enemyBullet(NUMBEROFENEMYBULLETS);
-//			EnemyBullet enemyBullet[4];
-			FiniteStateMachine finiteStateMachine;
 
 			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
-			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
+//			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
 			Azimuth *azimuthSensor = new Azimuth;
-			std::vector<std::shared_ptr<Sensor>> sensors;
-			sensors.push_back(std::make_shared<VisionEnemySensor>());
-			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
-			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
-			sensors.push_back(std::make_shared<Azimuth>());
-			double an = 0;
-			int ves = 0;
+			Dot dot;
+			Bullet bullet;
+			std::vector<Genome> genome(NUMBEROFOPPONENTS);
+			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+			std::function<double(unsigned int)> s1;
+			std::function<double(unsigned int)> s2;
+			std::function<double(unsigned int)> s3;
+			std::function<void(unsigned int)> f1;
+			std::function<void(unsigned int)> f2;
+			std::function<void(unsigned int)> f3;
+
+			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+				genome[i].add_section({1,2,3,4,5});
+				genome[i].add_section({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
+									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12});
+				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
+				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
+				enemy[i] ->add_sensor(s1);
+				s2 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
+				enemy[i] ->add_sensor(s2);
+				s3 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
+				enemy[i] ->add_sensor(s3);
+				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
+				enemy[i]->add_actor(f1);
+				f2 = [&](unsigned id){
+					std::cout<<"актор два ";
+					enemy[id]->moveLeft(); };
+				enemy[i]->add_actor(f2);
+				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
+				enemy[i]->add_actor(f3);
+
+			}
+
+			std::vector<EnemyBullet> enemyBullet(NUMBEROFENEMYBULLETS);
+//			FiniteStateMachine finiteStateMachine;
+
+
+//			std::vector<std::shared_ptr<Sensor>> sensors;
+//			sensors.push_back(std::make_shared<VisionEnemySensor>());
+//			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
+//			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
+//			sensors.push_back(std::make_shared<Azimuth>());
+//			double an = 0;
+//			int ves = 0;
 			int scrollingOffset = 0;
 
 			while( !quit )
@@ -184,10 +222,11 @@ int main( int argc, char* args[] )
 				}
 				bullet.move(dot);
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					enemyBullet[i].move(enemy[i]);
-					enemy[i].move(bullet);
+//					enemyBullet[i].move(enemy[i]);
+//					enemy[i].move(bullet);
+
 					dot.move(enemyBullet[i]);
-					finiteStateMachine.funk(sensors, enemy[i], bullet, dot, enemy);
+//					finiteStateMachine.funk(sensors, enemy[i], bullet, dot, enemy);
 				}
 
 				++scrollingOffset;
@@ -208,11 +247,16 @@ int main( int argc, char* args[] )
 				dot.render();
 
 
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					an = azimuthSensor->checkA(enemy[i], dot);
 
-					enemy[i].render(180+an, );
-					enemyBullet[i].render();
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+					enemy[i] ->tick();
+					enemy[i] ->render();
+//					an = azimuthSensor->checkA(enemy[i], dot);
+//					ves = visionEnemySensor->location(enemy[i], dot);
+//					an = azimuthSensor->checkA(enemy[i], dot);
+//					ves = visionEnemySensor->location(enemy[i], dot);
+//					enemy[i].render(an, ves);
+//					enemyBullet[i].render();
 //					visionDotBulletSensor->location(enemy[i], bullet);
 //					visionEnemySensor->location(enemy[i], dot);
 //					visionEnemySensor.location(enemy[i], dot);

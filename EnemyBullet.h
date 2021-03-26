@@ -11,6 +11,7 @@
 //#include "Enemy.h"
 #include "LTexGlobal.h"
 class Enemy;
+class Genome;
 class EnemyBullet
 {
     public:

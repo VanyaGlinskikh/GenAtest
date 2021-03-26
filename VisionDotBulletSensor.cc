@@ -8,7 +8,7 @@
 #include "Enemy.h"
 #include "VisionDotBulletSensor.h"
 
-int VisionDotBulletSensor::location(Enemy &enemy, Bullet &bullet)
+double VisionDotBulletSensor::location(Enemy &enemy, Bullet &bullet)
 {
 	centerEnemyPosX = enemy.getMPosX()+(enemy.DOT_WIDTH/2);
 	centerEnemyPosY = enemy.getMPosY()+(enemy.DOT_HEIGHT/2);

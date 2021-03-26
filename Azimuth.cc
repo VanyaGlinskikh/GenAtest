@@ -8,6 +8,7 @@
 #include "Azimuth.h"
 #include "Enemy.h"
 #include "Dot.h"
+#include "Genome.h"
 #include <math.h>
 #include <sstream>
 double Azimuth::checkA(Enemy &enemy, Dot &dot)

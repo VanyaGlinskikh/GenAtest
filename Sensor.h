@@ -23,8 +23,8 @@ public:
 	}
 	virtual ~Sensor(){};
 
-	static const int VISION_WIDTH = 120;
-	static const int VISION_HEIGHT = 120;
+	static const int VISION_WIDTH = 200;
+	static const int VISION_HEIGHT = 200;
 
 	int centerDotPosX;
 	int centerDotPosY;
