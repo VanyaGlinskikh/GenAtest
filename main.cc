@@ -191,7 +191,7 @@ int main( int argc, char* args[] )
 					std::cout<<"актор два ";
 					enemy[id]->moveLeft(); };
 				enemy[i]->add_actor(f2);
-				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
+				f3 = [&](unsigned id){ std::cout<<"актор три "; enemy[id]->moveRight(); };
 				enemy[i]->add_actor(f3);
 
 			}
