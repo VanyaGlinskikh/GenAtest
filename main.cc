@@ -5,7 +5,7 @@
 #include "Dot.h"
 #include "Bullet.h"
 #include "LTexGlobal.h"
-#include "FiniteStateMachine.h"
+//#include "FiniteStateMachine.h"
 //#include "vector";
 
 #include "Sensor.h"
@@ -13,8 +13,11 @@
 #include "VisionDotBulletSensor.h"
 #include "CheckTeammatesSensor.h"
 #include "Azimuth.h"
+#include "WallVerticalSensor.h"
+#include "WallGorizontalSensor.h"
 
 #include <functional>
+#include <chrono>
 
 SDL_Window* gWindow = NULL;
 
@@ -157,27 +160,44 @@ int main( int argc, char* args[] )
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
 //			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
 			Azimuth *azimuthSensor = new Azimuth;
+			WallVerticalSensor *wallVerticalSensor = new WallVerticalSensor;
+			WallGorizontalSensor *wallGorizontalSensor = new WallGorizontalSensor;
+
 			Dot dot;
 			Bullet bullet;
+			std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
 			std::vector<Genome> genome(NUMBEROFOPPONENTS);
 			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
 			std::function<double(unsigned int)> s1;
 			std::function<double(unsigned int)> s2;
 			std::function<double(unsigned int)> s3;
+			std::function<double(unsigned int)> s4;
+			std::function<double(unsigned int)> s5;
 			std::function<void(unsigned int)> f1;
 			std::function<void(unsigned int)> f2;
 			std::function<void(unsigned int)> f3;
+			std::function<void(unsigned int)> f4;
+			std::vector<int> sec2(2560);
 
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 				genome[i].add_section({1,2,3,4,5});
-				genome[i].add_section({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12,
-									   1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,12});
+
+				for (int j = 0; j < 16; ++j) {
+
+					sec2[i] =  1*rand() % 9;
+					sec2[i+16] =1*rand() % 9;
+					sec2[i+32] = 1*rand() % 9;
+					sec2[i+48] = 1*rand() % 9;
+					sec2[i+64] = 1*rand() % 9;
+					sec2[i+80] = 1*rand() % 9;
+					sec2[i+96] = 1*rand() % 9;
+					sec2[i+112] = 1*rand() % 9;
+					sec2[i+128] = 1*rand() % 9;
+					sec2[i+144] = 1*rand() % 9;
+					sec2[i+160] = 1*rand() % 9;
+				}
+				genome[i].add_section(sec2);  // 2^predic* sensors
+
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s1);
@@ -185,29 +205,28 @@ int main( int argc, char* args[] )
 				enemy[i] ->add_sensor(s2);
 				s3 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s3);
+				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
+				enemy[i] ->add_sensor(s4);
+				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
+				enemy[i] ->add_sensor(s5);
 				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 				enemy[i]->add_actor(f1);
-				f2 = [&](unsigned id){
-					std::cout<<"актор два ";
-					enemy[id]->moveLeft(); };
+				f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
 				enemy[i]->add_actor(f2);
-				f3 = [&](unsigned id){ std::cout<<"актор три "; enemy[id]->moveRight(); };
+				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
 				enemy[i]->add_actor(f3);
+				f4 = [&](unsigned id){ enemy[id]->moveBull(enemyBullet[i]); };
+				enemy[i]->add_actor(f4);
 
 			}
 
-			std::vector<EnemyBullet> enemyBullet(NUMBEROFENEMYBULLETS);
-//			FiniteStateMachine finiteStateMachine;
 
-
-//			std::vector<std::shared_ptr<Sensor>> sensors;
-//			sensors.push_back(std::make_shared<VisionEnemySensor>());
-//			sensors.push_back(std::make_shared<VisionDotBulletSensor>());
-//			sensors.push_back(std::make_shared<CheckTeammatesSensor>());
-//			sensors.push_back(std::make_shared<Azimuth>());
 //			double an = 0;
 //			int ves = 0;
 			int scrollingOffset = 0;
+			using clk = std::chrono::high_resolution_clock;
+			auto start = clk::now();
+			auto stop = start + std::chrono::seconds(10);
 
 			while( !quit )
 			{
@@ -247,23 +266,36 @@ int main( int argc, char* args[] )
 				dot.render();
 
 
-
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 					enemy[i] ->tick();
+					bullet.hittingTheEnemy(*enemy[i]);
 					enemy[i] ->render();
-//					an = azimuthSensor->checkA(enemy[i], dot);
-//					ves = visionEnemySensor->location(enemy[i], dot);
-//					an = azimuthSensor->checkA(enemy[i], dot);
-//					ves = visionEnemySensor->location(enemy[i], dot);
-//					enemy[i].render(an, ves);
-//					enemyBullet[i].render();
-//					visionDotBulletSensor->location(enemy[i], bullet);
-//					visionEnemySensor->location(enemy[i], dot);
-//					visionEnemySensor.location(enemy[i], dot);
-//					visionDotBulletSensor.location(enemy[i], bullet);
-//					std::cout<<"противник "<<i<<" находится по координатам x= "<<enemy[i].getMPosX()<<" y= "<<enemy[i].getMPosY()<<std::endl;
-//					std::cout<<"пуля "<<i<<" находится по координатам x= "<<enemyBullet[i].getMPosX()<<" y= "<<enemyBullet[i].getMPosY()<<std::endl;
 
+//					enemy[i] ->moveBull(enemyBullet[i]);
+//					enemyBullet[i].move(enemy[i]->getMPosX(), enemy[i]->getMPosY());
+//					enemyBullet[i].render();
+				}
+
+				for (int i = 0; i < NUMBEROFENEMYBULLETS; ++i) {
+					for (int j = 0; j < NUMBEROFENEMYBULLETS; ++j) {
+						enemyBullet[i].hittingTheAlly(*enemy[j]);
+					}
+				}
+
+				if (clk::now() >= stop){
+					std::cout<<"время прошло"<<std::endl;
+					start = clk::now();
+					stop = start + std::chrono::seconds(10);
+					for (int k = 0; k < NUMBEROFOPPONENTS; ++k) {
+						{
+							enemy[k]->getVelY(1);
+							enemy[k]->getVelX(1);
+							enemy[k]->setMPosX();
+							enemy[k]->setMPosY();
+//							genome[k-1].mutate(1, k-1, 2);
+//							genome[k-1] = splice(genome[k-1], genome[k], order);
+						}
+					}
 				}
 
 				//Update screen

@@ -12,6 +12,7 @@
 #include "LTexGlobal.h"
 #include "global.h"
 class Dot;
+class Enemy;
 class Bullet
 {
     public:
@@ -25,6 +26,7 @@ class Bullet
 		void handleEvent( SDL_Event &e, Dot &dot );
 
 		void move(Dot &dot);
+		void hittingTheEnemy(Enemy &enemy);
 
 		void render();
 

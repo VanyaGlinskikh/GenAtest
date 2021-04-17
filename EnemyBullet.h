@@ -16,7 +16,9 @@ class EnemyBullet
 {
     public:
 		EnemyBullet();
-		void move(Enemy &enemy);
+//		void move(Enemy &enemy);
+		void move(int x, int y);
+		void hittingTheAlly(Enemy &enemy);
 
 
 		static const int BULLET_WIDTH = 20;

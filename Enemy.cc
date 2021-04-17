@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "Bullet.h"
 #include "Dot.h"
+#include "EnemyBullet.h"
 #include "VisionDotBulletSensor.h"
 #include "VisionEnemySensor.h"
 #include "CheckTeammatesSensor.h"
@@ -42,6 +43,8 @@ Enemy::Enemy(unsigned id, Genome &genome)
     mPosX = rand() % 620 + 1;
     mPosY = (rand() % 80 + 20);
 
+
+
     mVelX = 1;
     mVelY = 1;
 }
@@ -64,12 +67,22 @@ void Enemy::moveStraight()
 
 void Enemy::moveRight()
 {
-	mPosX += mVelX;
+	if (mPosX+20 != SCREEN_WIDTH)
+		mPosX += mVelX;
 }
 
 void Enemy::moveLeft()
 {
-	mPosX -= mVelX;
+	if (mPosX != 0)
+		mPosX -= mVelX;
+
+}
+
+void Enemy::moveBull(EnemyBullet &enemyBullet)
+{
+
+		enemyBullet.move(mPosX, mPosY);
+		enemyBullet.render();
 
 }
 
@@ -131,6 +144,34 @@ bool Enemy::predicatCheckBulletLeft(const std::vector<double>& data)
 	return 0;
 }
 
+bool Enemy::predicatCheckWallRight(const std::vector<double>& data)
+{
+	if (data[3] == mPosX+20)
+		return 1;
+	return 0;
+}
+
+bool Enemy::predicatCheckWallLeft(const std::vector<double>& data)
+{
+	if (data[3] == mPosX)
+		return 1;
+	return 0;
+}
+
+bool Enemy::predicatCheckWallUp(const std::vector<double>& data)
+{
+	if (data[4] == mPosY)
+		return 1;
+	return 0;
+}
+
+bool Enemy::predicatCheckWallDown(const std::vector<double>& data)
+{
+	if (data[4] == mPosX+20)
+		return 1;
+	return 0;
+}
+
 unsigned Enemy::input()
 {
 	// „тение данных с сенсоров
@@ -145,6 +186,10 @@ unsigned Enemy::input()
 	pred |= (predicatIS(sensor_data) << 2);
 	pred |= (predicatCheckBulletRight(sensor_data) << 3);
 	pred |= (predicatCheckBulletLeft(sensor_data) << 4);
+	pred |= (predicatCheckWallRight(sensor_data) << 5);
+	pred |= (predicatCheckWallLeft(sensor_data) << 6);
+	pred |= (predicatCheckWallUp(sensor_data) << 7);
+	pred |= (predicatCheckWallDown(sensor_data) << 8);
 
 	return pred;
 }
@@ -156,8 +201,6 @@ void Enemy::tick()
 	_state = new_state;
 	unsigned action = _state_actions[_state];
 	_actors[action](_id);
-
-	std::cout<<"действие "<<action<<" id противника "<<_id<<std::endl;
 }
 
 void Enemy::render(/*double an, int ves*/)
