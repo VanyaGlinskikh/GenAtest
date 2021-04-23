@@ -5,7 +5,7 @@
  *      Author: vanya
  */
 #include "Genome.h"
-
+#include <iostream>
 Genome::Genome(const Genome& g)
 {
 	_data.resize(g.sections());
@@ -20,6 +20,7 @@ void Genome::mutate(unsigned section, unsigned location, unsigned bit)
 {
 	if (location >= section_size(section)) // may throw an OOR exception
 		throw std::out_of_range("Invalid location");
+//	std::cout<<" размер data_type "<<sizeof(data_type)<<std::endl;
 	if (bit >= sizeof(data_type))
 		throw std::runtime_error("Invalid bit index");
 	_data[section][location] ^= (1 << bit);

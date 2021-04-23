@@ -26,6 +26,7 @@ class Bullet
 		void handleEvent( SDL_Event &e, Dot &dot );
 
 		void move(Dot &dot);
+
 		void hittingTheEnemy(Enemy &enemy);
 
 		void render();

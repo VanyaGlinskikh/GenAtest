@@ -16,6 +16,8 @@
 #include "WallVerticalSensor.h"
 #include "WallGorizontalSensor.h"
 
+#include <fstream>
+
 #include <functional>
 #include <chrono>
 
@@ -179,22 +181,38 @@ int main( int argc, char* args[] )
 			std::function<void(unsigned int)> f4;
 			std::vector<int> sec2(2560);
 
+			std::random_device random_device;
+			std::mt19937 engine{ random_device() };
+			std::uniform_int_distribution<> dist2(0, 9);
+			std::uniform_int_distribution<> forX(1, 620);
+			std::uniform_int_distribution<> forY(20, 80);
+
+			std::uniform_int_distribution<> forOrder(0, 254);
+			std::uniform_int_distribution<> forSplice(0, 7);
+			std::uniform_int_distribution<> forSection(0, 1);
+			std::uniform_int_distribution<> forLocation(0, 1);
+			std::uniform_int_distribution<> forBit(0, 3);
+
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-				genome[i].add_section({1,2,3,4,5});
+				genome[i].add_section({1,2,3,4});
 
-				for (int j = 0; j < 16; ++j) {
-
-					sec2[i] =  1*rand() % 9;
-					sec2[i+16] =1*rand() % 9;
-					sec2[i+32] = 1*rand() % 9;
-					sec2[i+48] = 1*rand() % 9;
-					sec2[i+64] = 1*rand() % 9;
-					sec2[i+80] = 1*rand() % 9;
-					sec2[i+96] = 1*rand() % 9;
-					sec2[i+112] = 1*rand() % 9;
-					sec2[i+128] = 1*rand() % 9;
-					sec2[i+144] = 1*rand() % 9;
-					sec2[i+160] = 1*rand() % 9;
+				for (int j = 0; j < 160; ++j) {
+					sec2[j] =  dist2(random_device);
+					sec2[j+160] = dist2(random_device);
+					sec2[j+320] = dist2(random_device);
+					sec2[j+480] = dist2(random_device);
+					sec2[j+640] = dist2(random_device);
+					sec2[j+800] = dist2(random_device);
+					sec2[j+960] = dist2(random_device);
+					sec2[j+1120] = dist2(random_device);
+					sec2[j+1280] = dist2(random_device);
+					sec2[j+1440] = dist2(random_device);
+					sec2[j+1600] = dist2(random_device);
+					sec2[j+1760] = dist2(random_device);
+					sec2[j+1920] = dist2(random_device);
+					sec2[j+2080] = dist2(random_device);
+					sec2[j+2240] = dist2(random_device);
+					sec2[j+2400] = dist2(random_device);
 				}
 				genome[i].add_section(sec2);  // 2^predic* sensors
 
@@ -215,8 +233,10 @@ int main( int argc, char* args[] )
 				enemy[i]->add_actor(f2);
 				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
 				enemy[i]->add_actor(f3);
-				f4 = [&](unsigned id){ enemy[id]->moveBull(enemyBullet[i]); };
+				f4 = [&](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
 				enemy[i]->add_actor(f4);
+
+				enemy[i]->resetTickCount();
 
 			}
 
@@ -227,6 +247,32 @@ int main( int argc, char* args[] )
 			using clk = std::chrono::high_resolution_clock;
 			auto start = clk::now();
 			auto stop = start + std::chrono::seconds(10);
+
+
+			std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
+			std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
+			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
+			std::vector<uint8_t>  order;
+			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+				sortEnemy[i] = enemy[i];
+			}
+
+			std::ofstream out;          // поток для записи
+			out.open("D:\\hello.txt"); // окрываем файл для записи
+			if (out.is_open())
+			{
+				std::cout<<" запись произошла  "<< std::endl;
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+					out <<" существо "<<i<<": "<< std::endl;
+					for (int j = 0; j < 2; ++j) {
+						out <<" секция "<<j<<" размер секции  "<<genome[i].section_size(j)<< std::endl;
+						for (unsigned k = 0; k < genome[i].section_size(j); ++k) {
+							out <<genome[i].operator ()(j, k)<< " ";
+						}
+						out <<"\n"<< std::endl;
+					}
+				}
+			}
 
 			while( !quit )
 			{
@@ -266,12 +312,13 @@ int main( int argc, char* args[] )
 				dot.render();
 
 
+
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 					enemy[i] ->tick();
+//						std::cout<<enemy[i]->getTickCount()<<std::endl;
 					bullet.hittingTheEnemy(*enemy[i]);
 					enemy[i] ->render();
-
-//					enemy[i] ->moveBull(enemyBullet[i]);
+					enemy[i] ->moveBull(enemyBullet[i]);
 //					enemyBullet[i].move(enemy[i]->getMPosX(), enemy[i]->getMPosY());
 //					enemyBullet[i].render();
 				}
@@ -282,20 +329,71 @@ int main( int argc, char* args[] )
 					}
 				}
 
+//				sort(masLive.begin(), masLive.end());
+
+
 				if (clk::now() >= stop){
 					std::cout<<"время прошло"<<std::endl;
 					start = clk::now();
 					stop = start + std::chrono::seconds(10);
-					for (int k = 0; k < NUMBEROFOPPONENTS; ++k) {
-						{
-							enemy[k]->getVelY(1);
-							enemy[k]->getVelX(1);
-							enemy[k]->setMPosX();
-							enemy[k]->setMPosY();
-//							genome[k-1].mutate(1, k-1, 2);
-//							genome[k-1] = splice(genome[k-1], genome[k], order);
+
+
+
+					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//						std::cout<<enemy[q]->getTickCount()<<",  ";
+						for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
+							if (sortEnemy[i]->getTickCount() > sortEnemy[j]->getTickCount() ){
+								std::shared_ptr<Enemy> enemy = sortEnemy[i];
+								Genome &gs  = genome[i];
+								sortEnemy[i] = sortEnemy[j];
+								genome[i] = genome[j];
+								sortEnemy[j] = enemy;
+								genome[j] = gs;
+							}
 						}
 					}
+
+
+					order.resize(genome.size());
+					for (unsigned i = 0; i < order.size(); ++i) {
+						order[i] = forOrder(random_device);
+					}
+
+
+					for (int i = 1; i <= 8; ++i) {
+						genome[i+7] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						genome[i+15] = genome[i-1];
+						genome[i+15].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
+						genome[i+23] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						genome[i+23].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
+					}
+
+//					std::cout<<" отсортированный ";
+//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//						std::cout<<" "<<sortEnemy[i]->getTickCount()<<",  ";
+//					}
+//					std::cout<<"  "<<std::endl;
+//					std::cout<<" дефолт ";
+//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//						std::cout<<" "<<enemy[i]->getTickCount()<<",  ";
+//					}
+//					std::cout<<"  "<<std::endl;
+
+
+					for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
+					{
+
+
+						enemy[k]->setVelY(1);
+						enemy[k]->setVelX(1);
+						enemy[k]->resetTickCount();
+						enemy[k]->setDead(false);
+						enemy[k]->setMPosX(forX(random_device));
+						enemy[k]->setMPosY(forY(random_device));
+//							genome[k-1].mutate(1, k-1, 2);
+//							genome[k-1] = splice(genome[k-1], genome[k], order);
+					}
+
 				}
 
 				//Update screen

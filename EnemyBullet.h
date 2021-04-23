@@ -29,6 +29,9 @@ class EnemyBullet
 		int getMPosX();
 		int getMPosY();
 
+		void setVelY(int v){mVelY = v;};
+		void setPosY(int v){mPosY = v;};
+
     private:
 		int mPosX, mPosY;
 		int mVelX, mVelY;

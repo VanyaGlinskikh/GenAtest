@@ -55,21 +55,19 @@ void Bullet::move(Dot &dot)
 		 mVelY = 0;
 	 }
 }
-
 void Bullet::hittingTheEnemy(Enemy &enemy)
 {
-	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY())
+	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY()+20)
 		{
 		std::cout<<"убил"<<std::endl;
 			enemy.setPosX();
 			enemy.setPosY();
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-			enemy.getVelX(0);
-			enemy.getVelY(0);
+			enemy.setVelX(0);
+			enemy.setVelY(0);
 			mPosY = -1000;
-
-
-//			mVelY = 0;
+			mPosX = -1000;
+			enemy.setDead(true);
 		}
 }
 

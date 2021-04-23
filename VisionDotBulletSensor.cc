@@ -17,7 +17,7 @@ double VisionDotBulletSensor::location(Enemy &enemy, Bullet &bullet)
 	int cord = -100;
 	if ((bullet.getMPosX() < visionEnemyPosX + VISION_WIDTH && bullet.getMPosY()+bullet.BULLET_HEIGHT > visionEnemyPosY) && (bullet.getMPosX()+ bullet.BULLET_WIDTH > visionEnemyPosX && bullet.getMPosY()+bullet.BULLET_HEIGHT > visionEnemyPosY) && (bullet.getMPosX()+ bullet.BULLET_WIDTH > visionEnemyPosX && bullet.getMPosY() < visionEnemyPosY+VISION_HEIGHT) && (bullet.getMPosX() < visionEnemyPosX + VISION_WIDTH  && bullet.getMPosY() < visionEnemyPosY+VISION_HEIGHT) )
 	{
-		std::cout<<"пуля находится в поле видимости"<<std::endl;
+//		std::cout<<"пуля находится в поле видимости"<<std::endl;
 		cord = bullet.getMPosX();
 		return cord;
 	}

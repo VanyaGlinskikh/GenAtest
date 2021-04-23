@@ -15,6 +15,7 @@
 #include "vector"
 #include <functional>
 #include "memory"
+#include <chrono>
 
 class Sensor;
 class Bullet;
@@ -66,6 +67,7 @@ class Enemy
 		void moveRight();
 		void moveLeft();
 		void moveBull(EnemyBullet &enemyBullet);
+		void moveShot(EnemyBullet &enemyBullet);
 //		void add_actor(ActorFunc& actor) { _actors.push_back(actor); }
 		void add_actor(ActorFunc& actor) {
 			if (_real_actors_count == _actors.size()) { std::cout<<"перебор "; }
@@ -77,17 +79,28 @@ class Enemy
 
 //		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot);
 		unsigned getSizeActors (){ return _actors.size();};
-		void setMPosX(){ mPosX = rand() % 620 + 1;};
-		void setMPosY(){ mPosY = (rand() % 80 + 20);};
+		void setMPosX(int r){ mPosX= r;};
+//		mPosX = rand() % 620 + 1;
+		void setMPosY(int r){mPosY= r; };
+//		mPosY = (rand() % 80 + 20);
 
 		void setPosX(){ mPosX = -100;};
 		void setPosY(){ mPosY = -100;};
 
-		void getVelX(int v){ mVelX = v;};
-		void getVelY(int v){ mVelY = v;};
+		void setVelX(int v){ mVelX = v;};
+		void setVelY(int v){ mVelY = v;};
 
 		int getMPosX();
 		int getMPosY();
+
+		void setDead(bool v){_dead = v; };
+		bool getDead(){return _dead; };
+
+		void resetTickCount(){_tickCount = 0; };
+		int getTickCount(){return _tickCount; };
+		void upTickCount(){ _tickCount++; };
+
+
 
 	protected:
 		unsigned _id;
@@ -108,9 +121,13 @@ class Enemy
 
 		// Текущее состояние
 		unsigned _state { 0U };
+
+		bool _dead = false;
+		unsigned _tickCount;
 	private:
 		int mPosX, mPosY;
 		int mVelX, mVelY;
+
 };
 
 

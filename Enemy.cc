@@ -44,6 +44,8 @@ Enemy::Enemy(unsigned id, Genome &genome)
     mPosY = (rand() % 80 + 20);
 
 
+   _tickCount = 0;
+
 
     mVelX = 1;
     mVelY = 1;
@@ -78,11 +80,21 @@ void Enemy::moveLeft()
 
 }
 
+
 void Enemy::moveBull(EnemyBullet &enemyBullet)
 {
 
 		enemyBullet.move(mPosX, mPosY);
 		enemyBullet.render();
+
+}
+
+
+void Enemy::moveShot(EnemyBullet &enemyBullet)
+{
+
+	enemyBullet.setPosY(-50);
+	enemyBullet.setVelY(1);
 
 }
 
@@ -196,11 +208,13 @@ unsigned Enemy::input()
 
 void Enemy::tick()
 {
+	if (_dead) return;
 	unsigned inp = input();
 	unsigned new_state = _action_table[_state][inp] % MAX_STATES;
 	_state = new_state;
 	unsigned action = _state_actions[_state];
 	_actors[action](_id);
+	upTickCount();
 }
 
 void Enemy::render(/*double an, int ves*/)

@@ -14,11 +14,12 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <random>
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-const int NUMBEROFOPPONENTS = 16;
+const int NUMBEROFOPPONENTS = 32;
 
 const int NUMBEROFENEMYBULLETS = NUMBEROFOPPONENTS;
 
@@ -27,6 +28,8 @@ extern SDL_Window* gWindow;
 
 //The window renderer
 extern SDL_Renderer* gRenderer;
+
+
 
 
 
