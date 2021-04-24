@@ -7,12 +7,14 @@
 
 #include "Dot.h"
 #include "EnemyBullet.h"
+#include "Enemy.h"
 
 LTexture gDotTexture;
 Dot::Dot()
 {
     mPosX = 0;
     mPosY = 200;
+    _helth = 5;
 
     mVelX = 0;
     mVelY = 0;
@@ -61,7 +63,7 @@ void Dot::handleEvent( SDL_Event& e)
     }
 }
 
-void Dot::move(EnemyBullet &enemyBullet)
+void Dot::move()
 {
 
 
@@ -85,12 +87,23 @@ void Dot::move(EnemyBullet &enemyBullet)
         mPosY -= mVelY;
     }
 
+}
 
-    if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
-    {
-    	std::cout<<"тебя убили"<<std::endl;
-    	mPosX = -100;
-    }
+
+void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
+{
+	  if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
+	    {
+	    	std::cout<<"в тебя попали"<<std::endl;
+	    	if (getHealth() > 0)
+	    		setHealth();
+	    	if (getHealth() == 0)
+				mPosX = -100;
+	    	enemyBullet.setPosY(-200);
+	    	enemyBullet.setPosX(-200);
+	    	enemy.upHittingTheDot();
+
+	    }
 }
 
 void Dot::render()

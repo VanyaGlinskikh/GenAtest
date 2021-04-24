@@ -16,6 +16,7 @@ class EnemyBullet
 {
     public:
 		EnemyBullet();
+		EnemyBullet(const EnemyBullet&) = delete;
 //		void move(Enemy &enemy);
 		void move(int x, int y);
 		void hittingTheAlly(Enemy &enemy);
@@ -31,6 +32,7 @@ class EnemyBullet
 
 		void setVelY(int v){mVelY = v;};
 		void setPosY(int v){mPosY = v;};
+		void setPosX(int v){mPosX = v;};
 
     private:
 		int mPosX, mPosY;

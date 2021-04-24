@@ -34,7 +34,6 @@ Enemy::Enemy(unsigned id, Genome &genome)
 	// Секция 0 - соответствие акторов состояниям
 	for (unsigned i = 0; i < MAX_STATES; ++i)
 		_state_actions[i] = (genome(0, i) & 0x0fffffff) % MAX_ACTORS;
-
 	// Секция 1 - таблица действий конечного автомата
 	for (unsigned i = 0; i < MAX_STATES; ++i)
 		for (unsigned j = 0; j < (1 << PREDICATE_COUNT); ++j)
@@ -92,9 +91,12 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 
 void Enemy::moveShot(EnemyBullet &enemyBullet)
 {
+//	std::cout<<" значение Y у пули противника  "<<enemyBullet.getMPosY() << std::endl;
+    if (enemyBullet.getMPosY() == -200){
 
-	enemyBullet.setPosY(-50);
-	enemyBullet.setVelY(1);
+    	enemyBullet.setPosY(-50);
+		enemyBullet.setVelY(1);
+    }
 
 }
 

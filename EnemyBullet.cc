@@ -10,8 +10,8 @@ EnemyBullet::EnemyBullet()
 {
 	//Initialize the offsets
 
-	    mPosX = -50;
-	    mPosY = -50;
+	    mPosX = -200;
+	    mPosY = -200;
 
 	    //Initialize the velocity
 	    mVelX = 0;
@@ -21,38 +21,39 @@ EnemyBullet::EnemyBullet()
 //void EnemyBullet::move(Enemy &enemy)
 void EnemyBullet::move(int eX, int eY)
 {
-		if (mVelY == 1){
+		if (mPosY == -50){
 //			mPosX = enemy.getMPosX();
 //			mPosY = enemy.getMPosY();
 			mPosX = eX;
 			mPosY = eY;
 
 		}
-		mPosY+=mVelY;
 
-//		if(mPosY >= SCREEN_HEIGHT){
-////			mPosX = enemy.getMPosX();
+		if(mPosY >= SCREEN_HEIGHT){
+//			mPosX = enemy.getMPosX();
 ////			mPosY = enemy.getMPosY();
-//			mPosX = eX;
-//			mPosY = eY;
+			mPosX = -200;
+			mPosY = -200;
+			mVelY = 0;
+
 //
-//		}
+		}
 //		if (enemy.getMPosY() <= 0)
 //		if (eY <= 0)
 //		{
-////			mPosX = enemy.getMPosX();
-////			mPosY = enemy.getMPosY();
-//			mPosX = eX;
-//			mPosY = eY;
-//			mVelX = 0;
+//////			mPosX = enemy.getMPosX();
+//////			mPosY = enemy.getMPosY();
+//			mPosX = -200;
+//			mPosY = -200;
+//			mVelY = 0;
 //		}
 
 
 //		if (enemy.getMPosY() == 0)
 //		if (eY== 0)
 //		{
-////			mPosX = enemy.getMPosX();
-////			mPosY = enemy.getMPosY();
+//////			mPosX = enemy.getMPosX();
+//////			mPosY = enemy.getMPosY();
 //			mPosX = eX;
 //			mPosY = eY;
 //			mVelY = 1;
@@ -74,7 +75,10 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 				enemy.setVelX(0);
 				enemy.setVelY(0);
-				mPosY = 1000;
+				mPosY = -200;
+				mPosX = -200;
+				enemy.setDead(true);
+				enemy.upHittingTheAlly();
 
 
 	//			mVelY = 0;

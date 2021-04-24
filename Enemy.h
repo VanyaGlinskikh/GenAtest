@@ -36,7 +36,7 @@ class Enemy
 		using SensorFunc = std::function<double(unsigned)>;
 		static const int DOT_WIDTH = 20;
 		static const int DOT_HEIGHT = 20;
-		static const int DOT_VEL = 3;
+		static const int DOT_VEL = 10;
 
 		static constexpr unsigned MAX_ACTORS = 4;
 		static constexpr unsigned MAX_SENSORS = 5;
@@ -100,6 +100,24 @@ class Enemy
 		int getTickCount(){return _tickCount; };
 		void upTickCount(){ _tickCount++; };
 
+		void resetHittingTheDot(){_hitting_the_dot = 0; };
+		int getHittingTheDot(){return _hitting_the_dot; };
+		void upHittingTheDot(){ _hitting_the_dot++; };
+
+		void resetHittingTheAlly(){_hitting_the_ally = 0; };
+		int getHittingTheAlly(){return _hitting_the_ally; };
+		void upHittingTheAlly(){ _hitting_the_ally++; };
+
+//		bool k1 = getHittingTheDot()  > 0;
+//		bool k2 = getHittingTheAlly() > 0;
+
+		double k1 = 3.;
+		double k2 = 3.;
+		double k3 = 1.5;
+
+//		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
+		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 ; };
+
 
 
 	protected:
@@ -107,6 +125,9 @@ class Enemy
 		Genome _genome;
 		unsigned _real_actors_count = 0;
 		unsigned _real_sensor_count = 0;
+
+		unsigned _hitting_the_dot = 0;
+		unsigned _hitting_the_ally = 0;
 		// Список акторов
 		std::vector<ActorFunc> _actors;
 		// Список сенсоров

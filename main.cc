@@ -22,11 +22,15 @@
 #include <chrono>
 
 SDL_Window* gWindow = NULL;
+TTF_Font *gFont = NULL;
 
 LTexture gEnemyBulletTexture;
 LTexture gBulletTexture;
 LTexture gEnemyTexture;
 LTexture gBGTexture;
+LTexture gPanelTexture;
+LTexture gTextTexture;
+LTexture gTextGenerationTexture;
 
 
 bool init();
@@ -53,7 +57,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "GenA", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH2, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -78,6 +82,12 @@ bool init()
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
 				{
 					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+				//Initialize SDL_ttf
+				if( TTF_Init() == -1 )
+				{
+					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
 					success = false;
 				}
 			}
@@ -118,6 +128,36 @@ bool loadMedia()
 		success = false;
 	}
 
+	if( !gPanelTexture.loadFromFile( "panel.png" ) )
+	{
+		printf( "Failed to load background texture!\n" );
+		success = false;
+	}
+
+	//Open the font
+	gFont = TTF_OpenFont( "lazy.ttf", 28 );
+	if( gFont == NULL )
+	{
+		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+		success = false;
+	}
+	else
+	{
+		//Render text
+		SDL_Color textColor = { 0, 0, 0 };
+		if( !gTextTexture.loadFromRenderedText( "kyky", textColor ) )
+		{
+			printf( "Failed to render text texture!\n" );
+			success = false;
+		}
+		if( !gTextGenerationTexture.loadFromRenderedText( "kyky", textColor ) )
+		{
+			printf( "Failed to render text texture!\n" );
+			success = false;
+		}
+	}
+
+
 	return success;
 }
 
@@ -128,12 +168,22 @@ void close()
 	gBulletTexture.free();
 	gEnemyTexture.free();
 	gBGTexture.free();
+	gPanelTexture.free();
 
 	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
 	gRenderer = NULL;
 
+	 //Free loaded images
+	gTextTexture.free();
+	gTextGenerationTexture.free();
+
+	//Free global font
+	TTF_CloseFont( gFont );
+	gFont = NULL;
+
+	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 }
@@ -155,6 +205,11 @@ int main( int argc, char* args[] )
 		else
 		{
 			bool quit = false;
+			//In memory text stream
+			std::stringstream helthText;
+			std::stringstream generationText;
+			//Set text color as black
+			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			SDL_Event e;
 
@@ -191,11 +246,11 @@ int main( int argc, char* args[] )
 			std::uniform_int_distribution<> forSplice(0, 7);
 			std::uniform_int_distribution<> forSection(0, 1);
 			std::uniform_int_distribution<> forLocation(0, 1);
+			std::uniform_int_distribution<> forLocation2(0, 2559);
 			std::uniform_int_distribution<> forBit(0, 3);
 
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 				genome[i].add_section({1,2,3,4});
-
 				for (int j = 0; j < 160; ++j) {
 					sec2[j] =  dist2(random_device);
 					sec2[j+160] = dist2(random_device);
@@ -212,10 +267,8 @@ int main( int argc, char* args[] )
 					sec2[j+1920] = dist2(random_device);
 					sec2[j+2080] = dist2(random_device);
 					sec2[j+2240] = dist2(random_device);
-					sec2[j+2400] = dist2(random_device);
-				}
+					sec2[j+2400] = dist2(random_device);}
 				genome[i].add_section(sec2);  // 2^predic* sensors
-
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s1);
@@ -233,17 +286,15 @@ int main( int argc, char* args[] )
 				enemy[i]->add_actor(f2);
 				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
 				enemy[i]->add_actor(f3);
-				f4 = [&](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
+				f4 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
 				enemy[i]->add_actor(f4);
-
 				enemy[i]->resetTickCount();
-
 			}
 
 
 //			double an = 0;
 //			int ves = 0;
-			int scrollingOffset = 0;
+//			int scrollingOffset = 0;
 			using clk = std::chrono::high_resolution_clock;
 			auto start = clk::now();
 			auto stop = start + std::chrono::seconds(10);
@@ -253,27 +304,30 @@ int main( int argc, char* args[] )
 			std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
 			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 			std::vector<uint8_t>  order;
-			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-				sortEnemy[i] = enemy[i];
-			}
-
-			std::ofstream out;          // поток для записи
-			out.open("D:\\hello.txt"); // окрываем файл для записи
-			if (out.is_open())
-			{
-				std::cout<<" запись произошла  "<< std::endl;
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					out <<" существо "<<i<<": "<< std::endl;
-					for (int j = 0; j < 2; ++j) {
-						out <<" секция "<<j<<" размер секции  "<<genome[i].section_size(j)<< std::endl;
-						for (unsigned k = 0; k < genome[i].section_size(j); ++k) {
-							out <<genome[i].operator ()(j, k)<< " ";
-						}
-						out <<"\n"<< std::endl;
-					}
-				}
-			}
-
+			std::vector<int> indices(NUMBEROFOPPONENTS);
+//			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//				sortEnemy[i] = enemy[i];
+//			}
+//			std::ofstream out;          // поток для записи
+//			out.open("D:\\hello.txt"); // окрываем файл для записи
+//			if (out.is_open())
+//			{
+//				std::cout<<" запись произошла  "<< std::endl;
+//				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//					out <<" существо "<<i<<": "<< std::endl;
+//					for (int j = 0; j < 2; ++j) {
+//						out <<" секция "<<j<<" размер секции  "<<genome[i].section_size(j)<< std::endl;
+//						for (unsigned k = 0; k < genome[i].section_size(j); ++k) {
+//							out <<genome[i].operator ()(j, k)<< " ";
+//						}
+//						out <<"\n"<< std::endl;
+//					}
+//				}
+//			}
+			int sectionV=0;
+			int locationV=0;
+//			int bitV=0;
+			int generationCounter=0;
 			while( !quit )
 			{
 				while( SDL_PollEvent( &e ) != 0 )
@@ -283,30 +337,37 @@ int main( int argc, char* args[] )
 						quit = true;
 					}
 					dot.handleEvent( e );
+
 					bullet.handleEvent(e, dot);
 				}
+
+
 				bullet.move(dot);
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//					enemyBullet[i].move(enemy[i]);
-//					enemy[i].move(bullet);
 
-					dot.move(enemyBullet[i]);
-//					finiteStateMachine.funk(sensors, enemy[i], bullet, dot, enemy);
-				}
+				dot.move();
 
-				++scrollingOffset;
-				if( scrollingOffset > gBGTexture.getHeight() )
-				{
-					scrollingOffset = 0;
-				}
+//				++scrollingOffset;
+//				if( scrollingOffset > gBGTexture.getHeight() )
+//				{
+//					scrollingOffset = 0;
+//				}
 
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
 
+
+
+
 				//Render background
-				gBGTexture.render( 0, scrollingOffset );
-				gBGTexture.render( 0, scrollingOffset - gBGTexture.getHeight() );
+				gBGTexture.render( 0, 0 );
+				gPanelTexture.render( 640, 0 );
+//				gBGTexture.render( 0, scrollingOffset );
+//				gBGTexture.render( 0, scrollingOffset - gBGTexture.getHeight() );
+				helthText.str("");
+				helthText << "health: " << dot.getHealth() ;
+				generationText.str("");
+				generationText << "generation: " << generationCounter;
 
 				bullet.render();
 				dot.render();
@@ -317,15 +378,27 @@ int main( int argc, char* args[] )
 					enemy[i] ->tick();
 //						std::cout<<enemy[i]->getTickCount()<<std::endl;
 					bullet.hittingTheEnemy(*enemy[i]);
+					dot.hittingTheDot(enemyBullet[i], *enemy[i]);
 					enemy[i] ->render();
 					enemy[i] ->moveBull(enemyBullet[i]);
-//					enemyBullet[i].move(enemy[i]->getMPosX(), enemy[i]->getMPosY());
-//					enemyBullet[i].render();
 				}
+				//Render text
+				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
+				{
+					printf( "Unable to render time texture!\n" );
+				}
+				gTextTexture.render( 645, 50 );
+
+				if( !gTextGenerationTexture.loadFromRenderedText( generationText.str().c_str(), textColor ) )
+				{
+					printf( "Unable to render time texture!\n" );
+				}
+				gTextGenerationTexture.render( 645, 20 );
 
 				for (int i = 0; i < NUMBEROFENEMYBULLETS; ++i) {
 					for (int j = 0; j < NUMBEROFENEMYBULLETS; ++j) {
-						enemyBullet[i].hittingTheAlly(*enemy[j]);
+						if(i != j)
+							enemyBullet[i].hittingTheAlly(*enemy[j]);
 					}
 				}
 
@@ -333,23 +406,60 @@ int main( int argc, char* args[] )
 
 
 				if (clk::now() >= stop){
+					generationCounter++;
 					std::cout<<"время прошло"<<std::endl;
 					start = clk::now();
 					stop = start + std::chrono::seconds(10);
 
+					dot.resetHealth();
 
+//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//						for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
+//							if (sortEnemy[i]->getTickCount() > sortEnemy[j]->getTickCount() ){
+//								std::shared_ptr<Enemy> enemy = sortEnemy[i];
+//								Genome &gs  = genome[i];
+//								sortEnemy[i] = sortEnemy[j];
+//								genome[i] = genome[j];
+//								sortEnemy[j] = enemy;
+//								genome[j] = gs;
+//							}
+//						}
+//					}
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<enemy[q]->getTickCount()<<",  ";
-						for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
-							if (sortEnemy[i]->getTickCount() > sortEnemy[j]->getTickCount() ){
-								std::shared_ptr<Enemy> enemy = sortEnemy[i];
-								Genome &gs  = genome[i];
-								sortEnemy[i] = sortEnemy[j];
-								genome[i] = genome[j];
-								sortEnemy[j] = enemy;
-								genome[j] = gs;
-							}
+//						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
+						sortEnemy[i] = enemy[i];
+					}
+//					std::cout<<" "<< std::endl;
+
+//					for (int i = 0; i < NUMBEROFOPPONENTS-2; ++i) {
+//						for (int j = i+1; j < NUMBEROFOPPONENTS-1; ++j) {
+//							if (sortEnemy[i]->fitnessFunction() < sortEnemy[j]->fitnessFunction() ){
+//								std::shared_ptr<Enemy> enemy = sortEnemy[i];
+//								Genome &gs  = genome[i];
+//								sortEnemy[i] = sortEnemy[j];
+//								genome[i] = genome[j];
+//								sortEnemy[j] = enemy;
+//								genome[j] = gs;
+//							}
+//						}
+//					}
+
+					for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
+					std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
+					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
+					});
+
+
+					std::ofstream out;          // поток для записи
+					out.open("D:\\hello.txt"); // окрываем файл для записи
+					if (out.is_open())
+					{
+						std::cout<<" запись произошла  "<< std::endl;
+						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
+									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
+								out <<"\n";
 						}
 					}
 
@@ -360,40 +470,42 @@ int main( int argc, char* args[] )
 					}
 
 
+//					for (int i = 1; i <= 8; ++i) {
+//						genome[i+7] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+//						genome[i+15] = genome[i-1];
+//						genome[i+15].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
+//						genome[i+23] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+//						genome[i+23].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
+//					}
 					for (int i = 1; i <= 8; ++i) {
-						genome[i+7] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[i+15] = genome[i-1];
-						genome[i+15].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
-						genome[i+23] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[i+23].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
+						genome[indices[i+7]]=genome[indices[i]];
+						genome[indices[i+15]]=genome[indices[i]];
+						genome[indices[i+23]]=genome[indices[i]];
 					}
+					for (int i = 1; i <= 8; ++i) {
+						genome[indices[i+7]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						sectionV = forSection(random_device);
+						if (sectionV == 0)
+							locationV = forLocation(random_device);
+						if (sectionV == 1)
+							locationV = forLocation2(random_device);
 
-//					std::cout<<" отсортированный ";
-//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<" "<<sortEnemy[i]->getTickCount()<<",  ";
-//					}
-//					std::cout<<"  "<<std::endl;
-//					std::cout<<" дефолт ";
-//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<" "<<enemy[i]->getTickCount()<<",  ";
-//					}
-//					std::cout<<"  "<<std::endl;
-
+						genome[indices[i+15]].mutate(sectionV, locationV, forBit(random_device));
+						genome[indices[i+23]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						genome[indices[i+23]].mutate(sectionV, locationV, forBit(random_device));
+					}
 
 					for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
 					{
-
-
 						enemy[k]->setVelY(1);
 						enemy[k]->setVelX(1);
 						enemy[k]->resetTickCount();
+						enemy[k]->resetHittingTheAlly();
+						enemy[k]->resetHittingTheDot();
 						enemy[k]->setDead(false);
 						enemy[k]->setMPosX(forX(random_device));
 						enemy[k]->setMPosY(forY(random_device));
-//							genome[k-1].mutate(1, k-1, 2);
-//							genome[k-1] = splice(genome[k-1], genome[k], order);
 					}
-
 				}
 
 				//Update screen

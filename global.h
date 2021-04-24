@@ -10,12 +10,15 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include <stdio.h>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <random>
 //Screen dimension constants
+const int SCREEN_WIDTH2 = 840;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
@@ -28,6 +31,9 @@ extern SDL_Window* gWindow;
 
 //The window renderer
 extern SDL_Renderer* gRenderer;
+
+//Globally used font
+extern TTF_Font *gFont;
 
 
 
