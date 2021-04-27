@@ -12,11 +12,11 @@
 LTexture gDotTexture;
 Dot::Dot()
 {
-    mPosX = 0;
-    mPosY = 200;
-    _helth = 5;
+    mPosX = 100;
+    mPosY = 400;
+    _helth = 100;
 
-    mVelX = 0;
+    mVelX = 3;
     mVelY = 0;
 }
 
@@ -68,14 +68,23 @@ void Dot::move()
 
 
     //Move the dot left or right
-    mPosX += mVelX;
+	//mPosX += mVelX;
 
+    if (mPosX <= 0)
+    	mVelX = 3;
+    if (mPosX + DOT_WIDTH >= SCREEN_WIDTH)
+    	mVelX = -3;
+//    if (mPosX + DOT_WIDTH != SCREEN_WIDTH)
+//		mPosX -= mVelX;
     //If the dot went too far to the left or right
-    if( ( mPosX < 0 ) || ( mPosX + DOT_WIDTH > SCREEN_WIDTH ) )
-    {
-        //Move back
-        mPosX -= mVelX;
-    }
+//    if( ( mPosX < 0 ) || ( mPosX + DOT_WIDTH > SCREEN_WIDTH ) )
+//    {
+////        //Move back
+//        mPosX -= mVelX;
+//    }
+
+    	mPosX += mVelX;
+
 
     //Move the dot up or down
     mPosY += mVelY;

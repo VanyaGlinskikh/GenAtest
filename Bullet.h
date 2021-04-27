@@ -33,6 +33,9 @@ class Bullet
 
 		int getMPosX();
 		int getMPosY();
+		void setPosY(int v){mPosY = v;};
+		void setPosX(int v){mPosX = v;};
+		void setVelY(int v){mVelY = v;};
 
     private:
 		int mPosX, mPosY;

@@ -28,7 +28,7 @@ class Dot
 		void render();
 		int getHealth(){return _helth;};
 		void setHealth(){ _helth--;};
-		void resetHealth(){ _helth = 5;};
+		void resetHealth(){ _helth = 100;};
 		int getMPosX();
 		int getMPosY();
 

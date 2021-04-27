@@ -38,10 +38,10 @@ class Enemy
 		static const int DOT_HEIGHT = 20;
 		static const int DOT_VEL = 10;
 
-		static constexpr unsigned MAX_ACTORS = 4;
-		static constexpr unsigned MAX_SENSORS = 5;
-		static constexpr unsigned MAX_STATES = 4;
-		static constexpr unsigned PREDICATE_COUNT = 9;
+		static constexpr unsigned MAX_ACTORS = 5;
+		static constexpr unsigned MAX_SENSORS = 2;
+		static constexpr unsigned MAX_STATES = 16;
+		static constexpr unsigned PREDICATE_COUNT = 3;
 
 		Enemy(unsigned id, Genome &genome);
 		unsigned input();
@@ -61,9 +61,16 @@ class Enemy
 		bool predicatCheckWallUp(const std::vector<double>& data);
 		bool predicatCheckWallDown(const std::vector<double>& data);
 
+		bool predicatCheckBullet(const std::vector<double>& data);
+		bool predicatCheckBulletMove(const std::vector<double>& data);
+		bool predicatCheckDot(const std::vector<double>& data);
+		bool predicatCheckDotMove(const std::vector<double>& data);
+		bool predicatMove(const std::vector<double>& data);
+
 
 
 		void moveStraight();
+		void moveBack();
 		void moveRight();
 		void moveLeft();
 		void moveBull(EnemyBullet &enemyBullet);

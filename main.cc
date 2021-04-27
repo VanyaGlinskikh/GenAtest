@@ -216,9 +216,9 @@ int main( int argc, char* args[] )
 			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
 //			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
-			Azimuth *azimuthSensor = new Azimuth;
-			WallVerticalSensor *wallVerticalSensor = new WallVerticalSensor;
-			WallGorizontalSensor *wallGorizontalSensor = new WallGorizontalSensor;
+//			Azimuth *azimuthSensor = new Azimuth;
+//			WallVerticalSensor *wallVerticalSensor = new WallVerticalSensor;
+//			WallGorizontalSensor *wallGorizontalSensor = new WallGorizontalSensor;
 
 			Dot dot;
 			Bullet bullet;
@@ -234,8 +234,9 @@ int main( int argc, char* args[] )
 			std::function<void(unsigned int)> f2;
 			std::function<void(unsigned int)> f3;
 			std::function<void(unsigned int)> f4;
-			std::vector<int> sec2(2560);
-
+			std::function<void(unsigned int)> f5;
+//			std::vector<int> sec2(2560);// 2^predic* states
+			std::vector<int> sec2(128);
 			std::random_device random_device;
 			std::mt19937 engine{ random_device() };
 			std::uniform_int_distribution<> dist2(0, 9);
@@ -250,44 +251,48 @@ int main( int argc, char* args[] )
 			std::uniform_int_distribution<> forBit(0, 3);
 
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-				genome[i].add_section({1,2,3,4});
-				for (int j = 0; j < 160; ++j) {
+				genome[i].add_section({1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8});
+				for (int j = 0; j < 128; ++j)
 					sec2[j] =  dist2(random_device);
-					sec2[j+160] = dist2(random_device);
-					sec2[j+320] = dist2(random_device);
-					sec2[j+480] = dist2(random_device);
-					sec2[j+640] = dist2(random_device);
-					sec2[j+800] = dist2(random_device);
-					sec2[j+960] = dist2(random_device);
-					sec2[j+1120] = dist2(random_device);
-					sec2[j+1280] = dist2(random_device);
-					sec2[j+1440] = dist2(random_device);
-					sec2[j+1600] = dist2(random_device);
-					sec2[j+1760] = dist2(random_device);
-					sec2[j+1920] = dist2(random_device);
-					sec2[j+2080] = dist2(random_device);
-					sec2[j+2240] = dist2(random_device);
-					sec2[j+2400] = dist2(random_device);}
-				genome[i].add_section(sec2);  // 2^predic* sensors
+//				for (int j = 0; j < 160; ++j) {
+//					sec2[j] =  dist2(random_device);
+//					sec2[j+160] = dist2(random_device);
+//					sec2[j+320] = dist2(random_device);
+//					sec2[j+480] = dist2(random_device);
+//					sec2[j+640] = dist2(random_device);
+//					sec2[j+800] = dist2(random_device);
+//					sec2[j+960] = dist2(random_device);
+//					sec2[j+1120] = dist2(random_device);
+//					sec2[j+1280] = dist2(random_device);
+//					sec2[j+1440] = dist2(random_device);
+//					sec2[j+1600] = dist2(random_device);
+//					sec2[j+1760] = dist2(random_device);
+//					sec2[j+1920] = dist2(random_device);
+//					sec2[j+2080] = dist2(random_device);
+//					sec2[j+2240] = dist2(random_device);
+//					sec2[j+2400] = dist2(random_device);}
+				genome[i].add_section(sec2);  // 2^predic* states
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
-				enemy[i] ->add_sensor(s1);
+//				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
+//				enemy[i] ->add_sensor(s1);
 				s2 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s2);
 				s3 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s3);
-				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
-				enemy[i] ->add_sensor(s4);
-				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
-				enemy[i] ->add_sensor(s5);
+//				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
+//				enemy[i] ->add_sensor(s4);
+//				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
+//				enemy[i] ->add_sensor(s5);
 				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 				enemy[i]->add_actor(f1);
 				f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
 				enemy[i]->add_actor(f2);
 				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
 				enemy[i]->add_actor(f3);
-				f4 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
+				f4 = [&](unsigned id){ enemy[id]->moveBack(); };
 				enemy[i]->add_actor(f4);
+				f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
+				enemy[i]->add_actor(f5);
 				enemy[i]->resetTickCount();
 			}
 
@@ -324,8 +329,8 @@ int main( int argc, char* args[] )
 //					}
 //				}
 //			}
-			int sectionV=0;
-			int locationV=0;
+//			int sectionV=0;
+//			int locationV=0;
 //			int bitV=0;
 			int generationCounter=0;
 			while( !quit )
@@ -342,9 +347,16 @@ int main( int argc, char* args[] )
 				}
 
 
+				if (bullet.getMPosY() == 1000){
+					bullet.setPosY(dot.getMPosY());
+					bullet.setPosX(dot.getMPosX());
+					bullet.setVelY(-5);
+
+				}
 				bullet.move(dot);
 
 				dot.move();
+
 
 //				++scrollingOffset;
 //				if( scrollingOffset > gBGTexture.getHeight() )
@@ -402,56 +414,26 @@ int main( int argc, char* args[] )
 					}
 				}
 
-//				sort(masLive.begin(), masLive.end());
-
 
 				if (clk::now() >= stop){
 					generationCounter++;
 					std::cout<<"время прошло"<<std::endl;
 					start = clk::now();
 					stop = start + std::chrono::seconds(10);
-
 					dot.resetHealth();
-
-//					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
-//							if (sortEnemy[i]->getTickCount() > sortEnemy[j]->getTickCount() ){
-//								std::shared_ptr<Enemy> enemy = sortEnemy[i];
-//								Genome &gs  = genome[i];
-//								sortEnemy[i] = sortEnemy[j];
-//								genome[i] = genome[j];
-//								sortEnemy[j] = enemy;
-//								genome[j] = gs;
-//							}
-//						}
-//					}
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 //						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
 						sortEnemy[i] = enemy[i];
 					}
-//					std::cout<<" "<< std::endl;
-
-//					for (int i = 0; i < NUMBEROFOPPONENTS-2; ++i) {
-//						for (int j = i+1; j < NUMBEROFOPPONENTS-1; ++j) {
-//							if (sortEnemy[i]->fitnessFunction() < sortEnemy[j]->fitnessFunction() ){
-//								std::shared_ptr<Enemy> enemy = sortEnemy[i];
-//								Genome &gs  = genome[i];
-//								sortEnemy[i] = sortEnemy[j];
-//								genome[i] = genome[j];
-//								sortEnemy[j] = enemy;
-//								genome[j] = gs;
-//							}
-//						}
-//					}
 
 					for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
 					std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
 					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
 					});
 
-
-					std::ofstream out;          // поток для записи
+					std::ofstream out;
+					std::ofstream out2;// поток для записи
 					out.open("D:\\hello.txt"); // окрываем файл для записи
 					if (out.is_open())
 					{
@@ -463,6 +445,22 @@ int main( int argc, char* args[] )
 						}
 					}
 
+					out2.open("D:\\gen.txt"); // окрываем файл для записи
+					if (out2.is_open())
+					{
+						std::cout<<" запись произошла  "<< std::endl;
+						for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
+							out2 <<" существо "<<n<<std::endl;
+							for (unsigned i = 0; i < 2; ++i) {
+								out2 <<" секция : "<<i<<std::endl;
+								for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+									out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
+								}
+
+									out2 <<"\n";
+							}
+						}
+					}
 
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
@@ -470,13 +468,6 @@ int main( int argc, char* args[] )
 					}
 
 
-//					for (int i = 1; i <= 8; ++i) {
-//						genome[i+7] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-//						genome[i+15] = genome[i-1];
-//						genome[i+15].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
-//						genome[i+23] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-//						genome[i+23].mutate(forSection(random_device), forLocation(random_device), forBit(random_device));
-//					}
 					for (int i = 1; i <= 8; ++i) {
 						genome[indices[i+7]]=genome[indices[i]];
 						genome[indices[i+15]]=genome[indices[i]];
@@ -484,15 +475,25 @@ int main( int argc, char* args[] )
 					}
 					for (int i = 1; i <= 8; ++i) {
 						genome[indices[i+7]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						sectionV = forSection(random_device);
-						if (sectionV == 0)
-							locationV = forLocation(random_device);
-						if (sectionV == 1)
-							locationV = forLocation2(random_device);
+						genome[indices[i+23]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
 
-						genome[indices[i+15]].mutate(sectionV, locationV, forBit(random_device));
-						genome[indices[i+23]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[indices[i+23]].mutate(sectionV, locationV, forBit(random_device));
+						for (unsigned w = 0; w < genome[0].section_size(0); ++w) {
+							if (forSection(random_device)){
+								genome[indices[i+15]].mutate(0, w, forBit(random_device));
+							}
+							if (forSection(random_device)){
+								genome[indices[i+23]].mutate(0, w, forBit(random_device));
+							}
+						}
+
+						for (unsigned w = 0; w < genome[0].section_size(1); ++w) {
+							if (forSection(random_device)){
+								genome[indices[i+15]].mutate(1, w, forBit(random_device));
+							}
+							if (forSection(random_device)){
+								genome[indices[i+23]].mutate(1, w, forBit(random_device));
+							}
+						}
 					}
 
 					for (int k = 0; k < NUMBEROFOPPONENTS; ++k)

@@ -62,8 +62,14 @@ int Enemy::getMPosY()
 
 void Enemy::moveStraight()
 {
+	if (mPosY+20 != SCREEN_HEIGHT)
+		mPosY += mVelY;
+}
 
-	mPosY += mVelY;
+void Enemy::moveBack()
+{
+	if (mPosY != 0)
+		mPosY -= mVelY;
 }
 
 void Enemy::moveRight()
@@ -123,12 +129,69 @@ void Enemy::move(Bullet &bullet)
 
 }
 
+bool Enemy::predicatMove(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
+{
+	std::random_device random_device;
+	std::mt19937 engine{ random_device() };
+	std::uniform_int_distribution<> rand(0, 1);
+	if (predicatCheckBullet(data))
+	{
+		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
+			return 1; //направо
+		else
+			return 0;
+
+	}
+	else if (predicatCheckDot(data))
+	{
+		if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
+			return 0; //налево
+		else
+			return 1;
+
+	}
+	else
+		return rand(random_device);
+
+}
+
+bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
+{
+	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
+		return 1;
+	return 0;
+}
+
+bool Enemy::predicatCheckBulletMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
+{
+		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
+			return 1;
+	return 0;
+}
+
+bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
+{
+	if (data[1]+ 20 > mPosX && data[1] < mPosX+20 )
+		return 0;
+	return 1;
+}
+
+bool Enemy::predicatCheckDotMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
+{
+	if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
+		return 0;
+	return 1;
+}
+
+
+
 bool Enemy::predicatAL(const std::vector<double>& data)
 {
 	if (data[0] > 0)
 		return 1;
 	return 0;
 }
+
 
 bool Enemy::predicatAR(const std::vector<double>& data)
 {
@@ -195,15 +258,19 @@ unsigned Enemy::input()
 
 	// Результаты выполнения функции предиката
 	unsigned pred = 0;
-	pred |= (predicatAL(sensor_data));
-	pred |= (predicatAR(sensor_data) << 1);
-	pred |= (predicatIS(sensor_data) << 2);
-	pred |= (predicatCheckBulletRight(sensor_data) << 3);
-	pred |= (predicatCheckBulletLeft(sensor_data) << 4);
-	pred |= (predicatCheckWallRight(sensor_data) << 5);
-	pred |= (predicatCheckWallLeft(sensor_data) << 6);
-	pred |= (predicatCheckWallUp(sensor_data) << 7);
-	pred |= (predicatCheckWallDown(sensor_data) << 8);
+	pred |= (predicatCheckBullet(sensor_data));
+	pred |= (predicatCheckDot(sensor_data)<<1);
+	pred |= (predicatMove(sensor_data)<<2);
+
+//	pred |= (predicatAL(sensor_data));
+//	pred |= (predicatAR(sensor_data) << 1);
+//	pred |= (predicatIS(sensor_data) << 2);
+//	pred |= (predicatCheckBulletRight(sensor_data) << 3);
+//	pred |= (predicatCheckBulletLeft(sensor_data) << 4);
+//	pred |= (predicatCheckWallRight(sensor_data) << 5);
+//	pred |= (predicatCheckWallLeft(sensor_data) << 6);
+//	pred |= (predicatCheckWallUp(sensor_data) << 7);
+//	pred |= (predicatCheckWallDown(sensor_data) << 8);
 
 	return pred;
 }
