@@ -69,7 +69,7 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY())
 			{
 
-		std::cout<<"убил своего"<<std::endl;
+//		std::cout<<"убил своего"<<std::endl;
 				enemy.setPosX();
 				enemy.setPosY();
 	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
@@ -78,7 +78,9 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 				mPosY = -200;
 				mPosX = -200;
 				enemy.setDead(true);
+				enemy.setEnemyOnTheField(false);
 				enemy.upHittingTheAlly();
+				enemy.upShotCount();
 
 
 	//			mVelY = 0;

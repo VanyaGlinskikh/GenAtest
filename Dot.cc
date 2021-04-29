@@ -103,7 +103,7 @@ void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {
 	  if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
 	    {
-	    	std::cout<<"в тебя попали"<<std::endl;
+//	    	std::cout<<"в тебя попали"<<std::endl;
 	    	if (getHealth() > 0)
 	    		setHealth();
 	    	if (getHealth() == 0)
@@ -111,6 +111,7 @@ void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 	    	enemyBullet.setPosY(-200);
 	    	enemyBullet.setPosX(-200);
 	    	enemy.upHittingTheDot();
+//	    	enemy.upShotCount();
 
 	    }
 }

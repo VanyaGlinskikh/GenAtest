@@ -39,9 +39,9 @@ class Enemy
 		static const int DOT_VEL = 10;
 
 		static constexpr unsigned MAX_ACTORS = 5;
-		static constexpr unsigned MAX_SENSORS = 2;
-		static constexpr unsigned MAX_STATES = 16;
-		static constexpr unsigned PREDICATE_COUNT = 3;
+		static constexpr unsigned MAX_SENSORS = 4;
+		static constexpr unsigned MAX_STATES = 64;
+		static constexpr unsigned PREDICATE_COUNT = 5;
 
 		Enemy(unsigned id, Genome &genome);
 		unsigned input();
@@ -62,10 +62,12 @@ class Enemy
 		bool predicatCheckWallDown(const std::vector<double>& data);
 
 		bool predicatCheckBullet(const std::vector<double>& data);
-		bool predicatCheckBulletMove(const std::vector<double>& data);
+//		bool predicatCheckBulletMove(const std::vector<double>& data);
 		bool predicatCheckDot(const std::vector<double>& data);
-		bool predicatCheckDotMove(const std::vector<double>& data);
+//		bool predicatCheckDotMove(const std::vector<double>& data);
 		bool predicatMove(const std::vector<double>& data);
+		bool predicatCheckAlly(const std::vector<double>& data);
+		bool predicatCheckAllyBullet(const std::vector<double>& data);
 
 
 
@@ -115,15 +117,25 @@ class Enemy
 		int getHittingTheAlly(){return _hitting_the_ally; };
 		void upHittingTheAlly(){ _hitting_the_ally++; };
 
+		void resetShotCount(){ _shotCount = 0; };
+		int getShotCount(){return _shotCount; };
+		void upShotCount(){ _shotCount++;};
+
+		void setEnemyOnTheField(bool v){_enemyOnTheField = v; };
+		bool getEnemyOnTheField(){return _enemyOnTheField; };
+
+		int getId(){return _id;};
+
 //		bool k1 = getHittingTheDot()  > 0;
 //		bool k2 = getHittingTheAlly() > 0;
 
-		double k1 = 3.;
-		double k2 = 3.;
-		double k3 = 1.5;
+		double k1 = 5.;
+		double k2 = 4.;
+		double k3 = 1.2;
+		double k4 = 2;
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
-		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 ; };
+		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 /*+ getTickCount()*k3*/ + getShotCount() * k4 ; };
 
 
 
@@ -152,6 +164,8 @@ class Enemy
 
 		bool _dead = false;
 		unsigned _tickCount;
+		unsigned _shotCount;
+		bool _enemyOnTheField;
 	private:
 		int mPosX, mPosY;
 		int mVelX, mVelY;

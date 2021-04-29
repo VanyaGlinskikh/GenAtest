@@ -19,7 +19,7 @@ class Bullet
 		static const int BULLET_WIDTH = 20;
 		static const int BULLET_HEIGHT = 20;
 
-		static const int BULLET_VEL = 8;
+		static const int BULLET_VEL = 10;
 
 		Bullet();
 

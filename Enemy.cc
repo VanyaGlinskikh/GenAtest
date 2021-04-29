@@ -39,11 +39,19 @@ Enemy::Enemy(unsigned id, Genome &genome)
 		for (unsigned j = 0; j < (1 << PREDICATE_COUNT); ++j)
 			_action_table[i][j] = (genome(1, i * (1 << PREDICATE_COUNT) + j) & 0x0fffffff) % MAX_STATES;
 
-    mPosX = rand() % 620 + 1;
-    mPosY = (rand() % 80 + 20);
+
+    mPosX = -300;
+    mPosY = -300;
+
+    _enemyOnTheField= false;
+
+
+//    mPosX = rand() % 620 + 1;
+//    mPosY = (rand() % 80 + 20);
 
 
    _tickCount = 0;
+   _shotCount = 0;
 
 
     mVelX = 1;
@@ -90,6 +98,8 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 {
 
 		enemyBullet.move(mPosX, mPosY);
+//		if (enemyBullet.getMPosY() == -200)
+////			upShotCount();
 		enemyBullet.render();
 
 }
@@ -99,7 +109,7 @@ void Enemy::moveShot(EnemyBullet &enemyBullet)
 {
 //	std::cout<<" значение Y у пули противника  "<<enemyBullet.getMPosY() << std::endl;
     if (enemyBullet.getMPosY() == -200){
-
+    	upShotCount();
     	enemyBullet.setPosY(-50);
 		enemyBullet.setVelY(1);
     }
@@ -129,26 +139,40 @@ void Enemy::move(Bullet &bullet)
 
 }
 
-bool Enemy::predicatMove(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
+bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - налево
 {
 	std::random_device random_device;
 	std::mt19937 engine{ random_device() };
 	std::uniform_int_distribution<> rand(0, 1);
 	if (predicatCheckBullet(data))
 	{
-		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
-			return 1; //направо
+		if ((data[1] ==  mPosX || data[1]+20 > mPosX) && data[1] > 0 && data[1] < mPosX)
+			return 1;
 		else
 			return 0;
 
 	}
 	else if (predicatCheckDot(data))
 	{
-		if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
-			return 0; //налево
+		if ( data[0]+20 > mPosX && data[0] > 0 && data[0] < mPosX)
+			return 0;
 		else
 			return 1;
 
+	}
+	else if (predicatCheckAlly(data))
+	{
+		if ( data[2]+20 > mPosX && data[2] > 0 && data[2] < mPosX)
+			return 1;
+		else
+			return 0;
+	}
+	else if (predicatCheckAllyBullet(data))
+	{
+		if ( data[3]+20 > mPosX && data[3] > 0 && data[3] < mPosX)
+			return 1;
+		else
+			return 0;
 	}
 	else
 		return rand(random_device);
@@ -157,30 +181,44 @@ bool Enemy::predicatMove(const std::vector<double>& data)// 1 - если двигаться п
 
 bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
 {
+	if (data[1]+ 20 > mPosX && data[1] < mPosX+20 )
+		return 1;
+	return 0;
+}
+
+//bool Enemy::predicatCheckBulletMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
+//{
+//		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
+//			return 1;
+//	return 0;
+//}
+
+bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
+{
+	if (data[0]+ 20 > mPosX && data[0] < mPosX+20 )
+		return 0;
+	return 1;
+}
+
+//bool Enemy::predicatCheckDotMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
+//{
+//	if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
+//		return 0;
+//	return 1;
+//}
+
+bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
+{
 	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckBulletMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
+bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
 {
-		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
-			return 1;
+	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
+		return 1;
 	return 0;
-}
-
-bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
-{
-	if (data[1]+ 20 > mPosX && data[1] < mPosX+20 )
-		return 0;
-	return 1;
-}
-
-bool Enemy::predicatCheckDotMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
-{
-	if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
-		return 0;
-	return 1;
 }
 
 
@@ -260,7 +298,8 @@ unsigned Enemy::input()
 	unsigned pred = 0;
 	pred |= (predicatCheckBullet(sensor_data));
 	pred |= (predicatCheckDot(sensor_data)<<1);
-	pred |= (predicatMove(sensor_data)<<2);
+	pred |= (predicatCheckAlly(sensor_data)<<2);
+	pred |= (predicatMove(sensor_data)<<3);
 
 //	pred |= (predicatAL(sensor_data));
 //	pred |= (predicatAR(sensor_data) << 1);

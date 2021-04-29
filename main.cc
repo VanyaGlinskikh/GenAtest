@@ -11,6 +11,9 @@
 #include "Sensor.h"
 #include "VisionEnemySensor.h"
 #include "VisionDotBulletSensor.h"
+#include "VisionAllySensor.h"
+#include "VisionAllyBulletSensor.h"
+
 #include "CheckTeammatesSensor.h"
 #include "Azimuth.h"
 #include "WallVerticalSensor.h"
@@ -135,7 +138,7 @@ bool loadMedia()
 	}
 
 	//Open the font
-	gFont = TTF_OpenFont( "lazy.ttf", 28 );
+	gFont = TTF_OpenFont( "lazy.ttf", 24 );
 	if( gFont == NULL )
 	{
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -215,6 +218,8 @@ int main( int argc, char* args[] )
 
 			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
+			VisionAllySensor *visionAllySensor = new VisionAllySensor;
+			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
 //			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
 //			Azimuth *azimuthSensor = new Azimuth;
 //			WallVerticalSensor *wallVerticalSensor = new WallVerticalSensor;
@@ -236,7 +241,8 @@ int main( int argc, char* args[] )
 			std::function<void(unsigned int)> f4;
 			std::function<void(unsigned int)> f5;
 //			std::vector<int> sec2(2560);// 2^predic* states
-			std::vector<int> sec2(128);
+			std::vector<int> sec1(64);
+			std::vector<int> sec2(2048);
 			std::random_device random_device;
 			std::mt19937 engine{ random_device() };
 			std::uniform_int_distribution<> dist2(0, 9);
@@ -246,31 +252,19 @@ int main( int argc, char* args[] )
 			std::uniform_int_distribution<> forOrder(0, 254);
 			std::uniform_int_distribution<> forSplice(0, 7);
 			std::uniform_int_distribution<> forSection(0, 1);
-			std::uniform_int_distribution<> forLocation(0, 1);
-			std::uniform_int_distribution<> forLocation2(0, 2559);
 			std::uniform_int_distribution<> forBit(0, 3);
 
+			constexpr double Pmut = 0.02;
+			std::uniform_real_distribution<double> mut(0.0, 1.0);
+
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-				genome[i].add_section({1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8});
-				for (int j = 0; j < 128; ++j)
+				for (int k = 0; k < 64; ++k)
+					sec1[k] =  dist2(random_device);
+//				genome[i].add_section({1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8});
+				for (int j = 0; j < 2048; ++j)
 					sec2[j] =  dist2(random_device);
-//				for (int j = 0; j < 160; ++j) {
-//					sec2[j] =  dist2(random_device);
-//					sec2[j+160] = dist2(random_device);
-//					sec2[j+320] = dist2(random_device);
-//					sec2[j+480] = dist2(random_device);
-//					sec2[j+640] = dist2(random_device);
-//					sec2[j+800] = dist2(random_device);
-//					sec2[j+960] = dist2(random_device);
-//					sec2[j+1120] = dist2(random_device);
-//					sec2[j+1280] = dist2(random_device);
-//					sec2[j+1440] = dist2(random_device);
-//					sec2[j+1600] = dist2(random_device);
-//					sec2[j+1760] = dist2(random_device);
-//					sec2[j+1920] = dist2(random_device);
-//					sec2[j+2080] = dist2(random_device);
-//					sec2[j+2240] = dist2(random_device);
-//					sec2[j+2400] = dist2(random_device);}
+
+				genome[i].add_section(sec1);
 				genome[i].add_section(sec2);  // 2^predic* states
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 //				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
@@ -279,6 +273,10 @@ int main( int argc, char* args[] )
 				enemy[i] ->add_sensor(s2);
 				s3 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s3);
+				s4 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
+				enemy[i] ->add_sensor(s4);
+				s5 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
+				enemy[i] ->add_sensor(s5);
 //				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
 //				enemy[i] ->add_sensor(s4);
 //				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
@@ -302,7 +300,7 @@ int main( int argc, char* args[] )
 //			int scrollingOffset = 0;
 			using clk = std::chrono::high_resolution_clock;
 			auto start = clk::now();
-			auto stop = start + std::chrono::seconds(10);
+			auto stop = start + std::chrono::seconds(15);
 
 
 			std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
@@ -310,28 +308,10 @@ int main( int argc, char* args[] )
 			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 			std::vector<uint8_t>  order;
 			std::vector<int> indices(NUMBEROFOPPONENTS);
-//			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//				sortEnemy[i] = enemy[i];
-//			}
-//			std::ofstream out;          // поток для записи
-//			out.open("D:\\hello.txt"); // окрываем файл для записи
-//			if (out.is_open())
-//			{
-//				std::cout<<" запись произошла  "<< std::endl;
-//				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//					out <<" существо "<<i<<": "<< std::endl;
-//					for (int j = 0; j < 2; ++j) {
-//						out <<" секция "<<j<<" размер секции  "<<genome[i].section_size(j)<< std::endl;
-//						for (unsigned k = 0; k < genome[i].section_size(j); ++k) {
-//							out <<genome[i].operator ()(j, k)<< " ";
-//						}
-//						out <<"\n"<< std::endl;
-//					}
-//				}
-//			}
-//			int sectionV=0;
-//			int locationV=0;
-//			int bitV=0;
+			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
+			double favoriteGen = 0.;
+			double enemyOnTheField = 0;
+
 			int generationCounter=0;
 			while( !quit )
 			{
@@ -384,15 +364,26 @@ int main( int argc, char* args[] )
 				bullet.render();
 				dot.render();
 
-
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+					if (!(enemy[i] ->getDead()) && enemyOnTheField < 32 && !enemy[i]->getEnemyOnTheField()){
+							enemy[i] ->setEnemyOnTheField(true);
+							enemy[i]->setMPosX(forX(random_device));
+							enemy[i]->setMPosY(forY(random_device));
+							enemyOnTheField++;
+							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
+					}
+				}
 
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					enemy[i] ->tick();
-//						std::cout<<enemy[i]->getTickCount()<<std::endl;
-					bullet.hittingTheEnemy(*enemy[i]);
-					dot.hittingTheDot(enemyBullet[i], *enemy[i]);
-					enemy[i] ->render();
-					enemy[i] ->moveBull(enemyBullet[i]);
+					if (enemy[i] ->getEnemyOnTheField()){
+						enemy[i] ->tick();
+	//						std::cout<<enemy[i]->getTickCount()<<std::endl;
+						bullet.hittingTheEnemy(*enemy[i]);
+						dot.hittingTheDot(enemyBullet[i], *enemy[i]);
+						enemy[i] ->render();
+						enemy[i] ->moveBull(enemyBullet[i]);
+
+					}
 				}
 				//Render text
 				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
@@ -413,13 +404,22 @@ int main( int argc, char* args[] )
 							enemyBullet[i].hittingTheAlly(*enemy[j]);
 					}
 				}
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i)
+					if (!(enemy[i]->getEnemyOnTheField()))
+							enemyOnTheField = 0;
+
+				for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
+					if (enemy[j]->getEnemyOnTheField()){
+						enemyOnTheField++;
+					}
+				}
 
 
 				if (clk::now() >= stop){
-					generationCounter++;
+
 					std::cout<<"время прошло"<<std::endl;
 					start = clk::now();
-					stop = start + std::chrono::seconds(10);
+					stop = start + std::chrono::seconds(15);
 					dot.resetHealth();
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
@@ -434,12 +434,13 @@ int main( int argc, char* args[] )
 
 					std::ofstream out;
 					std::ofstream out2;// поток для записи
+					std::ofstream out3;// поток для записи
 					out.open("D:\\hello.txt"); // окрываем файл для записи
 					if (out.is_open())
 					{
 						std::cout<<" запись произошла  "<< std::endl;
 						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
+							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
 									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 								out <<"\n";
 						}
@@ -461,6 +462,25 @@ int main( int argc, char* args[] )
 							}
 						}
 					}
+					if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
+						favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
+						out3.open("D:\\genFavorite.txt"); // окрываем файл для записи
+						if (out3.is_open())
+						{
+							std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+							out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+							out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+							out3 <<"\n";
+							out3 <<" геном этого существа: "<<std::endl;
+							for (unsigned i = 0; i < 2; ++i) {
+								out3 <<" секция : "<<i<<std::endl;
+								for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+									out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
+								}
+								out3 <<"\n";
+							}
+						}
+					}
 
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
@@ -468,31 +488,49 @@ int main( int argc, char* args[] )
 					}
 
 
-					for (int i = 1; i <= 8; ++i) {
+					for (int i = 1; i <= 16; ++i) {
 						genome[indices[i+7]]=genome[indices[i]];
 						genome[indices[i+15]]=genome[indices[i]];
 						genome[indices[i+23]]=genome[indices[i]];
 					}
-					for (int i = 1; i <= 8; ++i) {
+					for (int i = 1; i <= 16; ++i) {
 						genome[indices[i+7]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
 						genome[indices[i+23]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
 
-						for (unsigned w = 0; w < genome[0].section_size(0); ++w) {
-							if (forSection(random_device)){
-								genome[indices[i+15]].mutate(0, w, forBit(random_device));
-							}
-							if (forSection(random_device)){
-								genome[indices[i+23]].mutate(0, w, forBit(random_device));
-							}
-						}
+//						for (unsigned w = 0; w < genome[0].section_size(0); ++w) {
+//							if (forSection(random_device)){
+//								genome[indices[i+15]].mutate(0, w, forBit(random_device));
+//							}
+//							if (forSection(random_device)){
+//								genome[indices[i+23]].mutate(0, w, forBit(random_device));
+//							}
+//						}
 
-						for (unsigned w = 0; w < genome[0].section_size(1); ++w) {
-							if (forSection(random_device)){
-								genome[indices[i+15]].mutate(1, w, forBit(random_device));
+//						for (unsigned w = 0; w < genome[0].section_size(1); ++w) {
+//							if (forSection(random_device)){
+//								genome[indices[i+15]].mutate(1, w, forBit(random_device));
+//							}
+//							if (forSection(random_device)){
+//								genome[indices[i+23]].mutate(1, w, forBit(random_device));
+//							}
+//						}
+						for (unsigned s = 0; s < 2; ++s) {
+						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
+						    for (unsigned b = 0; b < 4; ++b) {
+						      if (mut(random_device) < Pmut) {
+						        genome[indices[i+15]].mutate(s, w, b);
+						      }
+						    }
+						  }
+						}
+						for (unsigned s = 0; s < 2; ++s) {
+						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
+							for (unsigned b = 0; b < 4; ++b) {
+							  if (mut(random_device) < Pmut) {
+								genome[indices[i+23]].mutate(s, w, b);
+							  }
 							}
-							if (forSection(random_device)){
-								genome[indices[i+23]].mutate(1, w, forBit(random_device));
-							}
+						  }
 						}
 					}
 
@@ -501,12 +539,20 @@ int main( int argc, char* args[] )
 						enemy[k]->setVelY(1);
 						enemy[k]->setVelX(1);
 						enemy[k]->resetTickCount();
+						enemy[k]->resetShotCount();
 						enemy[k]->resetHittingTheAlly();
 						enemy[k]->resetHittingTheDot();
 						enemy[k]->setDead(false);
 						enemy[k]->setMPosX(forX(random_device));
 						enemy[k]->setMPosY(forY(random_device));
+						enemy[k]->setEnemyOnTheField(false);
+						enemyBullet[k].setPosX(-200);
+						enemyBullet[k].setPosY(-200);
+
 					}
+					bullet.setPosY(1000);
+					enemyOnTheField = 0;
+					generationCounter++;
 				}
 
 				//Update screen

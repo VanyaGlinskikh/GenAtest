@@ -23,7 +23,7 @@ int VisionEnemySensor::location(Enemy &enemy, Dot &dot)
 //	int pole = -100;
 	if ((dot.getMPosX() < visionEnemyPosX + VISION_WIDTH && dot.getMPosY()+dot.DOT_HEIGHT > visionEnemyPosY) && (dot.getMPosX()+ dot.DOT_WIDTH > visionEnemyPosX && dot.getMPosY()+dot.DOT_HEIGHT > visionEnemyPosY) && (dot.getMPosX()+ dot.DOT_WIDTH > visionEnemyPosX && dot.getMPosY() < visionEnemyPosY+VISION_HEIGHT) && (dot.getMPosX() < visionEnemyPosX + VISION_WIDTH  && dot.getMPosY() < visionEnemyPosY+VISION_HEIGHT) )
 	{
-		std::cout<<"игрок находится в поле видимости"<<std::endl;
+//		std::cout<<"игрок находится в поле видимости"<<std::endl;
 
 		return dot.getMPosX();
 	}
