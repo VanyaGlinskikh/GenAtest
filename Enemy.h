@@ -39,9 +39,13 @@ class Enemy
 		static const int DOT_VEL = 10;
 
 		static constexpr unsigned MAX_ACTORS = 5;
+		static_assert(MAX_ACTORS > 0, "MAX_ACTORS must not be zero");
 		static constexpr unsigned MAX_SENSORS = 4;
-		static constexpr unsigned MAX_STATES = 64;
+		static_assert(MAX_SENSORS > 0, "MAX_SENSORS must not be zero");
+		static constexpr unsigned MAX_STATES = 128;
+		static_assert(MAX_STATES >= MAX_ACTORS, "MAX_STATES must be >= MAX_ACTORS");
 		static constexpr unsigned PREDICATE_COUNT = 5;
+		static_assert(PREDICATE_COUNT >= MAX_SENSORS, "PREDICATE_COUNT must be >= MAX_SENSORS");
 
 		Enemy(unsigned id, Genome &genome);
 		unsigned input();

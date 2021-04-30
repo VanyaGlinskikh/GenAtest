@@ -313,7 +313,9 @@ int main( int argc, char* args[] )
 			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 			double favoriteGen = 0.;
 			double enemyOnTheField = 0;
-			int numberOfEnemyInOneGroup = NUMBEROFOPPONENTS/4;
+			int numberOfEnemyInOneGroup = 8;
+			int counterGroup = 1;
+			int counterGroupGenome = 0;
 
 			int generationCounter=0;
 			while( !quit )
@@ -484,24 +486,33 @@ int main( int argc, char* args[] )
 							}
 						}
 					}
-
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
 						order[i] = forOrder(random_device);
 					}
-					for (int i = 1; i <= numberOfEnemyInOneGroup; ++i) {
-						genome[indices[i+numberOfEnemyInOneGroup-1 ]]=genome[indices[i-1]];
-						genome[indices[i+numberOfEnemyInOneGroup*2-1]]=genome[indices[i-1]];
-						genome[indices[i+numberOfEnemyInOneGroup*3-1]]=genome[indices[i-1]];
+					for (int q = 0; q < (NUMBEROFOPPONENTS/numberOfEnemyInOneGroup); ++q) {
+
+						for (int i = 1; i <= numberOfEnemyInOneGroup; ++i) {
+							if(i == (numberOfEnemyInOneGroup * counterGroup)+1){
+								counterGroup++;
+								counterGroupGenome = 0;
+							}
+							genome[indices[i+numberOfEnemyInOneGroup*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
+							counterGroupGenome++;
+	//						genome[indices[i+numberOfEnemyInOneGroup*2-1]]=genome[indices[i-1]];
+	//						genome[indices[i+numberOfEnemyInOneGroup*3-1]]=genome[indices[i-1]];
+						}
 					}
+					counterGroup = 1;
+					counterGroupGenome = 0;
 					for (int i = 1; i <= numberOfEnemyInOneGroup; ++i) {
-						genome[indices[i+numberOfEnemyInOneGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[indices[i+numberOfEnemyInOneGroup*3-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
+						genome[indices[i+numberOfEnemyInOneGroup*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
 						for (unsigned s = 0; s < 2; ++s) {
 						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 						    for (unsigned b = 0; b < 4; ++b) {
 						      if (mut(random_device) < Pmut) {
-						        genome[indices[i+numberOfEnemyInOneGroup*2-1]].mutate(s, w, b);
+						        genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+1)-1]].mutate(s, w, b);
 						      }
 						    }
 						  }
@@ -510,13 +521,15 @@ int main( int argc, char* args[] )
 						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 							for (unsigned b = 0; b < 4; ++b) {
 							  if (mut(random_device) < Pmut) {
-								genome[indices[i+numberOfEnemyInOneGroup*3-1]].mutate(s, w, b);
+								genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+2)-1]].mutate(s, w, b);
 							  }
 							}
 						  }
 						}
+						if (i == numberOfEnemyInOneGroup * counterGroup)
+							counterGroup = 5;
 					}
-
+					counterGroup = 1;
 					for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
 					{
 						enemy[k]->setVelY(1);

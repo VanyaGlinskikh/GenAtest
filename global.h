@@ -22,7 +22,9 @@ const int SCREEN_WIDTH2 = 840;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+// 1<<
 const int NUMBEROFOPPONENTS = 64;
+static_assert(NUMBEROFOPPONENTS % 32 == 0, "NUMBEROFOPPONENTS must be % 32 ==0");
 
 const int NUMBEROFENEMYBULLETS = NUMBEROFOPPONENTS;
 
