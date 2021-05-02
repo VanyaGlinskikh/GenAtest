@@ -4,7 +4,7 @@
 #include "LTexture.h"
 #include "Dot.h"
 #include "Bullet.h"
-#include "LTexGlobal.h"
+
 //#include "FiniteStateMachine.h"
 //#include "vector";
 
@@ -34,7 +34,9 @@ LTexture gBGTexture;
 LTexture gPanelTexture;
 LTexture gTextTexture;
 LTexture gTextGenerationTexture;
+#include "LTexGlobal.h"
 
+int threadFunction( void* data );
 
 bool init();
 
@@ -133,6 +135,7 @@ bool loadMedia()
 
 	if( !gPanelTexture.loadFromFile( "panel.png" ) )
 	{
+
 		printf( "Failed to load background texture!\n" );
 		success = false;
 	}
@@ -190,6 +193,35 @@ void close()
 	IMG_Quit();
 	SDL_Quit();
 }
+
+struct GraficCord
+{
+	float generation;        // поколение
+	float avResFF;    // среднее значение фф у 8 лучших
+	GraficCord(float g, float a) : generation(g), avResFF(a)
+	{}
+};
+
+int threadFunction( void* input )
+{
+//	std::vector<GraficCord >* cord = (vector<GraficCord>*) input;
+//	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
+//	SDL_RenderDrawLine(gRenderer,650,200, 840, 200);
+//	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
+//	SDL_RenderDrawLine(gRenderer,650,150, 650, 250);
+//	for( unsigned i = 0; i < cord.size(); i += 1 )
+//	{
+//		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
+//		if (650+(cord[i].generation*10)>= 840)
+//			SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*5)),(200)-cord[i].avResFF);
+//		else
+//			SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*10)),(200)-cord[i].avResFF);
+//	}
+//
+	return 0;
+}
+
+
 
 int main( int argc, char* args[] )
 {
@@ -302,7 +334,7 @@ int main( int argc, char* args[] )
 //			int scrollingOffset = 0;
 			using clk = std::chrono::high_resolution_clock;
 			auto start = clk::now();
-			auto stop = start + std::chrono::seconds(15);
+			auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 
 
 			std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
@@ -316,8 +348,28 @@ int main( int argc, char* args[] )
 			int numberOfEnemyInOneGroup = 8;
 			int counterGroup = 1;
 			int counterGroupGenome = 0;
+			double SumFF = 0;
+
+			std::vector<GraficCord> cord;
+			float avResFF;
+			float generation;
+
+			std::ofstream out;
+			std::ofstream out2;// поток для записи
+			std::ofstream out3;// поток для записи
+			std::ofstream out4;// поток для записи
+//			for( unsigned i = 0; i < cord.size(); i += 1 )
+//			{
+//				SDL_RenderDrawPointF(gRenderer,(650+i*3+cord[i].generation),(SCREEN_HEIGHT/2)-cord[i].avResFF);
+//			}
+			out4.open("D:\\genRes.txt");
+			out4<<"";
+			out4.close();
 
 			int generationCounter=0;
+
+//			SDL_Thread* threadID = SDL_CreateThread( threadFunction, "LazyThread", (void*)cord );
+
 			while( !quit )
 			{
 				while( SDL_PollEvent( &e ) != 0 )
@@ -359,6 +411,7 @@ int main( int argc, char* args[] )
 				//Render background
 				gBGTexture.render( 0, 0 );
 				gPanelTexture.render( 640, 0 );
+
 //				gBGTexture.render( 0, scrollingOffset );
 //				gBGTexture.render( 0, scrollingOffset - gBGTexture.getHeight() );
 				helthText.str("");
@@ -370,7 +423,7 @@ int main( int argc, char* args[] )
 				dot.render();
 
 				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					if (!(enemy[i] ->getDead()) && enemyOnTheField < 32 && !enemy[i]->getEnemyOnTheField()){
+					if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
 							enemy[i] ->setEnemyOnTheField(true);
 							enemy[i]->setMPosX(forX(random_device));
 							enemy[i]->setMPosY(forY(random_device));
@@ -403,6 +456,7 @@ int main( int argc, char* args[] )
 				}
 				gTextGenerationTexture.render( 645, 20 );
 
+
 				for (int i = 0; i < NUMBEROFENEMYBULLETS; ++i) {
 					for (int j = 0; j < NUMBEROFENEMYBULLETS; ++j) {
 						if(i != j)
@@ -424,7 +478,7 @@ int main( int argc, char* args[] )
 
 					std::cout<<"время прошло"<<std::endl;
 					start = clk::now();
-					stop = start + std::chrono::seconds(15);
+					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 					dot.resetHealth();
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
@@ -437,9 +491,7 @@ int main( int argc, char* args[] )
 					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
 					});
 
-					std::ofstream out;
-					std::ofstream out2;// поток для записи
-					std::ofstream out3;// поток для записи
+
 					out.open("D:\\hello.txt"); // окрываем файл для записи
 					if (out.is_open())
 					{
@@ -450,6 +502,7 @@ int main( int argc, char* args[] )
 								out <<"\n";
 						}
 					}
+					out.close();
 
 					out2.open("D:\\gen.txt"); // окрываем файл для записи
 					if (out2.is_open())
@@ -467,6 +520,7 @@ int main( int argc, char* args[] )
 							}
 						}
 					}
+					out2.close();
 					if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
 						favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
 						out3.open("D:\\genFavorite.txt"); // окрываем файл для записи
@@ -485,7 +539,19 @@ int main( int argc, char* args[] )
 								out3 <<"\n";
 							}
 						}
+						out3.close();
 					}
+
+					out4.open("D:\\genRes.txt", std::ios::app); // окрываем файл для записи
+					if (out4.is_open())
+					{
+						for (int i = 0; i < numberOfEnemyInOneGroup; ++i) {
+							SumFF += sortEnemy[indices[0]]->fitnessFunction();
+						}
+						SumFF /= numberOfEnemyInOneGroup;
+						out4 << generationCounter<<" "<<SumFF<<std::endl;
+					}
+					out4.close();
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
 						order[i] = forOrder(random_device);
@@ -546,11 +612,51 @@ int main( int argc, char* args[] )
 						enemyBullet[k].setPosY(-200);
 
 					}
+
+//					std::ifstream in("D:\\genRes.txt"); // окрываем файл для чтения
+//					if (in.is_open())
+//					{
+//						while (in >> generation >> avResFF)
+//						{
+//							cord.push_back(GraficCord(generation, avResFF));
+//						}
+//					}
+//					in.close();
+////					SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
+//					for( unsigned i = 0; i < cord.size(); i += 1 )
+//					{
+//						SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
+//						SDL_RenderDrawPointF(gRenderer,(660+cord[i].generation),400-cord[i].avResFF);
+//						SDL_RenderDrawLine(gRenderer,650,300, SCREEN_WIDTH2, 300);
+//					}
+//					SDL_RenderDrawLine(gRenderer,650,300, SCREEN_WIDTH2, 300);
 					bullet.setPosY(1000);
 					enemyOnTheField = 0;
 					generationCounter++;
+
 				}
 
+//				std::ifstream in("D:\\genRes.txt"); // окрываем файл для чтения
+//				if (in.is_open())
+//				{
+//					while (in >> generation >> avResFF)
+//					{
+//						cord.push_back(GraficCord(generation, avResFF));
+//					}
+//				}
+//				in.close();
+//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
+//				SDL_RenderDrawLine(gRenderer,650,200, 840, 200);
+//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
+//				SDL_RenderDrawLine(gRenderer,650,150, 650, 250);
+//				for( unsigned i = 0; i < cord.size(); i += 1 )
+//				{
+//					SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
+//					if (650+(cord[i].generation*10)>= 840)
+//						SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*5)),(200)-cord[i].avResFF);
+//					else
+//						SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*10)),(200)-cord[i].avResFF);
+//				}
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 			}
