@@ -546,10 +546,10 @@ int main( int argc, char* args[] )
 					if (out4.is_open())
 					{
 						for (int i = 0; i < numberOfEnemyInOneGroup; ++i) {
-							SumFF += sortEnemy[indices[0]]->fitnessFunction();
+							SumFF += sortEnemy[indices[i]]->fitnessFunction();
 						}
-						SumFF /= numberOfEnemyInOneGroup;
-						out4 << generationCounter<<" "<<SumFF<<std::endl;
+//						SumFF /= numberOfEnemyInOneGroup;
+						out4 << generationCounter<<" "<<SumFF/numberOfEnemyInOneGroup<<std::endl;
 					}
 					out4.close();
 					order.resize(genome.size());
@@ -633,6 +633,7 @@ int main( int argc, char* args[] )
 					bullet.setPosY(1000);
 					enemyOnTheField = 0;
 					generationCounter++;
+					SumFF = 0;
 
 				}
 
