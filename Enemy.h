@@ -125,6 +125,10 @@ class Enemy
 		int getShotCount(){return _shotCount; };
 		void upShotCount(){ _shotCount++;};
 
+		void resetNumberOfMovements(){ _numberOfMovements = 0; };
+		int getNumberOfMovements(){return _numberOfMovements; };
+		void upNumberOfMovements(){ _numberOfMovements++;};
+
 		void setEnemyOnTheField(bool v){_enemyOnTheField = v; };
 		bool getEnemyOnTheField(){return _enemyOnTheField; };
 
@@ -136,10 +140,11 @@ class Enemy
 		double k1 = 5.;
 		double k2 = 4.;
 		double k3 = 1.2;
-		double k4 = 2;
+		double k4 = 2.;
+		double k5 = 1.1;
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
-		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 /*+ getTickCount()*k3*/ + getShotCount() * k4 ; };
+		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 /*+ getTickCount()*k3*/ + getShotCount() * k4 + getNumberOfMovements()*k5; };
 
 
 
@@ -170,6 +175,7 @@ class Enemy
 		unsigned _tickCount;
 		unsigned _shotCount;
 		bool _enemyOnTheField;
+		int _numberOfMovements;
 	private:
 		int mPosX, mPosY;
 		int mVelX, mVelY;

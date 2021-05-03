@@ -52,6 +52,7 @@ Enemy::Enemy(unsigned id, Genome &genome)
 
    _tickCount = 0;
    _shotCount = 0;
+   _numberOfMovements = 0;
 
 
     mVelX = 1;
@@ -70,26 +71,34 @@ int Enemy::getMPosY()
 
 void Enemy::moveStraight()
 {
-	if (mPosY+20 != SCREEN_HEIGHT)
+	if (mPosY+20 != SCREEN_HEIGHT){
 		mPosY += mVelY;
+		upNumberOfMovements();
+	}
 }
 
 void Enemy::moveBack()
 {
-	if (mPosY != 0)
+	if (mPosY != 0){
 		mPosY -= mVelY;
+		upNumberOfMovements();
+	}
 }
 
 void Enemy::moveRight()
 {
-	if (mPosX+20 != SCREEN_WIDTH)
+	if (mPosX+20 != SCREEN_WIDTH){
 		mPosX += mVelX;
+		upNumberOfMovements();
+	}
 }
 
 void Enemy::moveLeft()
 {
-	if (mPosX != 0)
+	if (mPosX != 0){
 		mPosX -= mVelX;
+		upNumberOfMovements();
+	}
 
 }
 

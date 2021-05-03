@@ -288,7 +288,7 @@ int main( int argc, char* args[] )
 			std::uniform_int_distribution<> forSection(0, 1);
 			std::uniform_int_distribution<> forBit(0, 3);
 
-			constexpr double Pmut = 0.02;
+			constexpr double Pmut = 0.05;
 			std::uniform_real_distribution<double> mut(0.0, 1.0);
 
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
@@ -497,7 +497,7 @@ int main( int argc, char* args[] )
 					{
 						std::cout<<" запись произошла  "<< std::endl;
 						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
+							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
 									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 								out <<"\n";
 						}
@@ -527,7 +527,7 @@ int main( int argc, char* args[] )
 						if (out3.is_open())
 						{
 							std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
-							out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+							out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
 							out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 							out3 <<"\n";
 							out3 <<" геном этого существа: "<<std::endl;
@@ -602,6 +602,7 @@ int main( int argc, char* args[] )
 						enemy[k]->setVelX(1);
 						enemy[k]->resetTickCount();
 						enemy[k]->resetShotCount();
+						enemy[k]->resetNumberOfMovements();
 						enemy[k]->resetHittingTheAlly();
 						enemy[k]->resetHittingTheDot();
 						enemy[k]->setDead(false);
