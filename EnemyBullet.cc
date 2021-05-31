@@ -6,6 +6,7 @@
  */
 #include "EnemyBullet.h"
 #include "Enemy.h"
+#include "Bullet.h"
 EnemyBullet::EnemyBullet()
 {
 	//Initialize the offsets
@@ -81,6 +82,23 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 				enemy.setEnemyOnTheField(false);
 				enemy.upHittingTheAlly();
 				enemy.upShotCount();
+
+
+	//			mVelY = 0;
+			}
+}
+
+void EnemyBullet::hittingTheBullet(Bullet &bullet)
+{
+	if ( (mPosX+20 > bullet.getMPosX() &&  mPosX < bullet.getMPosX()+ 20) && mPosY < bullet.getMPosY())
+			{
+
+//		std::cout<<"убил своего"<<std::endl;
+		bullet.setPosX(-50);
+		bullet.setPosY(-50);
+	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+				mPosY = -200;
+				mPosX = -200;
 
 
 	//			mVelY = 0;

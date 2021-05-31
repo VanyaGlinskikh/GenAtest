@@ -13,6 +13,7 @@
 #include "global.h"
 class Dot;
 class Enemy;
+class EnemyBullet;
 class Bullet
 {
     public:
@@ -28,6 +29,7 @@ class Bullet
 		void move(Dot &dot);
 
 		void hittingTheEnemy(Enemy &enemy);
+		void hittingTheEnemyBullet(EnemyBullet &enemybullet);
 
 		void render();
 

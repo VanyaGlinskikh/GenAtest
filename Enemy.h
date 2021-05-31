@@ -66,9 +66,7 @@ class Enemy
 		bool predicatCheckWallDown(const std::vector<double>& data);
 
 		bool predicatCheckBullet(const std::vector<double>& data);
-//		bool predicatCheckBulletMove(const std::vector<double>& data);
 		bool predicatCheckDot(const std::vector<double>& data);
-//		bool predicatCheckDotMove(const std::vector<double>& data);
 		bool predicatMove(const std::vector<double>& data);
 		bool predicatCheckAlly(const std::vector<double>& data);
 		bool predicatCheckAllyBullet(const std::vector<double>& data);
@@ -137,14 +135,14 @@ class Enemy
 //		bool k1 = getHittingTheDot()  > 0;
 //		bool k2 = getHittingTheAlly() > 0;
 
-		double k1 = 5.;
-		double k2 = 4.;
-		double k3 = 1.2;
+		double k1 = 10.;
+		double k2 = 6.;
+		double k3 = 0.06;
 		double k4 = 2.;
-		double k5 = 1.1;
+		double k5 = 0.06;
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
-		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 /*+ getTickCount()*k3*/ + getShotCount() * k4 + getNumberOfMovements()*k5; };
+		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5; };
 
 
 

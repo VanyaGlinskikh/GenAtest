@@ -12,6 +12,7 @@
 #include "LTexGlobal.h"
 class Enemy;
 class Genome;
+class Bullet;
 class EnemyBullet
 {
     public:
@@ -20,6 +21,7 @@ class EnemyBullet
 //		void move(Enemy &enemy);
 		void move(int x, int y);
 		void hittingTheAlly(Enemy &enemy);
+		void hittingTheBullet(Bullet &bullet);
 
 
 		static const int BULLET_WIDTH = 20;

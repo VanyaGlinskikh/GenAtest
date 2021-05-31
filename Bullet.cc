@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include "Dot.h"
 #include "Enemy.h"
+#include "EnemyBullet.h"
 Bullet::Bullet()
 {
 	    mPosX = 0;
@@ -69,6 +70,21 @@ void Bullet::hittingTheEnemy(Enemy &enemy)
 			mPosX = -1000;
 			enemy.setDead(true);
 			enemy.setEnemyOnTheField(false);
+
+		}
+}
+
+void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
+{
+	if ( (mPosX+20 > enemyBullet.getMPosX() &&  mPosX < enemyBullet.getMPosX()+ 20) && mPosY < enemyBullet.getMPosY()+20 && mPosY+20 > enemyBullet.getMPosY())
+		{
+//		std::cout<<"убил"<<std::endl;
+		enemyBullet.setPosX(-50);
+		enemyBullet.setPosY(-50);
+//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+//		enemyBullet.setVelY(0);
+			mPosY = -1000;
+			mPosX = -1000;
 
 		}
 }

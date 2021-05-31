@@ -5,9 +5,6 @@
 #include "Dot.h"
 #include "Bullet.h"
 
-//#include "FiniteStateMachine.h"
-//#include "vector";
-
 #include "Sensor.h"
 #include "VisionEnemySensor.h"
 #include "VisionDotBulletSensor.h"
@@ -35,8 +32,6 @@ LTexture gPanelTexture;
 LTexture gTextTexture;
 LTexture gTextGenerationTexture;
 #include "LTexGlobal.h"
-
-int threadFunction( void* data );
 
 bool init();
 
@@ -71,7 +66,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -202,25 +198,6 @@ struct GraficCord
 	{}
 };
 
-int threadFunction( void* input )
-{
-//	std::vector<GraficCord >* cord = (vector<GraficCord>*) input;
-//	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
-//	SDL_RenderDrawLine(gRenderer,650,200, 840, 200);
-//	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
-//	SDL_RenderDrawLine(gRenderer,650,150, 650, 250);
-//	for( unsigned i = 0; i < cord.size(); i += 1 )
-//	{
-//		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-//		if (650+(cord[i].generation*10)>= 840)
-//			SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*5)),(200)-cord[i].avResFF);
-//		else
-//			SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*10)),(200)-cord[i].avResFF);
-//	}
-//
-	return 0;
-}
-
 
 
 int main( int argc, char* args[] )
@@ -303,14 +280,14 @@ int main( int argc, char* args[] )
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 //				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
 //				enemy[i] ->add_sensor(s1);
-				s2 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
+				s1 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
+				enemy[i] ->add_sensor(s1);
+				s2 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s2);
-				s3 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
+				s3 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
 				enemy[i] ->add_sensor(s3);
-				s4 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
+				s4 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
 				enemy[i] ->add_sensor(s4);
-				s5 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
-				enemy[i] ->add_sensor(s5);
 //				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
 //				enemy[i] ->add_sensor(s4);
 //				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
@@ -351,8 +328,8 @@ int main( int argc, char* args[] )
 			double SumFF = 0;
 
 			std::vector<GraficCord> cord;
-			float avResFF;
-			float generation;
+//			float avResFF;
+//			float generation;
 
 			std::ofstream out;
 			std::ofstream out2;// поток для записи
@@ -437,9 +414,11 @@ int main( int argc, char* args[] )
 						enemy[i] ->tick();
 	//						std::cout<<enemy[i]->getTickCount()<<std::endl;
 						bullet.hittingTheEnemy(*enemy[i]);
+//						bullet.hittingTheEnemyBullet(enemyBullet[i]);
 						dot.hittingTheDot(enemyBullet[i], *enemy[i]);
 						enemy[i] ->render();
 						enemy[i] ->moveBull(enemyBullet[i]);
+						enemyBullet[i].hittingTheBullet(bullet);
 
 					}
 				}
@@ -565,8 +544,6 @@ int main( int argc, char* args[] )
 							}
 							genome[indices[i+numberOfEnemyInOneGroup*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
 							counterGroupGenome++;
-	//						genome[indices[i+numberOfEnemyInOneGroup*2-1]]=genome[indices[i-1]];
-	//						genome[indices[i+numberOfEnemyInOneGroup*3-1]]=genome[indices[i-1]];
 						}
 					}
 					counterGroup = 1;
@@ -614,23 +591,6 @@ int main( int argc, char* args[] )
 
 					}
 
-//					std::ifstream in("D:\\genRes.txt"); // окрываем файл для чтения
-//					if (in.is_open())
-//					{
-//						while (in >> generation >> avResFF)
-//						{
-//							cord.push_back(GraficCord(generation, avResFF));
-//						}
-//					}
-//					in.close();
-////					SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-//					for( unsigned i = 0; i < cord.size(); i += 1 )
-//					{
-//						SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-//						SDL_RenderDrawPointF(gRenderer,(660+cord[i].generation),400-cord[i].avResFF);
-//						SDL_RenderDrawLine(gRenderer,650,300, SCREEN_WIDTH2, 300);
-//					}
-//					SDL_RenderDrawLine(gRenderer,650,300, SCREEN_WIDTH2, 300);
 					bullet.setPosY(1000);
 					enemyOnTheField = 0;
 					generationCounter++;
@@ -638,28 +598,6 @@ int main( int argc, char* args[] )
 
 				}
 
-//				std::ifstream in("D:\\genRes.txt"); // окрываем файл для чтения
-//				if (in.is_open())
-//				{
-//					while (in >> generation >> avResFF)
-//					{
-//						cord.push_back(GraficCord(generation, avResFF));
-//					}
-//				}
-//				in.close();
-//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
-//				SDL_RenderDrawLine(gRenderer,650,200, 840, 200);
-//				SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
-//				SDL_RenderDrawLine(gRenderer,650,150, 650, 250);
-//				for( unsigned i = 0; i < cord.size(); i += 1 )
-//				{
-//					SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-//					if (650+(cord[i].generation*10)>= 840)
-//						SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*5)),(200)-cord[i].avResFF);
-//					else
-//						SDL_RenderDrawPointF(gRenderer,(650+(cord[i].generation*10)),(200)-cord[i].avResFF);
-//				}
-				//Update screen
 				SDL_RenderPresent( gRenderer );
 			}
 		}
