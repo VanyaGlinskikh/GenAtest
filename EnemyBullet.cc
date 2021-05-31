@@ -91,18 +91,18 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 void EnemyBullet::hittingTheBullet(Bullet &bullet)
 {
 	if ( (mPosX+20 > bullet.getMPosX() &&  mPosX < bullet.getMPosX()+ 20) && mPosY < bullet.getMPosY())
-			{
+	{
 
 //		std::cout<<"убил своего"<<std::endl;
 		bullet.setPosX(-50);
 		bullet.setPosY(-50);
-	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-				mPosY = -200;
-				mPosX = -200;
+//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+		mPosY = -200;
+		mPosX = -200;
 
 
-	//			mVelY = 0;
-			}
+//			mVelY = 0;
+	}
 }
 
 int EnemyBullet::getMPosX()
