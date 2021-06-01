@@ -264,7 +264,7 @@ int main( int argc, char* args[] )
 			//std::uniform_int_distribution<> forSection(0, 1);
 			//std::uniform_int_distribution<> forBit(0, 3);
 
-			constexpr double Pmut = 0.05;
+			constexpr double Pmut = 0.02;
 			std::uniform_real_distribution<double> mut(0.0, 1.0);
 
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
@@ -469,7 +469,7 @@ int main( int argc, char* args[] )
 					{
 						std::cout<<" запись произошла  "<< std::endl;
 						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<< std::endl;
+							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<< std::endl;
 									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 								out <<"\n";
 						}
@@ -573,6 +573,7 @@ int main( int argc, char* args[] )
 						enemy[k]->resetTickCount();
 						enemy[k]->resetShotCount();
 						enemy[k]->resetNumberOfMovements();
+						enemy[k]->resetNumberOfDown();
 						enemy[k]->resetHittingTheAlly();
 						enemy[k]->resetHittingTheDot();
 						enemy[k]->setDead(false);

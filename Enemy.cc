@@ -53,6 +53,7 @@ Enemy::Enemy(unsigned id, Genome &genome)
    _tickCount = 0;
    _shotCount = 0;
    _numberOfMovements = 0;
+   _numberOfDown = 0;
 
 
     mVelX = 1;
@@ -74,6 +75,7 @@ void Enemy::moveStraight()
 	if (mPosY+20 != SCREEN_HEIGHT){
 		mPosY += mVelY;
 		upNumberOfMovements();
+		upNumberOfDown();
 	}
 }
 
