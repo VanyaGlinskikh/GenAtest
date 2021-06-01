@@ -127,6 +127,14 @@ class Enemy
 		int getNumberOfMovements(){return _numberOfMovements; };
 		void upNumberOfMovements(){ _numberOfMovements++;};
 
+		void resetTotalNumberOfMovements(){ _totalNumberOfMovements = 0; };
+		int getTotalNumberOfMovements(){return _totalNumberOfMovements; };
+		void upTotalNumberOfMovements(){ _totalNumberOfMovements++;};
+
+		void resetStandMovements(){ _standMovements = 0; };
+		int getStandMovements(){return _standMovements; };
+		void upStandMovements(){ _standMovements++;};
+
 		void resetNumberOfDown(){ _numberOfDown = 0; };
 		int getNumberOfDown(){return _numberOfDown; };
 		void upNumberOfDown(){ _numberOfDown++;};
@@ -145,9 +153,11 @@ class Enemy
 		double k4 = 2.;
 		double k5 = 0.06;
 		double k6 = 0.2;
+		double k7 = 0.1;
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
-		double fitnessFunction(){ return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6; };
+		double fitnessFunction(){
+			return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 - getStandMovements()* k7; };
 
 
 
@@ -179,6 +189,8 @@ class Enemy
 		unsigned _shotCount;
 		bool _enemyOnTheField;
 		int _numberOfMovements;
+		int _totalNumberOfMovements;
+		int _standMovements;
 		int _numberOfDown;
 	private:
 		int mPosX, mPosY;

@@ -469,7 +469,7 @@ int main( int argc, char* args[] )
 					{
 						std::cout<<" запись произошла  "<< std::endl;
 						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<< std::endl;
+							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 								out <<"\n";
 						}
@@ -574,6 +574,8 @@ int main( int argc, char* args[] )
 						enemy[k]->resetTickCount();
 						enemy[k]->resetShotCount();
 						enemy[k]->resetNumberOfMovements();
+						enemy[k]->resetTotalNumberOfMovements();
+						enemy[k]->resetStandMovements();
 						enemy[k]->resetNumberOfDown();
 						enemy[k]->resetHittingTheAlly();
 						enemy[k]->resetHittingTheDot();
