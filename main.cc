@@ -521,7 +521,7 @@ int main( int argc, char* args[] )
 							SumFF += sortEnemy[indices[i]]->fitnessFunction();
 						}
 //						SumFF /= numberOfEnemyInOneGroup;
-						out4 << generationCounter<<" "<<SumFF/numberOfEnemyInOneGroup<<std::endl;
+						out4 << generationCounter<<" "<<SumFF/numberOfEnemyInOneGroup<<" "<<sortEnemy[indices[0]]->fitnessFunction()<<" "<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
 					}
 					out4.close();
 					order.resize(genome.size());
