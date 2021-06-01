@@ -217,10 +217,10 @@ int main( int argc, char* args[] )
 		else
 		{
 			bool quit = false;
-			//In memory text stream
+
 			std::stringstream helthText;
 			std::stringstream generationText;
-			//Set text color as black
+
 			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			SDL_Event e;
@@ -229,29 +229,28 @@ int main( int argc, char* args[] )
 			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
 			VisionAllySensor *visionAllySensor = new VisionAllySensor;
 			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
-//			CheckTeammatesSensor *checkTeammatesSensor = new CheckTeammatesSensor;
-//			Azimuth *azimuthSensor = new Azimuth;
-//			WallVerticalSensor *wallVerticalSensor = new WallVerticalSensor;
-//			WallGorizontalSensor *wallGorizontalSensor = new WallGorizontalSensor;
 
 			Dot dot;
 			Bullet bullet;
 			std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
 			std::vector<Genome> genome(NUMBEROFOPPONENTS);
 			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+
 			std::function<double(unsigned int)> s1;
 			std::function<double(unsigned int)> s2;
 			std::function<double(unsigned int)> s3;
 			std::function<double(unsigned int)> s4;
 			std::function<double(unsigned int)> s5;
+
 			std::function<void(unsigned int)> f1;
 			std::function<void(unsigned int)> f2;
 			std::function<void(unsigned int)> f3;
 			std::function<void(unsigned int)> f4;
 			std::function<void(unsigned int)> f5;
-//			std::vector<int> sec2(2560);// 2^predic* states
+
 			int sec1Length = (enemy[1]->MAX_STATES);
 			int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
+
 			std::vector<int> sec1(sec1Length);
 			std::vector<int> sec2(sec2Length);
 			std::random_device random_device;
@@ -262,8 +261,8 @@ int main( int argc, char* args[] )
 
 			std::uniform_int_distribution<> forOrder(0, 254);
 			std::uniform_int_distribution<> forSplice(0, 7);
-			std::uniform_int_distribution<> forSection(0, 1);
-			std::uniform_int_distribution<> forBit(0, 3);
+			//std::uniform_int_distribution<> forSection(0, 1);
+			//std::uniform_int_distribution<> forBit(0, 3);
 
 			constexpr double Pmut = 0.05;
 			std::uniform_real_distribution<double> mut(0.0, 1.0);
@@ -271,7 +270,6 @@ int main( int argc, char* args[] )
 			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 				for (int k = 0; k < sec1Length; ++k)
 					sec1[k] =  dist2(random_device);
-//				genome[i].add_section({1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8});
 				for (int j = 0; j < sec2Length; ++j)
 					sec2[j] =  dist2(random_device);
 
@@ -455,11 +453,6 @@ int main( int argc, char* args[] )
 
 				if (clk::now() >= stop){
 
-					std::cout<<"время прошло"<<std::endl;
-					start = clk::now();
-					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
-					dot.resetHealth();
-
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 //						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
 						sortEnemy[i] = enemy[i];
@@ -471,7 +464,7 @@ int main( int argc, char* args[] )
 					});
 
 
-					out.open("D:\\hello.txt"); // окрываем файл для записи
+					out.open("D:\\stat.txt"); // окрываем файл для записи
 					if (out.is_open())
 					{
 						std::cout<<" запись произошла  "<< std::endl;
@@ -595,7 +588,12 @@ int main( int argc, char* args[] )
 					enemyOnTheField = 0;
 					generationCounter++;
 					SumFF = 0;
+					dot.resetHealth();
 
+
+					std::cout<<"время прошло"<<std::endl;
+					start = clk::now();
+					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 				}
 
 				SDL_RenderPresent( gRenderer );
