@@ -514,14 +514,15 @@ int main( int argc, char* args[] )
 						out3.close();
 					}
 
-					out4.open("D:\\genRes.txt", std::ios::app); // окрываем файл для записи
+					out4.open("D:\\genRes.csv", std::ios::app); // окрываем файл для записи
 					if (out4.is_open())
 					{
+						out4.imbue(std::locale(""));
 						for (int i = 0; i < numberOfEnemyInOneGroup; ++i) {
 							SumFF += sortEnemy[indices[i]]->fitnessFunction();
 						}
 //						SumFF /= numberOfEnemyInOneGroup;
-						out4 << generationCounter<<" "<<SumFF/numberOfEnemyInOneGroup<<" "<<sortEnemy[indices[0]]->fitnessFunction()<<" "<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
+						out4 << generationCounter<<";"<<SumFF/numberOfEnemyInOneGroup<<";"<<sortEnemy[indices[0]]->fitnessFunction()<<";"<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
 					}
 					out4.close();
 					order.resize(genome.size());
