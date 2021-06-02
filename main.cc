@@ -436,13 +436,11 @@ int main( int argc, char* args[] )
 
 				for (int i = 0; i < NUMBEROFENEMYBULLETS; ++i) {
 					for (int j = 0; j < NUMBEROFENEMYBULLETS; ++j) {
-						if(i != j)
+						if(i != j && enemy[i]->getEnemyOnTheField() && enemy[j]->getEnemyOnTheField())
 							enemyBullet[i].hittingTheAlly(*enemy[j]);
 					}
 				}
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i)
-					if (!(enemy[i]->getEnemyOnTheField()))
-							enemyOnTheField = 0;
+				enemyOnTheField = 0;
 
 				for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
 					if (enemy[j]->getEnemyOnTheField()){
