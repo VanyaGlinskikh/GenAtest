@@ -66,8 +66,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -190,14 +190,83 @@ void close()
 	SDL_Quit();
 }
 
-struct GraficCord
-{
-	float generation;        // поколение
-	float avResFF;    // среднее значение фф у 8 лучших
-	GraficCord(float g, float a) : generation(g), avResFF(a)
-	{}
-};
+//struct GraficCord
+//{
+//	float generation;        // поколение
+//	float avResFF;    // среднее значение фф у 8 лучших
+//	GraficCord(float g, float a) : generation(g), avResFF(a)
+//	{}
+//};
 
+void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices){
+	out.open("D:\\stat.txt"); // окрываем файл для записи
+	if (out.is_open())
+	{
+		std::cout<<" запись произошла  "<< std::endl;
+		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+			out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
+					out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
+				out <<"\n";
+		}
+	}
+	out.close();
+}
+
+void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int> &indices){
+	out2.open("D:\\gen.txt"); // окрываем файл для записи
+	if (out2.is_open())
+	{
+		std::cout<<" запись произошла  "<< std::endl;
+		for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
+			out2 <<" существо "<<n<<std::endl;
+			for (unsigned i = 0; i < 2; ++i) {
+				out2 <<" секция : "<<i<<std::endl;
+				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+					out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
+				}
+					out2 <<"\n";
+			}
+		}
+	}
+	out2.close();
+}
+
+void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<Genome> &genome, std::vector<int> &indices, int &generationCounter, double &favoriteGen){
+	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
+		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
+		out3.open("D:\\genFavorite.txt"); // окрываем файл для записи
+		if (out3.is_open())
+		{
+			std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+			out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+			out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+			out3 <<"\n";
+			out3 <<" геном этого существа: "<<std::endl;
+			for (unsigned i = 0; i < 2; ++i) {
+				out3 <<" секция : "<<i<<std::endl;
+				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+					out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
+				}
+				out3 <<"\n";
+			}
+		}
+		out3.close();
+	}
+}
+
+void writeOut4(std::ofstream &out4, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices, int &generationCounter,double &SumFF){
+	out4.open("D:\\genRes.csv", std::ios::app); // окрываем файл для записи
+						if (out4.is_open())
+						{
+							out4.imbue(std::locale(""));
+							for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+								SumFF += sortEnemy[indices[i]]->fitnessFunction();
+							}
+	//						SumFF /= numberOfEnemyInOneGroup;
+							out4 << generationCounter<<";"<<SumFF/NUMBER_OF_ENEMY_IN_ONE_GROUP<<";"<<sortEnemy[indices[0]]->fitnessFunction()<<";"<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
+						}
+						out4.close();
+}
 
 
 int main( int argc, char* args[] )
@@ -261,8 +330,6 @@ int main( int argc, char* args[] )
 
 			std::uniform_int_distribution<> forOrder(0, 254);
 			std::uniform_int_distribution<> forSplice(0, 7);
-			//std::uniform_int_distribution<> forSection(0, 1);
-			//std::uniform_int_distribution<> forBit(0, 3);
 
 			constexpr double Pmut = 0.02;
 			std::uniform_real_distribution<double> mut(0.0, 1.0);
@@ -276,8 +343,6 @@ int main( int argc, char* args[] )
 				genome[i].add_section(sec1);
 				genome[i].add_section(sec2);  // 2^predic* states
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-//				s1 = [&](unsigned id) -> double { return azimuthSensor->checkA((*enemy[id]), dot); };
-//				enemy[i] ->add_sensor(s1);
 				s1 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s1);
 				s2 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
@@ -286,10 +351,7 @@ int main( int argc, char* args[] )
 				enemy[i] ->add_sensor(s3);
 				s4 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
 				enemy[i] ->add_sensor(s4);
-//				s4 = [&](unsigned id) -> double { return wallVerticalSensor->location((enemy[id])); };
-//				enemy[i] ->add_sensor(s4);
-//				s5 = [&](unsigned id) -> double { return wallGorizontalSensor->location((enemy[id])); };
-//				enemy[i] ->add_sensor(s5);
+
 				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 				enemy[i]->add_actor(f1);
 				f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
@@ -300,17 +362,12 @@ int main( int argc, char* args[] )
 				enemy[i]->add_actor(f4);
 				f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
 				enemy[i]->add_actor(f5);
+
 				enemy[i]->resetTickCount();
 			}
-
-
-//			double an = 0;
-//			int ves = 0;
-//			int scrollingOffset = 0;
 			using clk = std::chrono::high_resolution_clock;
 			auto start = clk::now();
 			auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
-
 
 			std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
 			std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
@@ -319,33 +376,26 @@ int main( int argc, char* args[] )
 			std::vector<int> indices(NUMBEROFOPPONENTS);
 			std::vector<int> enemyIdOnTheField;
 			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
+
 			double favoriteGen = 0.;
 			double enemyOnTheField = 0;
-			int numberOfEnemyInOneGroup = 8;
+			//int numberOfEnemyInOneGroup = 8;
 			int counterGroup = 1;
 			int counterGroupGenome = 0;
 			double SumFF = 0;
 
-			std::vector<GraficCord> cord;
-//			float avResFF;
-//			float generation;
+//			std::vector<GraficCord> cord;
 
 			std::ofstream out;
 			std::ofstream out2;// поток для записи
 			std::ofstream out3;// поток для записи
 			std::ofstream out4;// поток для записи
-//			for( unsigned i = 0; i < cord.size(); i += 1 )
-//			{
-//				SDL_RenderDrawPointF(gRenderer,(650+i*3+cord[i].generation),(SCREEN_HEIGHT/2)-cord[i].avResFF);
-//			}
+
 			out4.open("D:\\genRes.txt");
 			out4<<"";
 			out4.close();
 
 			int generationCounter=0;
-
-
-//			SDL_Thread* threadID = SDL_CreateThread( threadFunction, "LazyThread", (void*)cord );
 
 			while( !quit )
 			{
@@ -356,41 +406,22 @@ int main( int argc, char* args[] )
 						quit = true;
 					}
 					dot.handleEvent( e );
-
 					bullet.handleEvent(e, dot);
 				}
-
-
 				if (bullet.getMPosY() == 1000){
 					bullet.setPosY(dot.getMPosY());
 					bullet.setPosX(dot.getMPosX());
 					bullet.setVelY(-5);
-
 				}
 				bullet.move(dot);
-
 				dot.move();
-
-
-//				++scrollingOffset;
-//				if( scrollingOffset > gBGTexture.getHeight() )
-//				{
-//					scrollingOffset = 0;
-//				}
-
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
-
-
-
-
 				//Render background
 				gBGTexture.render( 0, 0 );
 				gPanelTexture.render( 640, 0 );
 
-//				gBGTexture.render( 0, scrollingOffset );
-//				gBGTexture.render( 0, scrollingOffset - gBGTexture.getHeight() );
 				helthText.str("");
 				helthText << "health: " << dot.getHealth() ;
 				generationText.str("");
@@ -408,21 +439,15 @@ int main( int argc, char* args[] )
 							enemyIdOnTheField.push_back(enemy[i]->getId());
 //							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
 					}
-
 				}
 
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
-//					if (enemy[i] ->getEnemyOnTheField()){
-						enemy[enemyIdOnTheField[i]] ->tick();
-	//						std::cout<<enemy[i]->getTickCount()<<std::endl;
-						bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
-//						bullet.hittingTheEnemyBullet(enemyBullet[i]);
-						dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
-						enemy[enemyIdOnTheField[i]] ->render();
-						enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
-						enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
-
-//					}
+					enemy[enemyIdOnTheField[i]] ->tick();
+					bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
+					dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
+					enemy[enemyIdOnTheField[i]] ->render();
+					enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
+					enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
 				}
 				//Render text
 				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
@@ -437,7 +462,6 @@ int main( int argc, char* args[] )
 				}
 				gTextGenerationTexture.render( 645, 20 );
 
-
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 					for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
 						if(i != j)
@@ -450,10 +474,8 @@ int main( int argc, char* args[] )
 					if (enemy[j]->getEnemyOnTheField()){
 						enemyOnTheField++;
 						enemyIdOnTheField.push_back(enemy[j]->getId());
-
 					}
 				}
-
 
 				if (clk::now() >= stop){
 
@@ -466,94 +488,36 @@ int main( int argc, char* args[] )
 					std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
 					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
 					});
+					writeOut(out,sortEnemy, indices);
+					writeOut2(out2, genome, indices);
+					writeOut3(out3, sortEnemy, genome, indices, generationCounter, favoriteGen);
+					writeOut4(out4, sortEnemy, indices, generationCounter, SumFF);
 
-
-					out.open("D:\\stat.txt"); // окрываем файл для записи
-					if (out.is_open())
-					{
-						std::cout<<" запись произошла  "<< std::endl;
-						for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-							out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
-									out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
-								out <<"\n";
-						}
-					}
-					out.close();
-
-					out2.open("D:\\gen.txt"); // окрываем файл для записи
-					if (out2.is_open())
-					{
-						std::cout<<" запись произошла  "<< std::endl;
-						for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
-							out2 <<" существо "<<n<<std::endl;
-							for (unsigned i = 0; i < 2; ++i) {
-								out2 <<" секция : "<<i<<std::endl;
-								for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
-									out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
-								}
-
-									out2 <<"\n";
-							}
-						}
-					}
-					out2.close();
-					if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
-						favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
-						out3.open("D:\\genFavorite.txt"); // окрываем файл для записи
-						if (out3.is_open())
-						{
-							std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
-							out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-							out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
-							out3 <<"\n";
-							out3 <<" геном этого существа: "<<std::endl;
-							for (unsigned i = 0; i < 2; ++i) {
-								out3 <<" секция : "<<i<<std::endl;
-								for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
-									out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
-								}
-								out3 <<"\n";
-							}
-						}
-						out3.close();
-					}
-
-					out4.open("D:\\genRes.csv", std::ios::app); // окрываем файл для записи
-					if (out4.is_open())
-					{
-						out4.imbue(std::locale(""));
-						for (int i = 0; i < numberOfEnemyInOneGroup; ++i) {
-							SumFF += sortEnemy[indices[i]]->fitnessFunction();
-						}
-//						SumFF /= numberOfEnemyInOneGroup;
-						out4 << generationCounter<<";"<<SumFF/numberOfEnemyInOneGroup<<";"<<sortEnemy[indices[0]]->fitnessFunction()<<";"<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
-					}
-					out4.close();
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
 						order[i] = forOrder(random_device);
 					}
-					for (int q = 0; q < (NUMBEROFOPPONENTS/numberOfEnemyInOneGroup); ++q) {
+					for (int q = 0; q < (NUMBEROFOPPONENTS/NUMBER_OF_ENEMY_IN_ONE_GROUP); ++q) {
 
-						for (int i = 1; i <= numberOfEnemyInOneGroup; ++i) {
-							if(i == (numberOfEnemyInOneGroup * counterGroup)+1){
+						for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+							if(i == (NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)+1){
 								counterGroup++;
 								counterGroupGenome = 0;
 							}
-							genome[indices[i+numberOfEnemyInOneGroup*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
+							genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
 							counterGroupGenome++;
 						}
 					}
 					counterGroup = 1;
 					counterGroupGenome = 0;
-					for (int i = 1; i <= numberOfEnemyInOneGroup; ++i) {
-						genome[indices[i+numberOfEnemyInOneGroup*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
+					for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
 						for (unsigned s = 0; s < 2; ++s) {
 						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 						    for (unsigned b = 0; b < 4; ++b) {
 						      if (mut(random_device) < Pmut) {
-						        genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+1)-1]].mutate(s, w, b);
+						        genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].mutate(s, w, b);
 						      }
 						    }
 						  }
@@ -562,12 +526,12 @@ int main( int argc, char* args[] )
 						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 							for (unsigned b = 0; b < 4; ++b) {
 							  if (mut(random_device) < Pmut) {
-								genome[indices[i+numberOfEnemyInOneGroup*(counterGroup+2)-1]].mutate(s, w, b);
+								genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].mutate(s, w, b);
 							  }
 							}
 						  }
 						}
-						if (i == numberOfEnemyInOneGroup * counterGroup)
+						if (i == NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)
 							counterGroup = 5;
 					}
 					counterGroup = 1;
