@@ -11,15 +11,11 @@
 #include "VisionAllySensor.h"
 #include "VisionAllyBulletSensor.h"
 
-#include "CheckTeammatesSensor.h"
-#include "Azimuth.h"
-#include "WallVerticalSensor.h"
-#include "WallGorizontalSensor.h"
-
 #include <fstream>
 
 #include <functional>
 #include <chrono>
+#include "LTexGlobal.h"
 
 SDL_Window* gWindow = NULL;
 TTF_Font *gFont = NULL;
@@ -31,7 +27,7 @@ LTexture gBGTexture;
 LTexture gPanelTexture;
 LTexture gTextTexture;
 LTexture gTextGenerationTexture;
-#include "LTexGlobal.h"
+
 
 bool init();
 
@@ -66,8 +62,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -309,7 +305,6 @@ int main( int argc, char* args[] )
 			std::function<double(unsigned int)> s2;
 			std::function<double(unsigned int)> s3;
 			std::function<double(unsigned int)> s4;
-			std::function<double(unsigned int)> s5;
 
 			std::function<void(unsigned int)> f1;
 			std::function<void(unsigned int)> f2;
@@ -465,7 +460,7 @@ int main( int argc, char* args[] )
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 					for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
 						if(i != j)
-							enemyBullet[enemyIdOnTheField[i]].hittingTheAlly(*enemy[enemyIdOnTheField[i]]);
+							enemyBullet[enemyIdOnTheField[i]].hittingTheAlly(*enemy[enemyIdOnTheField[j]]);
 					}
 				}
 				enemyOnTheField = 0;
