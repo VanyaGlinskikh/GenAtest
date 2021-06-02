@@ -374,7 +374,6 @@ int main( int argc, char* args[] )
 
 			double favoriteGen = 0.;
 			double enemyOnTheField = 0;
-			//int numberOfEnemyInOneGroup = 8;
 			int counterGroup = 1;
 			int counterGroupGenome = 0;
 			double SumFF = 0;
