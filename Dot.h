@@ -4,10 +4,11 @@
 //The dot that will move around on the screen
 #include "global.h"
 #include "LTexGlobal.h"
-//#include "EnemyBullet.h"
+
 
 class EnemyBullet;
 class Enemy;
+class SensorForPlayer;
 class Dot
 {
     public:
@@ -22,7 +23,7 @@ class Dot
 
 		void handleEvent( SDL_Event& e);
 
-		void move();
+		void move(std::vector<std::shared_ptr<Enemy>> enemy);
 		void hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy);
 
 		void render();
@@ -36,5 +37,6 @@ class Dot
 		int mPosX, mPosY;
 		int mVelX, mVelY;
 		int _helth;
+		SensorForPlayer *sensorForPlayer;
 };
 #endif

@@ -20,6 +20,8 @@ public:
 		centerDotPosY=0;
 		visionEnemyPosX=0;
 		visionEnemyPosY=0;
+		visionDotPosX=0;
+		visionDotPosY=0;
 	}
 	virtual ~Sensor(){};
 
@@ -32,6 +34,8 @@ public:
 	int centerEnemyPosY;
 	int visionEnemyPosX;
 	int visionEnemyPosY;
+	int visionDotPosX;
+	int visionDotPosY;
 
 
 };

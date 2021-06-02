@@ -346,7 +346,10 @@ unsigned Enemy::input()
 
 void Enemy::tick()
 {
-	if (getStandMovements() > IDLE_LIMIT) setDead(true);
+	if (getStandMovements() > IDLE_LIMIT){
+		setDead(true);
+		setEnemyOnTheField(false);
+	}
 	if (_dead) return;
 	unsigned inp = input();
 	unsigned new_state = _action_table[_state][inp] % MAX_STATES;

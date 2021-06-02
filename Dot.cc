@@ -8,10 +8,12 @@
 #include "Dot.h"
 #include "EnemyBullet.h"
 #include "Enemy.h"
+#include "SensorForPlayer.h"
 
 LTexture gDotTexture;
 Dot::Dot()
 {
+	sensorForPlayer = new SensorForPlayer;
     mPosX = 100;
     mPosY = 400;
     _helth = 100;
@@ -63,12 +65,13 @@ void Dot::handleEvent( SDL_Event& e)
     }
 }
 
-void Dot::move()
+void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy)
 {
 
 
     //Move the dot left or right
 	//mPosX += mVelX;
+	sensorForPlayer->location(*enemy[0], mPosX, mPosY);
 
     if (mPosX <= 0)
     	mVelX = 3;

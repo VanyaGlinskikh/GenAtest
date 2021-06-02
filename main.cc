@@ -373,10 +373,10 @@ int main( int argc, char* args[] )
 			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 
 			double favoriteGen = 0.;
-			double enemyOnTheField = 0;
+			int enemyOnTheField = 0;
 			int counterGroup = 1;
 			int counterGroupGenome = 0;
-			double SumFF = 0;
+			double SumFF = 0.;
 
 //			std::vector<GraficCord> cord;
 
@@ -408,7 +408,7 @@ int main( int argc, char* args[] )
 					bullet.setVelY(-5);
 				}
 				bullet.move(dot);
-				dot.move();
+				dot.move(enemy);
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );

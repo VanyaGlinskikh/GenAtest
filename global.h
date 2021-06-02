@@ -17,6 +17,8 @@
 #include <sstream>
 #include <iostream>
 #include <random>
+#include "vector"
+#include <memory>
 //Screen dimension constants
 const int SCREEN_WIDTH2 = 840;
 const int SCREEN_WIDTH = 640;
