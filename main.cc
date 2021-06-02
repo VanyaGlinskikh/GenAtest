@@ -195,7 +195,7 @@ void close()
 //};
 
 void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices){
-	out.open("D:\\stat.txt"); // окрываем файл для записи
+	out.open("stat.txt"); // окрываем файл для записи
 	if (out.is_open())
 	{
 		std::cout<<" запись произошла  "<< std::endl;
@@ -209,7 +209,7 @@ void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy,
 }
 
 void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int> &indices){
-	out2.open("D:\\gen.txt"); // окрываем файл для записи
+	out2.open("gen.txt"); // окрываем файл для записи
 	if (out2.is_open())
 	{
 		std::cout<<" запись произошла  "<< std::endl;
@@ -230,7 +230,7 @@ void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int
 void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<Genome> &genome, std::vector<int> &indices, int &generationCounter, double &favoriteGen){
 	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
 		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
-		out3.open("D:\\genFavorite.txt"); // окрываем файл для записи
+		out3.open("genFavorite.txt"); // окрываем файл для записи
 		if (out3.is_open())
 		{
 			std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
@@ -251,7 +251,7 @@ void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnem
 }
 
 void writeOut4(std::ofstream &out4, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices, int &generationCounter,double &SumFF){
-	out4.open("D:\\genRes.csv", std::ios::app); // окрываем файл для записи
+	out4.open("genRes.csv", std::ios::app); // окрываем файл для записи
 						if (out4.is_open())
 						{
 							out4.imbue(std::locale(""));
@@ -386,7 +386,7 @@ int main( int argc, char* args[] )
 			std::ofstream out3;// поток для записи
 			std::ofstream out4;// поток для записи
 
-			out4.open("D:\\genRes.csv");
+			out4.open("genRes.csv");
 			out4<<"";
 			out4.close();
 
