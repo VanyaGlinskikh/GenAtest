@@ -386,7 +386,7 @@ int main( int argc, char* args[] )
 			std::ofstream out3;// поток для записи
 			std::ofstream out4;// поток для записи
 
-			out4.open("D:\\genRes.txt");
+			out4.open("D:\\genRes.csv");
 			out4<<"";
 			out4.close();
 
