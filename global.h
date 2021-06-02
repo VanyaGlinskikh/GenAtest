@@ -27,7 +27,7 @@ const int SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD = 16;
 const int NUMBER_OF_ENEMY_IN_ONE_GROUP = 8;
 const int NUMBEROFOPPONENTS = 256;
 static_assert(NUMBEROFOPPONENTS % 32 == 0, "NUMBEROFOPPONENTS must be % 32 ==0");
-
+const int IDLE_LIMIT = 50;
 const int NUMBEROFENEMYBULLETS = NUMBEROFOPPONENTS;
 
 //The window we'll be rendering to
