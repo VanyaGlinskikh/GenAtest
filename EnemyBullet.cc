@@ -90,7 +90,7 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 
 void EnemyBullet::hittingTheBullet(Bullet &bullet)
 {
-	if ( (mPosX+20 > bullet.getMPosX() &&  mPosX < bullet.getMPosX()+ 20) && mPosY < bullet.getMPosY())
+	if ( (mPosX+20 > bullet.getMPosX() &&  mPosX < bullet.getMPosX()+ 20) && mPosY+20 >= bullet.getMPosY())
 	{
 
 //		std::cout<<"убил своего"<<std::endl;

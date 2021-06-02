@@ -66,8 +66,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -317,6 +317,7 @@ int main( int argc, char* args[] )
 			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 			std::vector<uint8_t>  order;
 			std::vector<int> indices(NUMBEROFOPPONENTS);
+			std::vector<int> enemyIdOnTheField;
 			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 			double favoriteGen = 0.;
 			double enemyOnTheField = 0;
@@ -342,6 +343,7 @@ int main( int argc, char* args[] )
 			out4.close();
 
 			int generationCounter=0;
+
 
 //			SDL_Thread* threadID = SDL_CreateThread( threadFunction, "LazyThread", (void*)cord );
 
@@ -403,22 +405,24 @@ int main( int argc, char* args[] )
 							enemy[i]->setMPosX(forX(random_device));
 							enemy[i]->setMPosY(forY(random_device));
 							enemyOnTheField++;
-							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
+							enemyIdOnTheField.push_back(enemy[i]->getId());
+//							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
 					}
+
 				}
 
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					if (enemy[i] ->getEnemyOnTheField()){
-						enemy[i] ->tick();
+				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
+//					if (enemy[i] ->getEnemyOnTheField()){
+						enemy[enemyIdOnTheField[i]] ->tick();
 	//						std::cout<<enemy[i]->getTickCount()<<std::endl;
-						bullet.hittingTheEnemy(*enemy[i]);
+						bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
 //						bullet.hittingTheEnemyBullet(enemyBullet[i]);
-						dot.hittingTheDot(enemyBullet[i], *enemy[i]);
-						enemy[i] ->render();
-						enemy[i] ->moveBull(enemyBullet[i]);
-						enemyBullet[i].hittingTheBullet(bullet);
+						dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
+						enemy[enemyIdOnTheField[i]] ->render();
+						enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
+						enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
 
-					}
+//					}
 				}
 				//Render text
 				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
@@ -434,17 +438,19 @@ int main( int argc, char* args[] )
 				gTextGenerationTexture.render( 645, 20 );
 
 
-				for (int i = 0; i < NUMBEROFENEMYBULLETS; ++i) {
-					for (int j = 0; j < NUMBEROFENEMYBULLETS; ++j) {
-						if(i != j && enemy[i]->getEnemyOnTheField() && enemy[j]->getEnemyOnTheField())
-							enemyBullet[i].hittingTheAlly(*enemy[j]);
+				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
+					for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
+						if(i != j)
+							enemyBullet[enemyIdOnTheField[i]].hittingTheAlly(*enemy[enemyIdOnTheField[i]]);
 					}
 				}
 				enemyOnTheField = 0;
-
+				enemyIdOnTheField.clear();
 				for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
 					if (enemy[j]->getEnemyOnTheField()){
 						enemyOnTheField++;
+						enemyIdOnTheField.push_back(enemy[j]->getId());
+
 					}
 				}
 
