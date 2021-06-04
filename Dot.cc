@@ -77,10 +77,10 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 	mVelY = 0;
 	for (unsigned i = 0; i < enemyIdOnTheField.size(); ++i) {
 //		sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY);
-		if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+20 < mPosY ){
+		if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+20 < mPosY ){// если увидели противника и он находится впереди нас
 
 			if (enemy[enemyIdOnTheField[i]]->getMPosX()+20 > mPosX && mPosX+20 > enemy[enemyIdOnTheField[i]]->getMPosX()){
-
+				// когда противник находится прямо перед нами
 				setShot(true);
 				mVelX = 0;
 				mVelY = 0;
@@ -88,6 +88,7 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 				std::cout<<" стреляю "<<std::endl;
 			}
 			else if(mPosX+20 < enemy[enemyIdOnTheField[i]]->getMPosX()){
+				// если противник стоит правее
 				mVelX = 3;
 				mVelY = 0;
 				setShot(false);
@@ -95,6 +96,7 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 				std::cout<<" ухожу вправо"<<std::endl;
 			}
 			else if(mPosX > enemy[enemyIdOnTheField[i]]->getMPosX()+ 20){
+				// если противник стоит левее
 				mVelX = -3;
 				mVelY = 0;
 				setShot(false);
@@ -103,25 +105,26 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 			}
 
 		}
-		else if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+ 20 > mPosY){
+		else if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+ 20 > mPosY){ // если увидели противника и он находится за нами
 			mVelY = 3;
 			setShot(false);
 //			setVoidShot(true);
 			std::cout<<" иду назад увидев противника"<<std::endl;
 		}
 		else if (!getVoidShot()){
+			// это действие выполняется самым первым, мы просто идем вперел со смещением влево
 			setShot(false);
 			mVelY = -3;
 			mVelX = 1;
-			if (SCREEN_HEIGHT-mPosY >= 450)
+			if (SCREEN_HEIGHT-mPosY >= 450) // если мы почти дошли до одного края карты, то меняем переключатель
 				setVoidShot(true);
 			std::cout<<" иду вперед от нечего делать"<<std::endl;
 		}
-		else if (getVoidShot()){
+		else if (getVoidShot()){ // если мы попали сюда, то мы уже пришли до одного края карты и надо двигаться в другой
 			setShot(false);
 			mVelY = 3;
 			mVelX = -1;
-			if (SCREEN_HEIGHT-mPosY < 40)
+			if (SCREEN_HEIGHT-mPosY < 40) // дошли до другого края карты, можно менять переключатель
 				setVoidShot(false);
 			std::cout<<" иду назад от нечего делать "<<std::endl;
 		}
