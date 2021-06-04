@@ -68,6 +68,7 @@ void Bullet::hittingTheEnemy(Enemy &enemy)
 			enemy.setVelY(0);
 			mPosY = -1000;
 			mPosX = -1000;
+
 			enemy.setDead(true);
 			enemy.setEnemyOnTheField(false);
 

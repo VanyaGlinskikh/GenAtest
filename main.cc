@@ -62,8 +62,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -402,13 +402,12 @@ int main( int argc, char* args[] )
 					dot.handleEvent( e );
 					bullet.handleEvent(e, dot);
 				}
-				if (bullet.getMPosY() == 1000){
+				if (bullet.getMPosY() == 1000 && dot.getShot()){
 					bullet.setPosY(dot.getMPosY());
 					bullet.setPosX(dot.getMPosX());
 					bullet.setVelY(-5);
 				}
-				bullet.move(dot);
-				dot.move(enemy);
+
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
@@ -421,28 +420,6 @@ int main( int argc, char* args[] )
 				generationText.str("");
 				generationText << "generation: " << generationCounter;
 
-				bullet.render();
-				dot.render();
-
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
-							enemy[i] ->setEnemyOnTheField(true);
-							enemy[i]->setMPosX(forX(random_device));
-							enemy[i]->setMPosY(forY(random_device));
-							enemyOnTheField++;
-							enemyIdOnTheField.push_back(enemy[i]->getId());
-//							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
-					}
-				}
-
-				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
-					enemy[enemyIdOnTheField[i]] ->tick();
-					bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
-					dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
-					enemy[enemyIdOnTheField[i]] ->render();
-					enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
-					enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
-				}
 				//Render text
 				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
 				{
@@ -455,6 +432,30 @@ int main( int argc, char* args[] )
 					printf( "Unable to render time texture!\n" );
 				}
 				gTextGenerationTexture.render( 645, 20 );
+
+				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+					if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
+							enemy[i] ->setEnemyOnTheField(true);
+							enemy[i]->setMPosX(forX(random_device));
+							enemy[i]->setMPosY(forY(random_device));
+							enemyOnTheField++;
+							enemyIdOnTheField.push_back(enemy[i]->getId());
+//							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
+					}
+				}
+				bullet.move(dot);
+				dot.move(enemy, enemyIdOnTheField, enemyBullet);
+				bullet.render();
+				dot.render();
+
+				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
+					enemy[enemyIdOnTheField[i]] ->tick();
+					bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
+					dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
+					enemy[enemyIdOnTheField[i]] ->render();
+					enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
+					enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
+				}
 
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 					for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
