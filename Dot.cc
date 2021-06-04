@@ -113,6 +113,7 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 		}
 		else if (!getVoidShot()){
 			// это действие выполняется самым первым, мы просто идем вперел со смещением влево
+
 			setShot(false);
 			mVelY = -3;
 			mVelX = 1;
