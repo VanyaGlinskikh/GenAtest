@@ -1,7 +1,7 @@
 /*
  * bullet.h
  *
- *  Created on: 21 ÿíâ. 2021 ã.
+ *  Created on: 21 ÑĞ½Ğ². 2021 Ğ³.
  *      Author: vanya
  */
 

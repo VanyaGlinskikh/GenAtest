@@ -1,7 +1,7 @@
 /*
  * VisionDotBulletSensor.h
  *
- *  Created on: 30 ˇÌ‚. 2021 „.
+ *  Created on: 30 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 

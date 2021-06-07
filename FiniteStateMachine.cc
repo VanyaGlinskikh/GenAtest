@@ -1,7 +1,7 @@
 ///*
 // * FiniteStateMachine.cc
 // *
-// *  Created on: 3 февр. 2021 г.
+// *  Created on: 3 баЕаВб. 2021 аГ.
 // *      Author: vanya
 // */
 //#include "FiniteStateMachine.h"
@@ -72,7 +72,7 @@
 //}
 //void FiniteStateMachine::konAvt(std::vector<double> &zn, int &q, std::vector<double> &gen, int &a, Enemy &enemy)
 //{
-//	// q = 0 - �����
+//	// q = 0 - яюшёъ
 //	gen = {3, 2, 4, 2, 5, 1, 8, 7};
 //	if (q == 0){
 //		if (predCheckBulletRight(zn[1], enemy.getMPosX() ) ){

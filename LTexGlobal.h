@@ -1,7 +1,7 @@
 /*
  * LTexGlobal.h
  *
- *  Created on: 23 ˇÌ‚. 2021 „.
+ *  Created on: 23 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 

@@ -195,19 +195,19 @@ void close()
 
 //struct GraficCord
 //{
-//	float generation;        // поколение
-//	float avResFF;    // среднее значение фф у 8 лучших
+//	float generation;        // РїРѕРєРѕР»РµРЅРёРµ
+//	float avResFF;    // СЃСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ С„С„ Сѓ 8 Р»СѓС‡С€РёС…
 //	GraficCord(float g, float a) : generation(g), avResFF(a)
 //	{}
 //};
 
 void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices){
-	out.open("stat.txt"); // окрываем файл для записи
+	out.open("stat.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 	if (out.is_open())
 	{
-		std::cout<<" запись произошла  "<< std::endl;
+		std::cout<<" Р·Р°РїРёСЃСЊ РїСЂРѕРёР·РѕС€Р»Р°  "<< std::endl;
 		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-			out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
+			out <<" СЃСѓС‰РµСЃС‚РІРѕ "<<i<<", Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ РёРіСЂРѕРєСѓ= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ СЃРѕСЋР·РЅРёРєСѓ="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РѕРІ= "<<sortEnemy[indices[i]]->getShotCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", Р° РІСЂРµРјСЏ= "<<sortEnemy[indices[i]]->getTickCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№ РІРЅРёР·="<<sortEnemy[indices[i]]->getNumberOfDown()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРїСѓС‰РµРЅРЅС‹С… С€Р°РіРѕРІ "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 					out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 				out <<"\n";
 		}
@@ -216,14 +216,14 @@ void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy,
 }
 
 void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int> &indices){
-	out2.open("gen.txt"); // окрываем файл для записи
+	out2.open("gen.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 	if (out2.is_open())
 	{
-		std::cout<<" запись произошла  "<< std::endl;
+		std::cout<<" Р·Р°РїРёСЃСЊ РїСЂРѕРёР·РѕС€Р»Р°  "<< std::endl;
 		for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
-			out2 <<" существо "<<n<<std::endl;
+			out2 <<" СЃСѓС‰РµСЃС‚РІРѕ "<<n<<std::endl;
 			for (unsigned i = 0; i < 2; ++i) {
-				out2 <<" секция : "<<i<<std::endl;
+				out2 <<" СЃРµРєС†РёСЏ : "<<i<<std::endl;
 				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
 					out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
 				}
@@ -237,16 +237,16 @@ void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int
 void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<Genome> &genome, std::vector<int> &indices, int &generationCounter, double &favoriteGen){
 	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
 		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
-		out3.open("genFavorite.txt"); // окрываем файл для записи
+		out3.open("genFavorite.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 		if (out3.is_open())
 		{
-			std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
-			out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-			out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+			std::cout<<" Р·Р°РїРёСЃСЊ РІ genFavorite РїСЂРѕРёР·РѕС€Р»Р° РЅР° РёС‚РµСЂР°С†РёРё "<<generationCounter<< std::endl;
+			out3 <<"РёС‚РµСЂР°С†РёСЏ: "<<generationCounter<<"\n СЃСѓС‰РµСЃС‚РІРѕ, Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ РёРіСЂРѕРєСѓ= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ СЃРѕСЋР·РЅРёРєСѓ="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РѕРІ= "<<sortEnemy[indices[0]]->getShotCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", Р° РІСЂРµРјСЏ= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+			out3 <<"Р РµР·СѓР»СЊР°С‚Р°С‚ С„СѓРЅРєС†РёРё = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 			out3 <<"\n";
-			out3 <<" геном этого существа: "<<std::endl;
+			out3 <<" РіРµРЅРѕРј СЌС‚РѕРіРѕ СЃСѓС‰РµСЃС‚РІР°: "<<std::endl;
 			for (unsigned i = 0; i < 2; ++i) {
-				out3 <<" секция : "<<i<<std::endl;
+				out3 <<" СЃРµРєС†РёСЏ : "<<i<<std::endl;
 				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
 					out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
 				}
@@ -258,7 +258,7 @@ void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnem
 }
 
 void writeOut4(std::ofstream &out4, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices, int &generationCounter,double &SumFF){
-	out4.open("genRes.csv", std::ios::app); // окрываем файл для записи
+	out4.open("genRes.csv", std::ios::app); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 						if (out4.is_open())
 						{
 							out4.imbue(std::locale(""));
@@ -412,9 +412,9 @@ int main( int argc, char* args[] )
 //			std::vector<GraficCord> cord;
 
 			std::ofstream out;
-			std::ofstream out2;// поток для записи
-			std::ofstream out3;// поток для записи
-			std::ofstream out4;// поток для записи
+			std::ofstream out2;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
+			std::ofstream out3;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
+			std::ofstream out4;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
 
 			out4.open("genRes.csv");
 			out4<<"";
@@ -471,7 +471,7 @@ int main( int argc, char* args[] )
 							enemy[i]->setMPosY(forY(random_device));
 							enemyOnTheField++;
 							enemyIdOnTheField.push_back(enemy[i]->getId());
-//							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
+//							std::cout<<" СЃСѓС‰РµСЃС‚РІ РЅР° РїРѕР»Рµ:  "<<enemyOnTheField<<std::endl;
 					}
 				}
 				bullet.move(dot);
@@ -485,7 +485,7 @@ int main( int argc, char* args[] )
 				visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
 				visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
 				visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
-//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
+//				std::cout<<" РєРѕРѕСЂРґРёРЅР°С‚С‹ Р»РёРЅРёРё:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
 				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
@@ -527,7 +527,7 @@ int main( int argc, char* args[] )
 				if (clk::now() >= stop){
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
+//						std::cout<<" СЂРµР·СѓР»СЊС‚Р°С‚ С„СѓРЅРєС†РёРё:  "<<enemy[i]->fitnessFunction()<<"  ";
 						sortEnemy[i] = enemy[i];
 					}
 
@@ -610,7 +610,7 @@ int main( int argc, char* args[] )
 					dot.resetHealth();
 
 
-					std::cout<<"время прошло"<<std::endl;
+					std::cout<<"РІСЂРµРјСЏ РїСЂРѕС€Р»Рѕ"<<std::endl;
 					start = clk::now();
 					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 				}

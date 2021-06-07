@@ -1,7 +1,7 @@
 /*
  * VisionAllySensor.cc
  *
- *  Created on: 28 апр. 2021 г.
+ *  Created on: 28 Р°РїСЂ. 2021 Рі.
  *      Author: vanya
  */
 #include "Dot.h"
@@ -22,7 +22,7 @@ int VisionAllyBulletSensor::location(std::vector<EnemyBullet> &enemyBullet, Enem
 			visionEnemyPosY = centerEnemyPosY - VISION_HEIGHT/2;
 			if ((enemyBullet[i].getMPosX() < visionEnemyPosX + VISION_WIDTH && enemyBullet[i].getMPosY()+enemyBullet[i].BULLET_WIDTH > visionEnemyPosY) && (enemyBullet[i].getMPosX()+ enemyBullet[i].BULLET_WIDTH > visionEnemyPosX && enemyBullet[i].getMPosY()+enemyBullet[i].BULLET_WIDTH > visionEnemyPosY) && (enemyBullet[i].getMPosX()+ enemyBullet[i].BULLET_WIDTH > visionEnemyPosX && enemyBullet[i].getMPosY() < visionEnemyPosY+VISION_HEIGHT) && (enemyBullet[i].getMPosX() < visionEnemyPosX + VISION_WIDTH  && enemyBullet[i].getMPosY() < visionEnemyPosY+VISION_HEIGHT) )
 			{
-		//		std::cout<<"игрок находится в поле видимости"<<std::endl;
+		//		std::cout<<"РёРіСЂРѕРє РЅР°С…РѕРґРёС‚СЃСЏ РІ РїРѕР»Рµ РІРёРґРёРјРѕСЃС‚Рё"<<std::endl;
 				return enemyBullet[i].getMPosX();
 			}
 		}
