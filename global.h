@@ -41,8 +41,8 @@ extern SDL_Renderer* gRenderer;
 //Globally used font
 extern TTF_Font *gFont;
 
-
-
+void displayError(const char * error, const char * additional = nullptr);
+void displayWarning(const char * error, const char * additional = nullptr);
 
 
 #endif /* GLOBAL_H_ */

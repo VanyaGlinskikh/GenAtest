@@ -39,63 +39,73 @@ bool loadMedia();
 
 void close();
 
+bool initialize_sdl()
+{
+	if (SDL_Init(SDL_INIT_VIDEO))
+		return true;
+	displayError("SDL could not initialize!", SDL_GetError());
+	return false;
+}
+
+bool initialize_window()
+{
+	//Create window
+	gWindow = SDL_CreateWindow( "GenA",
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			SCREEN_WIDTH2, SCREEN_HEIGHT,
+			SDL_WINDOW_SHOWN );
+	if (gWindow != nullptr) return true;
+
+	displayError("Window could not be created!", SDL_GetError());
+	return false;
+}
+
+bool initialize_renderer() {
+	//Create vsynced renderer for window
+	// gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (gRenderer != nullptr) return true;
+
+	displayError("Renderer could not be created!", SDL_GetError());
+	return false;
+}
+
+bool initialize_sdl_image() {
+	int imgFlags = IMG_INIT_PNG;
+	if ( (IMG_Init(imgFlags) & imgFlags) == imgFlags) return true;
+
+	displayError("SDL_image could not initialize!", IMG_GetError());
+	return false;
+}
+
+bool initialize_sdl_ttf() {
+	if ( TTF_Init() == 0) return true;
+
+	displayError("SDL_ttf could not initialize!", TTF_GetError());
+	return false;
+}
+
 bool init()
 {
 	bool success = true;
 
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
-		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-		success = false;
-	}
-	else
-	{
-		//Set texture filtering to linear
-		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
-		{
-			printf( "Warning: Linear texture filtering not enabled!" );
-		}
+	if (not initialize_sdl()) return false;
 
-		//Create window
-		gWindow = SDL_CreateWindow( "GenA", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH2, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( gWindow == NULL )
-		{
-			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-			success = false;
-		}
-		else
-		{
-			//Create vsynced renderer for window
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
-			if( gRenderer == NULL )
-			{
-				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
-				success = false;
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	// Если не можем задать "хотелки" - это не смертельно.
+	// Set texture filtering to linear
+	if( not SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		displayWarning( "Linear texture filtering not enabled!" );
 
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if( !( IMG_Init( imgFlags ) & imgFlags ) )
-				{
-					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-					success = false;
-				}
-				//Initialize SDL_ttf
-				if( TTF_Init() == -1 )
-				{
-					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-					success = false;
-				}
-			}
-		}
-	}
+	if (not initialize_window()) return false;
+	if (not initialize_renderer()) return false;
 
-	return success;
+	//Initialize renderer color
+	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+	if (not initialize_sdl_image()) return false;
+	if (not initialize_sdl_ttf()) return false;
+
+	return true;
 }
 
 bool loadMedia()
