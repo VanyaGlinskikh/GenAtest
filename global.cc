@@ -34,3 +34,12 @@ void displayWarning(const char *message, const char *additional) {
 	if (additional)
 		std::cerr << "Additional info:\n" << additional << std::endl;
 }
+
+void displayResourceError(const char *resource, const char *message,
+		const char *additional)
+{
+	std::cerr << "An error has occurred:\n" << resource << ':' <<
+			message << std::endl;
+	if (additional)
+		std::cerr << "Additional info:\n" << additional << std::endl;
+}

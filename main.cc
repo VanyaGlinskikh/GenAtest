@@ -98,67 +98,21 @@ bool init()
 
 bool loadMedia()
 {
-	bool success = true;
-
-	if( !gDotTexture.loadFromFile( "dot.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gBulletTexture.loadFromFile( "bullet.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gEnemyTexture.loadFromFile( "enemy.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-
-	if( !gBGTexture.loadFromFile( "bg.png" ) )
-	{
-		printf( "Failed to load background texture!\n" );
-		success = false;
-	}
-
-	if( !gPanelTexture.loadFromFile( "panel.png" ) )
-	{
-
-		printf( "Failed to load background texture!\n" );
-		success = false;
-	}
+	if ( not gDotTexture.loadFromFile( "dot.bmp" ) ) return false;
+	if ( not gBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
+	if ( not gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
+	if ( not gEnemyTexture.loadFromFile( "enemy.bmp" ) ) return false;
+	if ( not gBGTexture.loadFromFile( "bg.png" ) ) return false;
+	if ( not gPanelTexture.loadFromFile( "panel.png" ) ) return false;
 
 	//Open the font
 	gFont = TTF_OpenFont( "lazy.ttf", 24 );
-	if( gFont == NULL )
-	{
-		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
-		success = false;
-	}
-	else
-	{
-		//Render text
-		SDL_Color textColor = { 0, 0, 0 };
-		if( !gTextTexture.loadFromRenderedText( "kyky", textColor ) )
-		{
-			printf( "Failed to render text texture!\n" );
-			success = false;
-		}
-		if( !gTextGenerationTexture.loadFromRenderedText( "kyky", textColor ) )
-		{
-			printf( "Failed to render text texture!\n" );
-			success = false;
-		}
+	if( gFont == nullptr ) {
+		displayError("Failed to load lazy font!", TTF_GetError());
+		return false;
 	}
 
-
-	return success;
+	return true;
 }
 
 void close()
