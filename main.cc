@@ -236,14 +236,12 @@ int main( int argc, char* args[] )
 
 	SDL_Event e;
 
-
 	VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
 	VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
 	VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
 	VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
 	VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
 	VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
-
 
 	Dot dot;
 	Bullet bullet;
@@ -325,8 +323,6 @@ int main( int argc, char* args[] )
 	int counterGroup = 1;
 	int counterGroupGenome = 0;
 	double SumFF = 0.;
-
-//			std::vector<GraficCord> cord;
 
 	// Создание пустого файла
 	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
