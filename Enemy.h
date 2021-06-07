@@ -154,9 +154,9 @@ class Enemy
 		double k2 = 6.;
 		double k3 = 0.06;
 		double k4 = 2.;
-		double k5 = 0.06;
-		double k6 = 0.2;
-		double k7 = 0.1;
+		double k5 = 0.01;
+		double k6 = 0.01;
+		double k7 = 2;
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
 		double fitnessFunction(){
