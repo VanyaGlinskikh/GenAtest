@@ -8,9 +8,6 @@
 #include "Bullet.h"
 #include "Dot.h"
 #include "EnemyBullet.h"
-#include "VisionDotBulletSensor.h"
-#include "VisionEnemySensor.h"
-#include "CheckTeammatesSensor.h"
 Enemy::Enemy(unsigned id, Genome &genome)
 :_id(id), _genome(genome)
 {

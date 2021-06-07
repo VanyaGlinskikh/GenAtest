@@ -6,11 +6,6 @@
 #include "Bullet.h"
 
 #include "Sensor.h"
-//#include "VisionEnemySensor.h"
-//#include "VisionDotBulletSensor.h"
-//#include "VisionAllySensor.h"
-//#include "VisionAllyBulletSensor.h"
-
 #include "VisionEnemySensorLeft.h"
 #include "VisionEnemySensorRight.h"
 #include "VisionAllySensorLeft.h"
@@ -251,11 +246,6 @@ int main( int argc, char* args[] )
 			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			SDL_Event e;
-
-//			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
-//			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
-//			VisionAllySensor *visionAllySensor = new VisionAllySensor;
-//			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
 
 			VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
 			VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
