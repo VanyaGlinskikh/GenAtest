@@ -21,9 +21,9 @@ int VisionEnemySensorLeft::location(Enemy &enemy, Dot &dot)
 	kX = dot.getMPosX()+(dot.DOT_WIDTH/2);;
 	kY = dot.getMPosY()+(dot.DOT_HEIGHT/2);
 	bX = centerEnemyPosX - 150;
-	bY = centerEnemyPosY + 200;
+	bY = centerEnemyPosY + 350;
 	cX = centerEnemyPosX + 10;
-	cY = centerEnemyPosY + 200;
+	cY = centerEnemyPosY + 350;
 	pAB = (bX-centerEnemyPosX)*(kY-centerEnemyPosY)-(bY-centerEnemyPosY)*(kX-centerEnemyPosX);
 	pBC = (cX-bX)*(kY-bY)-(cY-bY)*(kX-bX);
 	pCA = (centerEnemyPosX-cX)*(kY-cY)-(centerEnemyPosY-cY)*(kX-cX);

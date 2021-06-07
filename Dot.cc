@@ -15,7 +15,7 @@ Dot::Dot()
 {
 	sensorForPlayer = new SensorForPlayer;
     mPosX = 100;
-    mPosY = 400;
+    mPosY = 340;
     _helth = 100;
 
     mVelX = -3;
