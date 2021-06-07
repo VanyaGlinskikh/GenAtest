@@ -229,336 +229,313 @@ void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 
 int main( int argc, char* args[] )
 {
-	//Start up SDL and create window
-	if( !init() )
-	{
-		printf( "Failed to initialize!\n" );
-	}
-	else
-	{
-		//Load media
-		if( !loadMedia() )
-		{
-			printf( "Failed to load media!\n" );
-		}
-		else
-		{
-			bool quit = false;
+	if ( not init() ) return 1;
+	if ( not loadMedia()) return 2;
 
-			std::stringstream helthText;
-			std::stringstream generationText;
+	bool quit = false;
 
-			SDL_Color textColor = { 0, 0, 0, 255 };
+	std::stringstream helthText;
+	std::stringstream generationText;
 
-			SDL_Event e;
+	SDL_Color textColor = { 0, 0, 0, 255 };
+
+	SDL_Event e;
 
 //			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
 //			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
 //			VisionAllySensor *visionAllySensor = new VisionAllySensor;
 //			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
 
-			VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
-			VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
-			VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
-			VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
-			VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
-			VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
+	VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
+	VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
+	VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
+	VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
+	VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
+	VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
 
 
-			Dot dot;
-			Bullet bullet;
-			std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
-			std::vector<Genome> genome(NUMBEROFOPPONENTS);
-			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
-			std::vector<int> enemyIdOnTheField;
+	Dot dot;
+	Bullet bullet;
+	std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
+	std::vector<Genome> genome(NUMBEROFOPPONENTS);
+	std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+	std::vector<int> enemyIdOnTheField;
 
-			std::function<double(unsigned int)> s1;
-			std::function<double(unsigned int)> s2;
-			std::function<double(unsigned int)> s3;
-			std::function<double(unsigned int)> s4;
-			std::function<double(unsigned int)> s5;
-			std::function<double(unsigned int)> s6;
+	Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
+	Enemy::ActorFunc f1, f2, f3, f4, f5;
 
-			std::function<void(unsigned int)> f1;
-			std::function<void(unsigned int)> f2;
-			std::function<void(unsigned int)> f3;
-			std::function<void(unsigned int)> f4;
-			std::function<void(unsigned int)> f5;
+	int sec1Length = (enemy[1]->MAX_STATES);
+	int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
 
-			int sec1Length = (enemy[1]->MAX_STATES);
-			int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
+	std::vector<int> sec1(sec1Length);
+	std::vector<int> sec2(sec2Length);
+	std::random_device random_device;
+	std::mt19937 engine{ random_device() };
+	std::uniform_int_distribution<> dist2(0, 9);
+	std::uniform_int_distribution<> forX(1, 620);
+	std::uniform_int_distribution<> forY(20, 80);
 
-			std::vector<int> sec1(sec1Length);
-			std::vector<int> sec2(sec2Length);
-			std::random_device random_device;
-			std::mt19937 engine{ random_device() };
-			std::uniform_int_distribution<> dist2(0, 9);
-			std::uniform_int_distribution<> forX(1, 620);
-			std::uniform_int_distribution<> forY(20, 80);
+	std::uniform_int_distribution<> forOrder(0, 254);
+	std::uniform_int_distribution<> forSplice(0, 7);
 
-			std::uniform_int_distribution<> forOrder(0, 254);
-			std::uniform_int_distribution<> forSplice(0, 7);
+	constexpr double Pmut = 0.02;
+	std::uniform_real_distribution<double> mut(0.0, 1.0);
 
-			constexpr double Pmut = 0.02;
-			std::uniform_real_distribution<double> mut(0.0, 1.0);
+	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+		for (int k = 0; k < sec1Length; ++k)
+			sec1[k] =  dist2(random_device);
+		for (int j = 0; j < sec2Length; ++j)
+			sec2[j] =  dist2(random_device);
 
-			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-				for (int k = 0; k < sec1Length; ++k)
-					sec1[k] =  dist2(random_device);
-				for (int j = 0; j < sec2Length; ++j)
-					sec2[j] =  dist2(random_device);
+		genome[i].add_section(sec1);
+		genome[i].add_section(sec2);  // 2^predic* states
+		enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 
-				genome[i].add_section(sec1);
-				genome[i].add_section(sec2);  // 2^predic* states
-				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
+		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
+		enemy[i] ->add_sensor(s1);
+		s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
+		enemy[i] ->add_sensor(s2);
+		s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
+		enemy[i] ->add_sensor(s3);
+		s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
+		enemy[i] ->add_sensor(s4);
+		s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
+		enemy[i] ->add_sensor(s5);
+		s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
+		enemy[i] ->add_sensor(s6);
 
-				s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
-				enemy[i] ->add_sensor(s1);
-				s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
-				enemy[i] ->add_sensor(s2);
-				s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
-				enemy[i] ->add_sensor(s3);
-				s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
-				enemy[i] ->add_sensor(s4);
-				s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
-				enemy[i] ->add_sensor(s5);
-				s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
-				enemy[i] ->add_sensor(s6);
+		f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
+		enemy[i]->add_actor(f1);
+		f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
+		enemy[i]->add_actor(f2);
+		f3 = [&](unsigned id){ enemy[id]->moveRight(); };
+		enemy[i]->add_actor(f3);
+		f4 = [&](unsigned id){ enemy[id]->moveBack(); };
+		enemy[i]->add_actor(f4);
+		f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
+		enemy[i]->add_actor(f5);
 
-				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
-				enemy[i]->add_actor(f1);
-				f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
-				enemy[i]->add_actor(f2);
-				f3 = [&](unsigned id){ enemy[id]->moveRight(); };
-				enemy[i]->add_actor(f3);
-				f4 = [&](unsigned id){ enemy[id]->moveBack(); };
-				enemy[i]->add_actor(f4);
-				f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
-				enemy[i]->add_actor(f5);
+		enemy[i]->resetTickCount();
+	}
+	using clk = std::chrono::high_resolution_clock;
+	auto start = clk::now();
+	auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 
-				enemy[i]->resetTickCount();
-			}
-			using clk = std::chrono::high_resolution_clock;
-			auto start = clk::now();
-			auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
+	std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
+	std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
+	std::vector<Genome> sortG(NUMBEROFOPPONENTS);
+	std::vector<uint8_t>  order;
+	std::vector<int> indices(NUMBEROFOPPONENTS);
 
-			std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
-			std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
-			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
-			std::vector<uint8_t>  order;
-			std::vector<int> indices(NUMBEROFOPPONENTS);
+	std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 
-			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
-
-			double favoriteGen = 0.;
-			int enemyOnTheField = 0;
-			int counterGroup = 1;
-			int counterGroupGenome = 0;
-			double SumFF = 0.;
+	double favoriteGen = 0.;
+	int enemyOnTheField = 0;
+	int counterGroup = 1;
+	int counterGroupGenome = 0;
+	double SumFF = 0.;
 
 //			std::vector<GraficCord> cord;
 
-			// Создание пустого файла
-			{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
+	// Создание пустого файла
+	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
 
-			int generationCounter=0;
+	int generationCounter=0;
 
-			while( !quit )
+	while( !quit )
+	{
+		while( SDL_PollEvent( &e ) != 0 )
+		{
+			if( e.type == SDL_QUIT )
 			{
-				while( SDL_PollEvent( &e ) != 0 )
-				{
-					if( e.type == SDL_QUIT )
-					{
-						quit = true;
-					}
-					dot.handleEvent( e );
-					bullet.handleEvent(e, dot);
-				}
-				if (bullet.getMPosY() == 1000){
-					bullet.setPosY(dot.getMPosY());
-					bullet.setPosX(dot.getMPosX());
-					bullet.setVelY(-5);
-				}
+				quit = true;
+			}
+			dot.handleEvent( e );
+			bullet.handleEvent(e, dot);
+		}
+		if (bullet.getMPosY() == 1000){
+			bullet.setPosY(dot.getMPosY());
+			bullet.setPosX(dot.getMPosX());
+			bullet.setVelY(-5);
+		}
 
-				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
-				//Render background
-				gBGTexture.render( 0, 0 );
-				gPanelTexture.render( 640, 0 );
+		//Clear screen
+		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+		SDL_RenderClear( gRenderer );
+		//Render background
+		gBGTexture.render( 0, 0 );
+		gPanelTexture.render( 640, 0 );
 
-				helthText.str("");
-				helthText << "health: " << dot.getHealth() ;
-				generationText.str("");
-				generationText << "generation: " << generationCounter;
+		helthText.str("");
+		helthText << "health: " << dot.getHealth() ;
+		generationText.str("");
+		generationText << "generation: " << generationCounter;
 
-				//Render text
-				if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
-				{
-					printf( "Unable to render time texture!\n" );
-				}
-				gTextTexture.render( 645, 50 );
+		//Render text
+		if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
+		{
+			printf( "Unable to render time texture!\n" );
+		}
+		gTextTexture.render( 645, 50 );
 
-				if( !gTextGenerationTexture.loadFromRenderedText( generationText.str().c_str(), textColor ) )
-				{
-					printf( "Unable to render time texture!\n" );
-				}
-				gTextGenerationTexture.render( 645, 20 );
+		if( !gTextGenerationTexture.loadFromRenderedText( generationText.str().c_str(), textColor ) )
+		{
+			printf( "Unable to render time texture!\n" );
+		}
+		gTextGenerationTexture.render( 645, 20 );
 
-				for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-					if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
-							enemy[i] ->setEnemyOnTheField(true);
-							enemy[i]->setMPosX(forX(random_device));
-							enemy[i]->setMPosY(forY(random_device));
-							enemyOnTheField++;
-							enemyIdOnTheField.push_back(enemy[i]->getId());
+		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+			if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
+					enemy[i] ->setEnemyOnTheField(true);
+					enemy[i]->setMPosX(forX(random_device));
+					enemy[i]->setMPosY(forY(random_device));
+					enemyOnTheField++;
+					enemyIdOnTheField.push_back(enemy[i]->getId());
 //							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
-					}
-				}
-				bullet.move(dot);
-				dot.move(enemy, enemyIdOnTheField, enemyBullet);
-				bullet.render();
-				dot.render();
-
-				visionEnemySensorLeft->location(*enemy[enemyIdOnTheField[0]], dot);
-				visionEnemySensorRight->location(*enemy[enemyIdOnTheField[0]], dot);
-				visionAllySensorLeft->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
-				visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
-				visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
-				visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
-//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
-				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
-
-				SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
-
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
-				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
-
-//				SDL_RenderDrawLine(gRenderer, visionAllySensorLeft->kX, visionAllySensorLeft->kY, visionAllySensorLeft->centerEnemyPosX, visionAllySensorLeft->centerEnemyPosY); // KA
-				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
-					enemy[enemyIdOnTheField[i]] ->tick();
-					bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
-					dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
-					enemy[enemyIdOnTheField[i]] ->render();
-					enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
-					enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
-
-				}
-
-				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
-					for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
-						if(i != j)
-							enemyBullet[enemyIdOnTheField[i]].hittingTheAlly(*enemy[enemyIdOnTheField[j]]);
-					}
-				}
-				enemyOnTheField = 0;
-				enemyIdOnTheField.clear();
-				for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
-					if (enemy[j]->getEnemyOnTheField()){
-						enemyOnTheField++;
-						enemyIdOnTheField.push_back(enemy[j]->getId());
-					}
-				}
-
-				if (clk::now() >= stop){
-
-					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
-						sortEnemy[i] = enemy[i];
-					}
-
-					for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
-					std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
-					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
-					});
-					writeStats(sortEnemy, indices);
-					writeGenome(genome, indices);
-					writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen);
-					writeGenRes(sortEnemy, indices, generationCounter, SumFF);
-
-					order.resize(genome.size());
-					for (unsigned i = 0; i < order.size(); ++i) {
-						order[i] = forOrder(random_device);
-					}
-					for (int q = 0; q < (NUMBEROFOPPONENTS/NUMBER_OF_ENEMY_IN_ONE_GROUP); ++q) {
-
-						for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-							if(i == (NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)+1){
-								counterGroup++;
-								counterGroupGenome = 0;
-							}
-							genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
-							counterGroupGenome++;
-						}
-					}
-					counterGroup = 1;
-					counterGroupGenome = 0;
-					for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
-						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
-						for (unsigned s = 0; s < 2; ++s) {
-						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
-						    for (unsigned b = 0; b < 4; ++b) {
-						      if (mut(random_device) < Pmut) {
-						        genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].mutate(s, w, b);
-						      }
-						    }
-						  }
-						}
-						for (unsigned s = 0; s < 2; ++s) {
-						  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
-							for (unsigned b = 0; b < 4; ++b) {
-							  if (mut(random_device) < Pmut) {
-								genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].mutate(s, w, b);
-							  }
-							}
-						  }
-						}
-						if (i == NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)
-							counterGroup = 5;
-					}
-					counterGroup = 1;
-					for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
-					{
-						enemy[k]->setVelY(1);
-						enemy[k]->setVelX(1);
-						enemy[k]->resetTickCount();
-						enemy[k]->resetShotCount();
-						enemy[k]->resetNumberOfMovements();
-						enemy[k]->resetTotalNumberOfMovements();
-						enemy[k]->resetStandMovements();
-						enemy[k]->resetNumberOfDown();
-						enemy[k]->resetHittingTheAlly();
-						enemy[k]->resetHittingTheDot();
-						enemy[k]->setDead(false);
-						enemy[k]->setMPosX(forX(random_device));
-						enemy[k]->setMPosY(forY(random_device));
-						enemy[k]->setEnemyOnTheField(false);
-						enemyBullet[k].setPosX(-200);
-						enemyBullet[k].setPosY(-200);
-
-					}
-
-					bullet.setPosY(1000);
-					enemyOnTheField = 0;
-					generationCounter++;
-					SumFF = 0;
-					dot.resetHealth();
-
-
-					std::cout<<"время прошло"<<std::endl;
-					start = clk::now();
-					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
-				}
-
-				SDL_RenderPresent( gRenderer );
 			}
 		}
+		bullet.move(dot);
+		dot.move(enemy, enemyIdOnTheField, enemyBullet);
+		bullet.render();
+		dot.render();
+
+		visionEnemySensorLeft->location(*enemy[enemyIdOnTheField[0]], dot);
+		visionEnemySensorRight->location(*enemy[enemyIdOnTheField[0]], dot);
+		visionAllySensorLeft->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
+		visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
+		visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
+		visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
+//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
+		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
+
+		SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
+
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
+		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
+
+//				SDL_RenderDrawLine(gRenderer, visionAllySensorLeft->kX, visionAllySensorLeft->kY, visionAllySensorLeft->centerEnemyPosX, visionAllySensorLeft->centerEnemyPosY); // KA
+		for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
+			enemy[enemyIdOnTheField[i]] ->tick();
+			bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
+			dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
+			enemy[enemyIdOnTheField[i]] ->render();
+			enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
+			enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
+
+		}
+
+		for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
+			for (int j = 0; j < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++j) {
+				if(i != j)
+					enemyBullet[enemyIdOnTheField[i]].hittingTheAlly(*enemy[enemyIdOnTheField[j]]);
+			}
+		}
+		enemyOnTheField = 0;
+		enemyIdOnTheField.clear();
+		for (int j = 0; j < NUMBEROFOPPONENTS; ++j) {
+			if (enemy[j]->getEnemyOnTheField()){
+				enemyOnTheField++;
+				enemyIdOnTheField.push_back(enemy[j]->getId());
+			}
+		}
+
+		if (clk::now() >= stop){
+
+			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+//						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
+				sortEnemy[i] = enemy[i];
+			}
+
+			for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
+			std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
+			  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
+			});
+			writeStats(sortEnemy, indices);
+			writeGenome(genome, indices);
+			writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen);
+			writeGenRes(sortEnemy, indices, generationCounter, SumFF);
+
+			order.resize(genome.size());
+			for (unsigned i = 0; i < order.size(); ++i) {
+				order[i] = forOrder(random_device);
+			}
+			for (int q = 0; q < (NUMBEROFOPPONENTS/NUMBER_OF_ENEMY_IN_ONE_GROUP); ++q) {
+
+				for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+					if(i == (NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)+1){
+						counterGroup++;
+						counterGroupGenome = 0;
+					}
+					genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
+					counterGroupGenome++;
+				}
+			}
+			counterGroup = 1;
+			counterGroupGenome = 0;
+			for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
+				for (unsigned s = 0; s < 2; ++s) {
+				  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
+					for (unsigned b = 0; b < 4; ++b) {
+					  if (mut(random_device) < Pmut) {
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].mutate(s, w, b);
+					  }
+					}
+				  }
+				}
+				for (unsigned s = 0; s < 2; ++s) {
+				  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
+					for (unsigned b = 0; b < 4; ++b) {
+					  if (mut(random_device) < Pmut) {
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].mutate(s, w, b);
+					  }
+					}
+				  }
+				}
+				if (i == NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)
+					counterGroup = 5;
+			}
+			counterGroup = 1;
+			for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
+			{
+				enemy[k]->setVelY(1);
+				enemy[k]->setVelX(1);
+				enemy[k]->resetTickCount();
+				enemy[k]->resetShotCount();
+				enemy[k]->resetNumberOfMovements();
+				enemy[k]->resetTotalNumberOfMovements();
+				enemy[k]->resetStandMovements();
+				enemy[k]->resetNumberOfDown();
+				enemy[k]->resetHittingTheAlly();
+				enemy[k]->resetHittingTheDot();
+				enemy[k]->setDead(false);
+				enemy[k]->setMPosX(forX(random_device));
+				enemy[k]->setMPosY(forY(random_device));
+				enemy[k]->setEnemyOnTheField(false);
+				enemyBullet[k].setPosX(-200);
+				enemyBullet[k].setPosY(-200);
+
+			}
+
+			bullet.setPosY(1000);
+			enemyOnTheField = 0;
+			generationCounter++;
+			SumFF = 0;
+			dot.resetHealth();
+
+
+			std::cout<<"время прошло"<<std::endl;
+			start = clk::now();
+			stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
+		}
+
+		SDL_RenderPresent( gRenderer );
 	}
 
 	close();
