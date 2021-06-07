@@ -233,7 +233,72 @@ std::uniform_int_distribution<> forSplice(0, 7);
 constexpr double Pmut = 0.02;
 std::uniform_real_distribution<double> mut(0.0, 1.0);
 
+std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
+std::vector<Genome> genome(NUMBEROFOPPONENTS);
+std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+std::vector<int> enemyIdOnTheField;
 
+VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
+VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
+VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
+VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
+VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
+VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
+
+
+Dot dot;
+Bullet bullet;
+
+void create_enemies() {
+	Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
+	Enemy::ActorFunc f1, f2, f3, f4, f5;
+	int sec1Length = (enemy[1]->MAX_STATES);
+	int sec2Length = (2 << enemy[1]->PREDICATE_COUNT) * (enemy[1]->MAX_STATES);
+	std::vector<int> sec1(sec1Length);
+	std::vector<int> sec2(sec2Length);
+	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+		for (int k = 0; k < sec1Length; ++k)
+			sec1[k] = dist2(random_device);
+		for (int j = 0; j < sec2Length; ++j)
+			sec2[j] = dist2(random_device);
+		genome[i].add_section(sec1);
+		genome[i].add_section(sec2); // 2^predic* states
+		enemy[i] = std::make_shared<Enemy>(i, genome[i]);
+		//		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
+		//		enemy[i] ->add_sensor(s1);
+		//		s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
+		//		enemy[i] ->add_sensor(s2);
+		//		s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
+		//		enemy[i] ->add_sensor(s3);
+		//		s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
+		//		enemy[i] ->add_sensor(s4);
+		//		s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
+		//		enemy[i] ->add_sensor(s5);
+		//		s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
+		//		enemy[i] ->add_sensor(s6);
+		f1 = [&](unsigned id) {
+			enemy[id]->moveStraight();
+		};
+		enemy[i]->add_actor(f1);
+		f2 = [&](unsigned id) {
+			enemy[id]->moveLeft();
+		};
+		enemy[i]->add_actor(f2);
+		f3 = [&](unsigned id) {
+			enemy[id]->moveRight();
+		};
+		enemy[i]->add_actor(f3);
+		f4 = [&](unsigned id) {
+			enemy[id]->moveBack();
+		};
+		enemy[i]->add_actor(f4);
+		f5 = [&, i](unsigned id) {
+			enemy[id]->moveShot(enemyBullet[i]);
+		};
+		enemy[i]->add_actor(f5);
+		enemy[i]->resetTickCount();
+	}
+}
 
 int main( int argc, char* args[] )
 {
@@ -249,66 +314,9 @@ int main( int argc, char* args[] )
 
 	SDL_Event e;
 
-	VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
-	VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
-	VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
-	VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
-	VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
-	VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
 
+	create_enemies();
 
-	Dot dot;
-	Bullet bullet;
-	std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
-	std::vector<Genome> genome(NUMBEROFOPPONENTS);
-	std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
-	std::vector<int> enemyIdOnTheField;
-
-	Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
-	Enemy::ActorFunc f1, f2, f3, f4, f5;
-
-	int sec1Length = (enemy[1]->MAX_STATES);
-	int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
-
-	std::vector<int> sec1(sec1Length);
-	std::vector<int> sec2(sec2Length);
-
-	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-		for (int k = 0; k < sec1Length; ++k)
-			sec1[k] =  dist2(random_device);
-		for (int j = 0; j < sec2Length; ++j)
-			sec2[j] =  dist2(random_device);
-
-		genome[i].add_section(sec1);
-		genome[i].add_section(sec2);  // 2^predic* states
-		enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-
-		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
-		enemy[i] ->add_sensor(s1);
-		s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
-		enemy[i] ->add_sensor(s2);
-		s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
-		enemy[i] ->add_sensor(s3);
-		s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
-		enemy[i] ->add_sensor(s4);
-		s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
-		enemy[i] ->add_sensor(s5);
-		s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
-		enemy[i] ->add_sensor(s6);
-
-		f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
-		enemy[i]->add_actor(f1);
-		f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
-		enemy[i]->add_actor(f2);
-		f3 = [&](unsigned id){ enemy[id]->moveRight(); };
-		enemy[i]->add_actor(f3);
-		f4 = [&](unsigned id){ enemy[id]->moveBack(); };
-		enemy[i]->add_actor(f4);
-		f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
-		enemy[i]->add_actor(f5);
-
-		enemy[i]->resetTickCount();
-	}
 	using clk = std::chrono::high_resolution_clock;
 	auto start = clk::now();
 	auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
