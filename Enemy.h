@@ -1,7 +1,7 @@
 /*
  * Enemy.h
  *
- *  Created on: 13 СЃРµРЅС‚. 2020 Рі.
+ *  Created on: 13 РЎРѓР ВµР Р…РЎвЂљ. 2020 Р С–.
  *      Author: vanya
  */
 
@@ -10,7 +10,6 @@
 
 //#include "Bullet.h"
 #include "global.h"
-#include "LTexGlobal.h"
 #include "Genome.h"
 #include "vector"
 #include <functional>
@@ -25,13 +24,13 @@ class Enemy
 {
 	public:
 		/*
-		 * Функция актора. Вызывается существом в зависимости от текущего состояния.
-		 * Параметр - ID существа.
+		 * Р¤СѓРЅРєС†РёСЏ Р°РєС‚РѕСЂР°. Р’С‹Р·С‹РІР°РµС‚СЃСЏ СЃСѓС‰РµСЃС‚РІРѕРј РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ.
+		 * РџР°СЂР°РјРµС‚СЂ - ID СЃСѓС‰РµСЃС‚РІР°.
 		 */
 		using ActorFunc = std::function<void(unsigned)>;
 		/*
-		 * Функция сенсора. Вызывается существом для получения входных данных.
-		 * Параметр - ID существа.
+		 * Р¤СѓРЅРєС†РёСЏ СЃРµРЅСЃРѕСЂР°. Р’С‹Р·С‹РІР°РµС‚СЃСЏ СЃСѓС‰РµСЃС‚РІРѕРј РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С….
+		 * РџР°СЂР°РјРµС‚СЂ - ID СЃСѓС‰РµСЃС‚РІР°.
 		 */
 		using SensorFunc = std::function<double(unsigned)>;
 		static const int DOT_WIDTH = 20;
@@ -84,11 +83,11 @@ class Enemy
 		void moveShot(EnemyBullet &enemyBullet);
 //		void add_actor(ActorFunc& actor) { _actors.push_back(actor); }
 		void add_actor(ActorFunc& actor) {
-			if (_real_actors_count == _actors.size()) { std::cout<<"перебор "; }
+			if (_real_actors_count == _actors.size()) { std::cout<<"РїРµСЂРµР±РѕСЂ "; }
 			_actors[_real_actors_count++] = actor; }
 //		void add_sensor(SensorFunc sensor) { _sensors.push_back(sensor); }
 		void add_sensor(SensorFunc sensor) {
-			if (_real_sensor_count == _sensors.size()) { std::cout<<"перебор "; }
+			if (_real_sensor_count == _sensors.size()) { std::cout<<"РїРµСЂРµР±РѕСЂ "; }
 			_sensors[_real_sensor_count++] = sensor;}
 
 //		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot);
@@ -172,19 +171,19 @@ class Enemy
 
 		unsigned _hitting_the_dot = 0;
 		unsigned _hitting_the_ally = 0;
-		// Список акторов
+		// РЎРїРёСЃРѕРє Р°РєС‚РѕСЂРѕРІ
 		std::vector<ActorFunc> _actors;
-		// Список сенсоров
+		// РЎРїРёСЃРѕРє СЃРµРЅСЃРѕСЂРѕРІ
 		std::vector<SensorFunc> _sensors;
 
-		// Список акторов, выполняющихся в каждом из состояний
+		// РЎРїРёСЃРѕРє Р°РєС‚РѕСЂРѕРІ, РІС‹РїРѕР»РЅСЏСЋС‰РёС…СЃСЏ РІ РєР°Р¶РґРѕРј РёР· СЃРѕСЃС‚РѕСЏРЅРёР№
 		std::vector<unsigned> _state_actions;
-		// Таблица действий.
-		// Первый индекс - текущее состояние
-		// Второй индекс - входное значение
+		// РўР°Р±Р»РёС†Р° РґРµР№СЃС‚РІРёР№.
+		// РџРµСЂРІС‹Р№ РёРЅРґРµРєСЃ - С‚РµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
+		// Р’С‚РѕСЂРѕР№ РёРЅРґРµРєСЃ - РІС…РѕРґРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ
 		std::vector<std::vector<unsigned>> _action_table;
 
-		// Текущее состояние
+		// РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
 		unsigned _state { 0U };
 
 		bool _dead = false;

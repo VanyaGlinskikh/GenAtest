@@ -1,7 +1,7 @@
 /*
  * Dot.cc
  *
- *  Created on: 23 янв. 2021 г.
+ *  Created on: 23 СЏРЅРІ. 2021 Рі.
  *      Author: vanya
  */
 
@@ -10,7 +10,6 @@
 #include "Enemy.h"
 #include "SensorForPlayer.h"
 
-LTexture gDotTexture;
 Dot::Dot()
 {
 	sensorForPlayer = new SensorForPlayer;
@@ -50,7 +49,7 @@ void Dot::handleEvent( SDL_Event& e)
 //            case SDLK_k: bullet.mVelY -= bullet.BULLET_VEL; break;
 
         }
-//        std::cout<<"1 координаты bullet.mVelY: "<<bullet.mVelY<<" "<<mPosY<<std::endl;
+//        std::cout<<"1 РєРѕРѕСЂРґРёРЅР°С‚С‹ bullet.mVelY: "<<bullet.mVelY<<" "<<mPosY<<std::endl;
     }
     //If a key was released
     else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
@@ -77,57 +76,57 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 //	mVelY = 0;
 //	for (unsigned i = 0; i < enemyIdOnTheField.size(); ++i) {
 ////		sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY);
-//		if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+20 < mPosY ){// если увидели противника и он находится впереди нас
+//		if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+20 < mPosY ){// РµСЃР»Рё СѓРІРёРґРµР»Рё РїСЂРѕС‚РёРІРЅРёРєР° Рё РѕРЅ РЅР°С…РѕРґРёС‚СЃСЏ РІРїРµСЂРµРґРё РЅР°СЃ
 //
 //			if (enemy[enemyIdOnTheField[i]]->getMPosX()+20 > mPosX && mPosX+20 > enemy[enemyIdOnTheField[i]]->getMPosX()){
-//				// когда противник находится прямо перед нами
+//				// РєРѕРіРґР° РїСЂРѕС‚РёРІРЅРёРє РЅР°С…РѕРґРёС‚СЃСЏ РїСЂСЏРјРѕ РїРµСЂРµРґ РЅР°РјРё
 //				setShot(true);
 //				mVelX = 0;
 //				mVelY = 0;
 ////				setVoidShot(true);
-//				std::cout<<" стреляю "<<std::endl;
+//				std::cout<<" СЃС‚СЂРµР»СЏСЋ "<<std::endl;
 //			}
 //			else if(mPosX+20 < enemy[enemyIdOnTheField[i]]->getMPosX()){
-//				// если противник стоит правее
+//				// РµСЃР»Рё РїСЂРѕС‚РёРІРЅРёРє СЃС‚РѕРёС‚ РїСЂР°РІРµРµ
 //				mVelX = 3;
 //				mVelY = 0;
 //				setShot(false);
 ////				setVoidShot(true);
-//				std::cout<<" ухожу вправо"<<std::endl;
+//				std::cout<<" СѓС…РѕР¶Сѓ РІРїСЂР°РІРѕ"<<std::endl;
 //			}
 //			else if(mPosX > enemy[enemyIdOnTheField[i]]->getMPosX()+ 20){
-//				// если противник стоит левее
+//				// РµСЃР»Рё РїСЂРѕС‚РёРІРЅРёРє СЃС‚РѕРёС‚ Р»РµРІРµРµ
 //				mVelX = -3;
 //				mVelY = 0;
 //				setShot(false);
 ////				setVoidShot(true);
-//				std::cout<<" ухожу влево"<<std::endl;
+//				std::cout<<" СѓС…РѕР¶Сѓ РІР»РµРІРѕ"<<std::endl;
 //			}
 //
 //		}
-//		else if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+ 20 > mPosY){ // если увидели противника и он находится за нами
+//		else if (sensorForPlayer->location(*enemy[enemyIdOnTheField[i]], mPosX, mPosY) != -100 && enemy[enemyIdOnTheField[i]]->getMPosY()+ 20 > mPosY){ // РµСЃР»Рё СѓРІРёРґРµР»Рё РїСЂРѕС‚РёРІРЅРёРєР° Рё РѕРЅ РЅР°С…РѕРґРёС‚СЃСЏ Р·Р° РЅР°РјРё
 //			mVelY = 3;
 //			setShot(false);
 ////			setVoidShot(true);
-//			std::cout<<" иду назад увидев противника"<<std::endl;
+//			std::cout<<" РёРґСѓ РЅР°Р·Р°Рґ СѓРІРёРґРµРІ РїСЂРѕС‚РёРІРЅРёРєР°"<<std::endl;
 //		}
 //		else if (!getVoidShot()){
-//			// это действие выполняется самым первым, мы просто идем вперел со смещением влево
+//			// СЌС‚Рѕ РґРµР№СЃС‚РІРёРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ СЃР°РјС‹Рј РїРµСЂРІС‹Рј, РјС‹ РїСЂРѕСЃС‚Рѕ РёРґРµРј РІРїРµСЂРµР» СЃРѕ СЃРјРµС‰РµРЅРёРµРј РІР»РµРІРѕ
 //
 //			setShot(false);
 //			mVelY = -3;
 //			mVelX = 1;
-//			if (SCREEN_HEIGHT-mPosY >= 450) // если мы почти дошли до одного края карты, то меняем переключатель
+//			if (SCREEN_HEIGHT-mPosY >= 450) // РµСЃР»Рё РјС‹ РїРѕС‡С‚Рё РґРѕС€Р»Рё РґРѕ РѕРґРЅРѕРіРѕ РєСЂР°СЏ РєР°СЂС‚С‹, С‚Рѕ РјРµРЅСЏРµРј РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ
 //				setVoidShot(true);
-//			std::cout<<" иду вперед от нечего делать"<<std::endl;
+//			std::cout<<" РёРґСѓ РІРїРµСЂРµРґ РѕС‚ РЅРµС‡РµРіРѕ РґРµР»Р°С‚СЊ"<<std::endl;
 //		}
-//		else if (getVoidShot()){ // если мы попали сюда, то мы уже пришли до одного края карты и надо двигаться в другой
+//		else if (getVoidShot()){ // РµСЃР»Рё РјС‹ РїРѕРїР°Р»Рё СЃСЋРґР°, С‚Рѕ РјС‹ СѓР¶Рµ РїСЂРёС€Р»Рё РґРѕ РѕРґРЅРѕРіРѕ РєСЂР°СЏ РєР°СЂС‚С‹ Рё РЅР°РґРѕ РґРІРёРіР°С‚СЊСЃСЏ РІ РґСЂСѓРіРѕР№
 //			setShot(false);
 //			mVelY = 3;
 //			mVelX = -1;
-//			if (SCREEN_HEIGHT-mPosY < 40) // дошли до другого края карты, можно менять переключатель
+//			if (SCREEN_HEIGHT-mPosY < 40) // РґРѕС€Р»Рё РґРѕ РґСЂСѓРіРѕРіРѕ РєСЂР°СЏ РєР°СЂС‚С‹, РјРѕР¶РЅРѕ РјРµРЅСЏС‚СЊ РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ
 //				setVoidShot(false);
-//			std::cout<<" иду назад от нечего делать "<<std::endl;
+//			std::cout<<" РёРґСѓ РЅР°Р·Р°Рґ РѕС‚ РЅРµС‡РµРіРѕ РґРµР»Р°С‚СЊ "<<std::endl;
 //		}
 //
 //	}
@@ -168,7 +167,7 @@ void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {
 	  if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
 	    {
-//	    	std::cout<<"в тебя попали"<<std::endl;
+//	    	std::cout<<"РІ С‚РµР±СЏ РїРѕРїР°Р»Рё"<<std::endl;
 	    	if (getHealth() > 0)
 	    		setHealth();
 	    	if (getHealth() == 0)

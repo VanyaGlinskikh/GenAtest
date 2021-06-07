@@ -1,7 +1,7 @@
 /*
  * azimuth.cc
  *
- *  Created on: 2 февр. 2021 г.
+ *  Created on: 2 С„РµРІСЂ. 2021 Рі.
  *      Author: vanya
  */
 
@@ -27,7 +27,7 @@ double Azimuth::checkA(Enemy &enemy, Dot &dot)
 		{
 		return atan2(vecBC, vecAC)* (180/acos(-1.0));
 		}
-//	std::cout<<"atan2 равен "<<atan2(vecBC, vecAC)* (180/acos(-1.0))<<", расстояние от противника до игрока "<<hypot(vecBC, vecAC)<<std::endl;
+//	std::cout<<"atan2 СЂР°РІРµРЅ "<<atan2(vecBC, vecAC)* (180/acos(-1.0))<<", СЂР°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ РїСЂРѕС‚РёРІРЅРёРєР° РґРѕ РёРіСЂРѕРєР° "<<hypot(vecBC, vecAC)<<std::endl;
 	return result;
 }
 

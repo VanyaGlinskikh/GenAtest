@@ -1,7 +1,7 @@
 /*
  * Sensor.h
  *
- *  Created on: 29 ÿíâ. 2021 ã.
+ *  Created on: 29 ÑĞ½Ğ². 2021 Ğ³.
  *      Author: vanya
  */
 

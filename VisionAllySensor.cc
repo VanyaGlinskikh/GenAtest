@@ -1,7 +1,7 @@
 /*
  * VisionAllySensor.cc
  *
- *  Created on: 28 апр. 2021 г.
+ *  Created on: 28 Р°РїСЂ. 2021 Рі.
  *      Author: vanya
  */
 #include "Dot.h"
@@ -20,7 +20,7 @@ int VisionAllySensor::location(std::vector<std::shared_ptr<Enemy>> enemy, Enemy 
 			visionEnemyPosY = centerEnemyPosY - VISION_HEIGHT/2;
 			if ((enemy[i]->getMPosX() < visionEnemyPosX + VISION_WIDTH && enemy[i]->getMPosY()+enemy[i]->DOT_HEIGHT > visionEnemyPosY) && (enemy[i]->getMPosX()+ enemy[i]->DOT_WIDTH > visionEnemyPosX && enemy[i]->getMPosY()+enemy[i]->DOT_HEIGHT > visionEnemyPosY) && (enemy[i]->getMPosX()+ enemy[i]->DOT_WIDTH > visionEnemyPosX && enemy[i]->getMPosY() < visionEnemyPosY+VISION_HEIGHT) && (enemy[i]->getMPosX() < visionEnemyPosX + VISION_WIDTH  && enemy[i]->getMPosY() < visionEnemyPosY+VISION_HEIGHT) )
 			{
-		//		std::cout<<"игрок находится в поле видимости"<<std::endl;
+		//		std::cout<<"РёРіСЂРѕРє РЅР°С…РѕРґРёС‚СЃСЏ РІ РїРѕР»Рµ РІРёРґРёРјРѕСЃС‚Рё"<<std::endl;
 				return enemy[i]->getMPosX();
 			}
 		}

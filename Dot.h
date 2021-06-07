@@ -3,8 +3,7 @@
 
 //The dot that will move around on the screen
 #include "global.h"
-#include "LTexGlobal.h"
-
+#include "LTexture.h"
 
 class EnemyBullet;
 class Enemy;

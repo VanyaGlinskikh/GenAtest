@@ -1,7 +1,7 @@
 /*
  * VisionDotBulletSensor.cc
  *
- *  Created on: 30 янв. 2021 г.
+ *  Created on: 30 СЏРЅРІ. 2021 Рі.
  *      Author: vanya
  */
 #include "Bullet.h"
@@ -17,7 +17,7 @@ double VisionDotBulletSensor::location(Enemy &enemy, Bullet &bullet)
 	int cord = -100;
 	if ((bullet.getMPosX() < visionEnemyPosX + VISION_WIDTH && bullet.getMPosY()+bullet.BULLET_HEIGHT > visionEnemyPosY) && (bullet.getMPosX()+ bullet.BULLET_WIDTH > visionEnemyPosX && bullet.getMPosY()+bullet.BULLET_HEIGHT > visionEnemyPosY) && (bullet.getMPosX()+ bullet.BULLET_WIDTH > visionEnemyPosX && bullet.getMPosY() < visionEnemyPosY+VISION_HEIGHT) && (bullet.getMPosX() < visionEnemyPosX + VISION_WIDTH  && bullet.getMPosY() < visionEnemyPosY+VISION_HEIGHT) )
 	{
-//		std::cout<<"пуля находится в поле видимости"<<std::endl;
+//		std::cout<<"РїСѓР»СЏ РЅР°С…РѕРґРёС‚СЃСЏ РІ РїРѕР»Рµ РІРёРґРёРјРѕСЃС‚Рё"<<std::endl;
 		cord = bullet.getMPosX();
 		return cord;
 	}
