@@ -6,10 +6,17 @@
 #include "Bullet.h"
 
 #include "Sensor.h"
-#include "VisionEnemySensor.h"
-#include "VisionDotBulletSensor.h"
-#include "VisionAllySensor.h"
-#include "VisionAllyBulletSensor.h"
+//#include "VisionEnemySensor.h"
+//#include "VisionDotBulletSensor.h"
+//#include "VisionAllySensor.h"
+//#include "VisionAllyBulletSensor.h"
+
+#include "VisionEnemySensorLeft.h"
+#include "VisionEnemySensorRight.h"
+#include "VisionAllySensorLeft.h"
+#include "VisionAllySensorRight.h"
+#include "VisionDotBulletSensorLeft.h"
+#include "VisionDotBulletSensorRight.h"
 
 #include <fstream>
 
@@ -62,8 +69,8 @@ bool init()
 		else
 		{
 			//Create vsynced renderer for window
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -290,21 +297,32 @@ int main( int argc, char* args[] )
 
 			SDL_Event e;
 
-			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
-			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
-			VisionAllySensor *visionAllySensor = new VisionAllySensor;
-			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
+//			VisionEnemySensor *visionEnemySensor = new VisionEnemySensor;
+//			VisionDotBulletSensor *visionDotBulletSensor = new VisionDotBulletSensor;
+//			VisionAllySensor *visionAllySensor = new VisionAllySensor;
+//			VisionAllyBulletSensor *visionAllyBulletSensor = new VisionAllyBulletSensor;
+
+			VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
+			VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
+			VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
+			VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
+			VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
+			VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
+
 
 			Dot dot;
 			Bullet bullet;
 			std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
 			std::vector<Genome> genome(NUMBEROFOPPONENTS);
 			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+			std::vector<int> enemyIdOnTheField;
 
 			std::function<double(unsigned int)> s1;
 			std::function<double(unsigned int)> s2;
 			std::function<double(unsigned int)> s3;
 			std::function<double(unsigned int)> s4;
+			std::function<double(unsigned int)> s5;
+			std::function<double(unsigned int)> s6;
 
 			std::function<void(unsigned int)> f1;
 			std::function<void(unsigned int)> f2;
@@ -338,14 +356,27 @@ int main( int argc, char* args[] )
 				genome[i].add_section(sec1);
 				genome[i].add_section(sec2);  // 2^predic* states
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-				s1 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
+//				s1 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
+//				enemy[i] ->add_sensor(s1);
+//				s2 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
+//				enemy[i] ->add_sensor(s2);
+//				s3 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
+//				enemy[i] ->add_sensor(s3);
+//				s4 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
+//				enemy[i] ->add_sensor(s4);
+
+				s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s1);
-				s2 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
+				s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s2);
-				s3 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
+				s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s3);
-				s4 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
+				s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
 				enemy[i] ->add_sensor(s4);
+				s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
+				enemy[i] ->add_sensor(s5);
+				s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
+				enemy[i] ->add_sensor(s6);
 
 				f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 				enemy[i]->add_actor(f1);
@@ -369,7 +400,7 @@ int main( int argc, char* args[] )
 			std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 			std::vector<uint8_t>  order;
 			std::vector<int> indices(NUMBEROFOPPONENTS);
-			std::vector<int> enemyIdOnTheField;
+
 			std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 
 			double favoriteGen = 0.;
@@ -402,7 +433,7 @@ int main( int argc, char* args[] )
 					dot.handleEvent( e );
 					bullet.handleEvent(e, dot);
 				}
-				if (bullet.getMPosY() == 1000 && dot.getShot()){
+				if (bullet.getMPosY() == 1000){
 					bullet.setPosY(dot.getMPosY());
 					bullet.setPosX(dot.getMPosX());
 					bullet.setVelY(-5);
@@ -448,6 +479,26 @@ int main( int argc, char* args[] )
 				bullet.render();
 				dot.render();
 
+				visionEnemySensorLeft->location(*enemy[enemyIdOnTheField[0]], dot);
+				visionEnemySensorRight->location(*enemy[enemyIdOnTheField[0]], dot);
+				visionAllySensorLeft->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
+				visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
+				visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
+				visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
+//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
+				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
+
+				SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
+
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
+				SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
+
+//				SDL_RenderDrawLine(gRenderer, visionAllySensorLeft->kX, visionAllySensorLeft->kY, visionAllySensorLeft->centerEnemyPosX, visionAllySensorLeft->centerEnemyPosY); // KA
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 					enemy[enemyIdOnTheField[i]] ->tick();
 					bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
@@ -455,6 +506,7 @@ int main( int argc, char* args[] )
 					enemy[enemyIdOnTheField[i]] ->render();
 					enemy[enemyIdOnTheField[i]] ->moveBull(enemyBullet[enemyIdOnTheField[i]]);
 					enemyBullet[enemyIdOnTheField[i]].hittingTheBullet(bullet);
+
 				}
 
 				for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {

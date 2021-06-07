@@ -22,20 +22,27 @@ public:
 		visionEnemyPosY=0;
 		visionDotPosX=0;
 		visionDotPosY=0;
+		kX = 0;
+		kY = 0;
+		bX = 0;
+		bY = 0;
+		cX = 0;
+		cY = 0;
+		pAB = 0;
+		pBC = 0;
+		pCA = 0;
 	}
 	virtual ~Sensor(){};
 
 	static const int VISION_WIDTH = 200;
 	static const int VISION_HEIGHT = 200;
 
-	int centerDotPosX;
-	int centerDotPosY;
-	int centerEnemyPosX;
-	int centerEnemyPosY;
-	int visionEnemyPosX;
-	int visionEnemyPosY;
-	int visionDotPosX;
-	int visionDotPosY;
+	int centerDotPosX, centerDotPosY;
+	int centerEnemyPosX, centerEnemyPosY;
+	int visionEnemyPosX, visionEnemyPosY;
+	int visionDotPosX, visionDotPosY;
+	int kX,kY, bX,bY, cX, cY;
+	int pAB, pBC, pCA;
 
 
 };

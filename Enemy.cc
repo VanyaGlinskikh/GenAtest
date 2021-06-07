@@ -207,6 +207,7 @@ bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - нал
 	else
 		return rand(random_device);
 
+
 }
 
 bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
@@ -216,26 +217,16 @@ bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двиг
 	return 0;
 }
 
-//bool Enemy::predicatCheckBulletMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
-//{
-//		if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
-//			return 1;
-//	return 0;
-//}
 
 bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
 {
-	if (data[0]+ 20 > mPosX && data[0] < mPosX+20 )
-		return 0;
-	return 1;
-}
-
-//bool Enemy::predicatCheckDotMove(const std::vector<double>& data) // 1 - если вправо, 0 - если налево
-//{
-//	if ( data[1]+20 > mPosX && data[1] > 0 && data[1] < mPosX)
+//	if (data[0]+ 20 > mPosX && data[0] < mPosX+20 )
 //		return 0;
 //	return 1;
-//}
+	if (data[0] > 0 || data[1] > 0) // если в зоне видимости
+		return 1;
+	return 0;
+}
 
 bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
 {
@@ -251,71 +242,47 @@ bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - если 
 	return 0;
 }
 
-
-
-bool Enemy::predicatAL(const std::vector<double>& data)
-{
-	if (data[0] > 0)
-		return 1;
-	return 0;
-}
-
-
-bool Enemy::predicatAR(const std::vector<double>& data)
-{
-	if (data[0] < 0)
-		return 1;
-	return 0;
-}
-
-bool Enemy::predicatIS(const std::vector<double>& data)
-{
-	if (data[1] != -100)
-		return 1;
-	return 0;
-}
-
-bool Enemy::predicatCheckBulletRight(const std::vector<double>& data)
-{
-	if ((data[2] ==  mPosX || data[2]+20 > mPosX) && data[2] > 0 && data[2] < mPosX)
-		return 1;
-	return 0;
-}
-
 bool Enemy::predicatCheckBulletLeft(const std::vector<double>& data)
 {
-	if (data[2] < mPosX+20  && data[2] > 0 && data[2] > mPosX)
+	if (data[2]>0 && data[3]<0)
+			return 1;
+		return 0;
+}
+bool Enemy::predicatCheckBulletRight(const std::vector<double>& data)
+{
+	if (data[2]<0 && data[3]>0)
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckWallRight(const std::vector<double>& data)
+bool Enemy::predicatCheckDotLeft(const std::vector<double>& data)
 {
-	if (data[3] == mPosX+20)
+	if (data[0]>0 && data[1]<0)
+			return 1;
+		return 0;
+}
+bool Enemy::predicatCheckDotRight(const std::vector<double>& data)
+{
+	if (data[0]<0 && data[1]>0)
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckWallLeft(const std::vector<double>& data)
+bool Enemy::predicatCheckAllyLeft(const std::vector<double>& data)
 {
-	if (data[3] == mPosX)
+	if (data[4]>0 && data[5]<0)
+			return 1;
+		return 0;
+}
+bool Enemy::predicatCheckAllyRight(const std::vector<double>& data)
+{
+	if (data[4]<0 && data[5]>0)
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckWallUp(const std::vector<double>& data)
-{
-	if (data[4] == mPosY)
-		return 1;
-	return 0;
-}
 
-bool Enemy::predicatCheckWallDown(const std::vector<double>& data)
-{
-	if (data[4] == mPosX+20)
-		return 1;
-	return 0;
-}
+
 
 unsigned Enemy::input()
 {
@@ -326,11 +293,16 @@ unsigned Enemy::input()
 
 	// Результаты выполнения функции предиката
 	unsigned pred = 0;
-	pred |= (predicatCheckBullet(sensor_data));
-	pred |= (predicatCheckDot(sensor_data)<<1);
-	pred |= (predicatCheckAlly(sensor_data)<<2);
-	pred |= (predicatMove(sensor_data)<<3);
-
+//	pred |= (predicatCheckBullet(sensor_data));
+//	pred |= (predicatCheckDot(sensor_data)<<1);
+//	pred |= (predicatCheckAlly(sensor_data)<<2);
+//	pred |= (predicatMove(sensor_data)<<3);
+	pred |= (predicatCheckBulletLeft(sensor_data));
+	pred |= (predicatCheckBulletRight(sensor_data)<<1);
+	pred |= (predicatCheckAllyLeft(sensor_data)<<2);
+	pred |= (predicatCheckAllyRight(sensor_data)<<3);
+	pred |= (predicatCheckDotLeft(sensor_data)<<4);
+	pred |= (predicatCheckDotRight(sensor_data)<<5);
 //	pred |= (predicatAL(sensor_data));
 //	pred |= (predicatAR(sensor_data) << 1);
 //	pred |= (predicatIS(sensor_data) << 2);

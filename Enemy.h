@@ -40,11 +40,14 @@ class Enemy
 
 		static constexpr unsigned MAX_ACTORS = 5;
 		static_assert(MAX_ACTORS > 0, "MAX_ACTORS must not be zero");
-		static constexpr unsigned MAX_SENSORS = 4;
+//		static constexpr unsigned MAX_SENSORS = 4;
+		static constexpr unsigned MAX_SENSORS = 6;
+
 		static_assert(MAX_SENSORS > 0, "MAX_SENSORS must not be zero");
 		static constexpr unsigned MAX_STATES = 128;
 		static_assert(MAX_STATES >= MAX_ACTORS, "MAX_STATES must be >= MAX_ACTORS");
-		static constexpr unsigned PREDICATE_COUNT = 5;
+//		static constexpr unsigned PREDICATE_COUNT = 5;
+		static constexpr unsigned PREDICATE_COUNT = 6;
 		static_assert(PREDICATE_COUNT >= MAX_SENSORS, "PREDICATE_COUNT must be >= MAX_SENSORS");
 
 		Enemy(unsigned id, Genome &genome);
@@ -55,15 +58,15 @@ class Enemy
 
 		void render(/*double an, int ves*/);
 
-		bool predicatAL(const std::vector<double>& data);
-		bool predicatAR(const std::vector<double>& data);
-		bool predicatIS(const std::vector<double>& data);
-		bool predicatCheckBulletRight(const std::vector<double>& data);
+
 		bool predicatCheckBulletLeft(const std::vector<double>& data);
-		bool predicatCheckWallRight(const std::vector<double>& data);
-		bool predicatCheckWallLeft(const std::vector<double>& data);
-		bool predicatCheckWallUp(const std::vector<double>& data);
-		bool predicatCheckWallDown(const std::vector<double>& data);
+		bool predicatCheckBulletRight(const std::vector<double>& data);
+		bool predicatCheckDotLeft(const std::vector<double>& data);
+		bool predicatCheckDotRight(const std::vector<double>& data);
+		bool predicatCheckAllyLeft(const std::vector<double>& data);
+		bool predicatCheckAllyRight(const std::vector<double>& data);
+
+
 
 		bool predicatCheckBullet(const std::vector<double>& data);
 		bool predicatCheckDot(const std::vector<double>& data);
