@@ -272,18 +272,8 @@ int main( int argc, char* args[] )
 			std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
 			std::vector<int> enemyIdOnTheField;
 
-			std::function<double(unsigned int)> s1;
-			std::function<double(unsigned int)> s2;
-			std::function<double(unsigned int)> s3;
-			std::function<double(unsigned int)> s4;
-			std::function<double(unsigned int)> s5;
-			std::function<double(unsigned int)> s6;
-
-			std::function<void(unsigned int)> f1;
-			std::function<void(unsigned int)> f2;
-			std::function<void(unsigned int)> f3;
-			std::function<void(unsigned int)> f4;
-			std::function<void(unsigned int)> f5;
+			Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
+			Enemy::ActorFunc f1, f2, f3, f4, f5;
 
 			int sec1Length = (enemy[1]->MAX_STATES);
 			int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
