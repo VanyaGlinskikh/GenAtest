@@ -386,7 +386,7 @@ int main( int argc, char* args[] )
 //			std::vector<GraficCord> cord;
 
 			// Создание пустого файла
-			std::ofstream(GEN_RES_FILE_NAME);
+			{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
 
 			int generationCounter=0;
 
