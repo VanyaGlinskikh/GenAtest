@@ -22,16 +22,6 @@
 
 #include <functional>
 #include <chrono>
-#include "LTexGlobal.h"
-
-LTexture gEnemyBulletTexture;
-LTexture gBulletTexture;
-LTexture gEnemyTexture;
-LTexture gBGTexture;
-LTexture gPanelTexture;
-LTexture gTextTexture;
-LTexture gTextGenerationTexture;
-
 
 bool init();
 
@@ -175,25 +165,19 @@ bool loadMedia()
 
 void close()
 {
-	gEnemyBulletTexture.free();
-	gDotTexture.free();
-	gBulletTexture.free();
-	gEnemyTexture.free();
-	gBGTexture.free();
-	gPanelTexture.free();
+	if (gRenderer) {
+		SDL_DestroyRenderer( gRenderer );
+		gRenderer = NULL;
+	}
 
-	SDL_DestroyRenderer( gRenderer );
-	SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
-	gRenderer = NULL;
+	if (gWindow) {
+		SDL_DestroyWindow( gWindow );
+		gWindow = NULL;
+	}
 
-	 //Free loaded images
-	gTextTexture.free();
-	gTextGenerationTexture.free();
-
-	//Free global font
-	TTF_CloseFont( gFont );
-	gFont = NULL;
+	if (gFont) {
+		TTF_CloseFont( gFont ); gFont = NULL;
+	}
 
 	TTF_Quit();
 	IMG_Quit();

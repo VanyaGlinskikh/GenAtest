@@ -10,7 +10,6 @@
 #include "Enemy.h"
 #include "SensorForPlayer.h"
 
-LTexture gDotTexture;
 Dot::Dot()
 {
 	sensorForPlayer = new SensorForPlayer;

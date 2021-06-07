@@ -12,6 +12,15 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 TTF_Font *gFont = NULL;
 
+LTexture gEnemyBulletTexture;
+LTexture gDotTexture;
+LTexture gBulletTexture;
+LTexture gEnemyTexture;
+LTexture gBGTexture;
+LTexture gPanelTexture;
+LTexture gTextTexture;
+LTexture gTextGenerationTexture;
+
 void displayError(const char *message, const char *additional)
 {
 	std::cerr << "An error has occurred:\n" << message << std::endl;
