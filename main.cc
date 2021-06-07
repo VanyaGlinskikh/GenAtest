@@ -23,6 +23,30 @@
 #include <functional>
 #include <chrono>
 
+namespace {
+
+const char *GEN_RES_FILE_NAME = "genRes.csv";
+
+}
+
+namespace {
+
+const char *FAVORITE_FILE_NAME = "genFavorite.txt";
+
+}
+
+namespace {
+
+const char *GENOME_FILE_NAME = "gen.txt";
+
+}
+
+namespace {
+
+const char *STATS_FILE_NAME = "stat.txt";
+
+}
+
 bool init();
 
 bool loadMedia();
@@ -145,74 +169,80 @@ void close()
 //	{}
 //};
 
-void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices){
-	out.open("stat.txt"); // окрываем файл для записи
-	if (out.is_open())
-	{
-		std::cout<<" запись произошла  "<< std::endl;
-		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-			out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
-					out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
-				out <<"\n";
+void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
+		const std::vector<int> &indices)
+{
+	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
+	if (not out.is_open()) return;
+
+	std::cout<<" запись произошла  "<< std::endl;
+	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
+		out << sortEnemy[indices[i]]->fitnessFunction() << std::endl;
+	}
+	out.close();
+}
+
+void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
+{
+	std::ofstream out(GENOME_FILE_NAME); // окрываем файл для записи
+	if (not out.is_open()) return;
+
+	std::cout<<" запись произошла  "<< std::endl;
+	for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
+		out <<" существо "<<n<<std::endl;
+		for (unsigned i = 0; i < 2; ++i) {
+			out <<" секция : "<<i<<std::endl;
+			for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+				out <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
+			}
+			out <<"\n";
 		}
 	}
 	out.close();
 }
 
-void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int> &indices){
-	out2.open("gen.txt"); // окрываем файл для записи
-	if (out2.is_open())
-	{
-		std::cout<<" запись произошла  "<< std::endl;
-		for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
-			out2 <<" существо "<<n<<std::endl;
-			for (unsigned i = 0; i < 2; ++i) {
-				out2 <<" секция : "<<i<<std::endl;
-				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
-					out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
-				}
-					out2 <<"\n";
-			}
-		}
-	}
-	out2.close();
-}
-
-void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<Genome> &genome, std::vector<int> &indices, int &generationCounter, double &favoriteGen){
+void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
+		std::vector<Genome> &genome, std::vector<int> &indices,
+		int &generationCounter, double &favoriteGen)
+{
 	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
 		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
-		out3.open("genFavorite.txt"); // окрываем файл для записи
-		if (out3.is_open())
-		{
-			std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
-			out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-			out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
-			out3 <<"\n";
-			out3 <<" геном этого существа: "<<std::endl;
-			for (unsigned i = 0; i < 2; ++i) {
-				out3 <<" секция : "<<i<<std::endl;
-				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
-					out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
-				}
-				out3 <<"\n";
+		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
+		if (not out.is_open()) return;
+
+		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+		out <<"\n";
+		out <<" геном этого существа: "<<std::endl;
+		for (unsigned i = 0; i < 2; ++i) {
+			out <<" секция : "<<i<<std::endl;
+			for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
+				out <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
 			}
+			out <<"\n";
 		}
-		out3.close();
+		out.close();
 	}
 }
 
-void writeOut4(std::ofstream &out4, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices, int &generationCounter,double &SumFF){
-	out4.open("genRes.csv", std::ios::app); // окрываем файл для записи
-						if (out4.is_open())
-						{
-							out4.imbue(std::locale(""));
-							for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-								SumFF += sortEnemy[indices[i]]->fitnessFunction();
-							}
+void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
+		std::vector<int> &indices, int &generationCounter,double &SumFF)
+{
+	std::ofstream out(GEN_RES_FILE_NAME, std::ios::app); // окрываем файл для записи
+	if (not out.is_open()) return;
+
+	out.imbue(std::locale(""));
+	for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+		SumFF += sortEnemy[indices[i]]->fitnessFunction();
+	}
 	//						SumFF /= numberOfEnemyInOneGroup;
-							out4 << generationCounter<<";"<<SumFF/NUMBER_OF_ENEMY_IN_ONE_GROUP<<";"<<sortEnemy[indices[0]]->fitnessFunction()<<";"<<sortEnemy[indices[7]]->fitnessFunction()<<std::endl;
-						}
-						out4.close();
+	out << generationCounter << ";" << SumFF / NUMBER_OF_ENEMY_IN_ONE_GROUP
+			<< ";" << sortEnemy[indices[0]]->fitnessFunction() << ";"
+			<< sortEnemy[indices[7]]->fitnessFunction() << std::endl;
+
+	out.close();
 }
 
 
@@ -355,14 +385,8 @@ int main( int argc, char* args[] )
 
 //			std::vector<GraficCord> cord;
 
-			std::ofstream out;
-			std::ofstream out2;// поток для записи
-			std::ofstream out3;// поток для записи
-			std::ofstream out4;// поток для записи
-
-			out4.open("genRes.csv");
-			out4<<"";
-			out4.close();
+			// Создание пустого файла
+			std::ofstream(GEN_RES_FILE_NAME);
 
 			int generationCounter=0;
 
@@ -479,10 +503,10 @@ int main( int argc, char* args[] )
 					std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
 					  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
 					});
-					writeOut(out,sortEnemy, indices);
-					writeOut2(out2, genome, indices);
-					writeOut3(out3, sortEnemy, genome, indices, generationCounter, favoriteGen);
-					writeOut4(out4, sortEnemy, indices, generationCounter, SumFF);
+					writeStats(sortEnemy, indices);
+					writeGenome(genome, indices);
+					writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen);
+					writeGenRes(sortEnemy, indices, generationCounter, SumFF);
 
 					order.resize(genome.size());
 					for (unsigned i = 0; i < order.size(); ++i) {
