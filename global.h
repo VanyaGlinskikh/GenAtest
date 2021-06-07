@@ -19,7 +19,6 @@
 #include <random>
 #include <vector>
 #include <memory>
-#include "LTexture.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH2 = 840;
@@ -43,6 +42,7 @@ extern SDL_Renderer* gRenderer;
 //Globally used font
 extern TTF_Font *gFont;
 
+class LTexture;
 extern LTexture gEnemyBulletTexture;
 extern LTexture gDotTexture;
 extern LTexture gBulletTexture;

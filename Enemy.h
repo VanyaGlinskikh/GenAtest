@@ -10,7 +10,6 @@
 
 //#include "Bullet.h"
 #include "global.h"
-#include "LTexGlobal.h"
 #include "Genome.h"
 #include "vector"
 #include <functional>

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "global.h"
+#include "LTexture.h"
 
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;

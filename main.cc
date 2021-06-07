@@ -31,7 +31,7 @@ void close();
 
 bool initialize_sdl()
 {
-	if (SDL_Init(SDL_INIT_VIDEO))
+	if (SDL_Init(SDL_INIT_VIDEO) == 0)
 		return true;
 	displayError("SDL could not initialize!", SDL_GetError());
 	return false;
@@ -77,8 +77,6 @@ bool initialize_sdl_ttf() {
 
 bool init()
 {
-	bool success = true;
-
 	if (not initialize_sdl()) return false;
 
 	// Если не можем задать "хотелки" - это не смертельно.
@@ -176,7 +174,8 @@ void close()
 	}
 
 	if (gFont) {
-		TTF_CloseFont( gFont ); gFont = NULL;
+		TTF_CloseFont( gFont );
+		gFont = NULL;
 	}
 
 	TTF_Quit();

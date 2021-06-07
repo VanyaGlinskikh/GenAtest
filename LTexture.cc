@@ -4,7 +4,7 @@
  *  Created on: 23 янв. 2021 г.
  *      Author: vanya
  */
-#include "LTexGlobal.h"
+#include "LTexture.h"
 LTexture::LTexture()
 {
 	//Initialize

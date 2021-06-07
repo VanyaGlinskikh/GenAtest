@@ -9,8 +9,8 @@
 #define BULLET_H_
 
 //#include "Dot.h"
-#include "LTexGlobal.h"
 #include "global.h"
+#include "LTexture.h"
 class Dot;
 class Enemy;
 class EnemyBullet;
