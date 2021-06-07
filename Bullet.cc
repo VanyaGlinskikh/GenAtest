@@ -1,7 +1,7 @@
 /*
  * Bullet.cc
  *
- *  Created on: 23 ÿíâ. 2021 ã.
+ *  Created on: 23 ÑÐ½Ð². 2021 Ð³.
  *      Author: vanya
  */
 #include "Bullet.h"
@@ -60,7 +60,7 @@ void Bullet::hittingTheEnemy(Enemy &enemy)
 {
 	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY()+20 && mPosY+20 > enemy.getMPosY())
 		{
-//		std::cout<<"óáèë"<<std::endl;
+//		std::cout<<"ÑƒÐ±Ð¸Ð»"<<std::endl;
 			enemy.setPosX();
 			enemy.setPosY();
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
@@ -79,7 +79,7 @@ void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
 {
 	if ( (mPosX+20 > enemyBullet.getMPosX() &&  mPosX < enemyBullet.getMPosX()+ 20) && mPosY < enemyBullet.getMPosY()+20 && mPosY+20 > enemyBullet.getMPosY())
 		{
-//		std::cout<<"óáèë"<<std::endl;
+//		std::cout<<"ÑƒÐ±Ð¸Ð»"<<std::endl;
 		enemyBullet.setPosX(-50);
 		enemyBullet.setPosY(-50);
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);

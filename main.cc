@@ -22,19 +22,6 @@
 
 #include <functional>
 #include <chrono>
-#include "LTexGlobal.h"
-
-SDL_Window* gWindow = NULL;
-TTF_Font *gFont = NULL;
-
-LTexture gEnemyBulletTexture;
-LTexture gBulletTexture;
-LTexture gEnemyTexture;
-LTexture gBGTexture;
-LTexture gPanelTexture;
-LTexture gTextTexture;
-LTexture gTextGenerationTexture;
-
 
 bool init();
 
@@ -42,151 +29,108 @@ bool loadMedia();
 
 void close();
 
+bool initialize_sdl()
+{
+	if (SDL_Init(SDL_INIT_VIDEO) == 0)
+		return true;
+	displayError("SDL could not initialize!", SDL_GetError());
+	return false;
+}
+
+bool initialize_window()
+{
+	//Create window
+	gWindow = SDL_CreateWindow( "GenA",
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			SCREEN_WIDTH2, SCREEN_HEIGHT,
+			SDL_WINDOW_SHOWN );
+	if (gWindow != nullptr) return true;
+
+	displayError("Window could not be created!", SDL_GetError());
+	return false;
+}
+
+bool initialize_renderer() {
+	//Create vsynced renderer for window
+	// gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+	if (gRenderer != nullptr) return true;
+
+	displayError("Renderer could not be created!", SDL_GetError());
+	return false;
+}
+
+bool initialize_sdl_image() {
+	int imgFlags = IMG_INIT_PNG;
+	if ( (IMG_Init(imgFlags) & imgFlags) == imgFlags) return true;
+
+	displayError("SDL_image could not initialize!", IMG_GetError());
+	return false;
+}
+
+bool initialize_sdl_ttf() {
+	if ( TTF_Init() == 0) return true;
+
+	displayError("SDL_ttf could not initialize!", TTF_GetError());
+	return false;
+}
+
 bool init()
 {
-	bool success = true;
+	if (not initialize_sdl()) return false;
 
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
-		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-		success = false;
-	}
-	else
-	{
-		//Set texture filtering to linear
-		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
-		{
-			printf( "Warning: Linear texture filtering not enabled!" );
-		}
+	// Р•СЃР»Рё РЅРµ РјРѕР¶РµРј Р·Р°РґР°С‚СЊ "С…РѕС‚РµР»РєРё" - СЌС‚Рѕ РЅРµ СЃРјРµСЂС‚РµР»СЊРЅРѕ.
+	// Set texture filtering to linear
+	if( not SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+		displayWarning( "Linear texture filtering not enabled!" );
 
-		//Create window
-		gWindow = SDL_CreateWindow( "GenA", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH2, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if( gWindow == NULL )
-		{
-			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-			success = false;
-		}
-		else
-		{
-			//Create vsynced renderer for window
-//			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
-			if( gRenderer == NULL )
-			{
-				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
-				success = false;
-			}
-			else
-			{
-				//Initialize renderer color
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	if (not initialize_window()) return false;
+	if (not initialize_renderer()) return false;
 
-				//Initialize PNG loading
-				int imgFlags = IMG_INIT_PNG;
-				if( !( IMG_Init( imgFlags ) & imgFlags ) )
-				{
-					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-					success = false;
-				}
-				//Initialize SDL_ttf
-				if( TTF_Init() == -1 )
-				{
-					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-					success = false;
-				}
-			}
-		}
-	}
+	//Initialize renderer color
+	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-	return success;
+	if (not initialize_sdl_image()) return false;
+	if (not initialize_sdl_ttf()) return false;
+
+	return true;
 }
 
 bool loadMedia()
 {
-	bool success = true;
-
-	if( !gDotTexture.loadFromFile( "dot.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gBulletTexture.loadFromFile( "bullet.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-	if( !gEnemyTexture.loadFromFile( "enemy.bmp" ) )
-	{
-		printf( "Failed to load dot texture!\n" );
-		success = false;
-	}
-
-	if( !gBGTexture.loadFromFile( "bg.png" ) )
-	{
-		printf( "Failed to load background texture!\n" );
-		success = false;
-	}
-
-	if( !gPanelTexture.loadFromFile( "panel.png" ) )
-	{
-
-		printf( "Failed to load background texture!\n" );
-		success = false;
-	}
+	if ( not gDotTexture.loadFromFile( "dot.bmp" ) ) return false;
+	if ( not gBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
+	if ( not gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
+	if ( not gEnemyTexture.loadFromFile( "enemy.bmp" ) ) return false;
+	if ( not gBGTexture.loadFromFile( "bg.png" ) ) return false;
+	if ( not gPanelTexture.loadFromFile( "panel.png" ) ) return false;
 
 	//Open the font
 	gFont = TTF_OpenFont( "lazy.ttf", 24 );
-	if( gFont == NULL )
-	{
-		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
-		success = false;
-	}
-	else
-	{
-		//Render text
-		SDL_Color textColor = { 0, 0, 0 };
-		if( !gTextTexture.loadFromRenderedText( "kyky", textColor ) )
-		{
-			printf( "Failed to render text texture!\n" );
-			success = false;
-		}
-		if( !gTextGenerationTexture.loadFromRenderedText( "kyky", textColor ) )
-		{
-			printf( "Failed to render text texture!\n" );
-			success = false;
-		}
+	if( gFont == nullptr ) {
+		displayError("Failed to load lazy font!", TTF_GetError());
+		return false;
 	}
 
-
-	return success;
+	return true;
 }
 
 void close()
 {
-	gEnemyBulletTexture.free();
-	gDotTexture.free();
-	gBulletTexture.free();
-	gEnemyTexture.free();
-	gBGTexture.free();
-	gPanelTexture.free();
+	if (gRenderer) {
+		SDL_DestroyRenderer( gRenderer );
+		gRenderer = NULL;
+	}
 
-	SDL_DestroyRenderer( gRenderer );
-	SDL_DestroyWindow( gWindow );
-	gWindow = NULL;
-	gRenderer = NULL;
+	if (gWindow) {
+		SDL_DestroyWindow( gWindow );
+		gWindow = NULL;
+	}
 
-	 //Free loaded images
-	gTextTexture.free();
-	gTextGenerationTexture.free();
-
-	//Free global font
-	TTF_CloseFont( gFont );
-	gFont = NULL;
+	if (gFont) {
+		TTF_CloseFont( gFont );
+		gFont = NULL;
+	}
 
 	TTF_Quit();
 	IMG_Quit();
@@ -195,19 +139,19 @@ void close()
 
 //struct GraficCord
 //{
-//	float generation;        // поколение
-//	float avResFF;    // среднее значение фф у 8 лучших
+//	float generation;        // РїРѕРєРѕР»РµРЅРёРµ
+//	float avResFF;    // СЃСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ С„С„ Сѓ 8 Р»СѓС‡С€РёС…
 //	GraficCord(float g, float a) : generation(g), avResFF(a)
 //	{}
 //};
 
 void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices){
-	out.open("stat.txt"); // окрываем файл для записи
+	out.open("stat.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 	if (out.is_open())
 	{
-		std::cout<<" запись произошла  "<< std::endl;
+		std::cout<<" Р·Р°РїРёСЃСЊ РїСЂРѕРёР·РѕС€Р»Р°  "<< std::endl;
 		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-			out <<" существо "<<i<<", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
+			out <<" СЃСѓС‰РµСЃС‚РІРѕ "<<i<<", Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ РёРіСЂРѕРєСѓ= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ СЃРѕСЋР·РЅРёРєСѓ="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РѕРІ= "<<sortEnemy[indices[i]]->getShotCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", Р° РІСЂРµРјСЏ= "<<sortEnemy[indices[i]]->getTickCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№ РІРЅРёР·="<<sortEnemy[indices[i]]->getNumberOfDown()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРѕРїСѓС‰РµРЅРЅС‹С… С€Р°РіРѕРІ "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 					out <<sortEnemy[indices[i]]->fitnessFunction()<< " ";
 				out <<"\n";
 		}
@@ -216,14 +160,14 @@ void writeOut(std::ofstream &out, std::vector<std::shared_ptr<Enemy>> sortEnemy,
 }
 
 void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int> &indices){
-	out2.open("gen.txt"); // окрываем файл для записи
+	out2.open("gen.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 	if (out2.is_open())
 	{
-		std::cout<<" запись произошла  "<< std::endl;
+		std::cout<<" Р·Р°РїРёСЃСЊ РїСЂРѕРёР·РѕС€Р»Р°  "<< std::endl;
 		for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
-			out2 <<" существо "<<n<<std::endl;
+			out2 <<" СЃСѓС‰РµСЃС‚РІРѕ "<<n<<std::endl;
 			for (unsigned i = 0; i < 2; ++i) {
-				out2 <<" секция : "<<i<<std::endl;
+				out2 <<" СЃРµРєС†РёСЏ : "<<i<<std::endl;
 				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
 					out2 <<" "<<genome[indices[n]].operator ()(i, j)<<", ";
 				}
@@ -237,16 +181,16 @@ void writeOut2(std::ofstream &out2, std::vector<Genome> &genome, std::vector<int
 void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<Genome> &genome, std::vector<int> &indices, int &generationCounter, double &favoriteGen){
 	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
 		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
-		out3.open("genFavorite.txt"); // окрываем файл для записи
+		out3.open("genFavorite.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 		if (out3.is_open())
 		{
-			std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
-			out3 <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-			out3 <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+			std::cout<<" Р·Р°РїРёСЃСЊ РІ genFavorite РїСЂРѕРёР·РѕС€Р»Р° РЅР° РёС‚РµСЂР°С†РёРё "<<generationCounter<< std::endl;
+			out3 <<"РёС‚РµСЂР°С†РёСЏ: "<<generationCounter<<"\n СЃСѓС‰РµСЃС‚РІРѕ, Сѓ РєРѕС‚РѕСЂРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ РёРіСЂРѕРєСѓ= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕРїР°РґР°РЅРёР№ РїРѕ СЃРѕСЋР·РЅРёРєСѓ="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РІС‹СЃС‚СЂРµР»РѕРІ= "<<sortEnemy[indices[0]]->getShotCount()<<", Р° РєРѕР»РёС‡РµСЃС‚РІРѕ РґРІРёР¶РµРЅРёР№  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", Р° РІСЂРµРјСЏ= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
+			out3 <<"Р РµР·СѓР»СЊР°С‚Р°С‚ С„СѓРЅРєС†РёРё = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 			out3 <<"\n";
-			out3 <<" геном этого существа: "<<std::endl;
+			out3 <<" РіРµРЅРѕРј СЌС‚РѕРіРѕ СЃСѓС‰РµСЃС‚РІР°: "<<std::endl;
 			for (unsigned i = 0; i < 2; ++i) {
-				out3 <<" секция : "<<i<<std::endl;
+				out3 <<" СЃРµРєС†РёСЏ : "<<i<<std::endl;
 				for (unsigned j = 0; j < genome[indices[0]].section_size(i); ++j) {
 					out3 <<" "<<genome[indices[0]].operator ()(i, j)<<", ";
 				}
@@ -258,7 +202,7 @@ void writeOut3(std::ofstream &out3, std::vector<std::shared_ptr<Enemy>> sortEnem
 }
 
 void writeOut4(std::ofstream &out4, std::vector<std::shared_ptr<Enemy>> sortEnemy, std::vector<int> &indices, int &generationCounter,double &SumFF){
-	out4.open("genRes.csv", std::ios::app); // окрываем файл для записи
+	out4.open("genRes.csv", std::ios::app); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ Р·Р°РїРёСЃРё
 						if (out4.is_open())
 						{
 							out4.imbue(std::locale(""));
@@ -412,9 +356,9 @@ int main( int argc, char* args[] )
 //			std::vector<GraficCord> cord;
 
 			std::ofstream out;
-			std::ofstream out2;// поток для записи
-			std::ofstream out3;// поток для записи
-			std::ofstream out4;// поток для записи
+			std::ofstream out2;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
+			std::ofstream out3;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
+			std::ofstream out4;// РїРѕС‚РѕРє РґР»СЏ Р·Р°РїРёСЃРё
 
 			out4.open("genRes.csv");
 			out4<<"";
@@ -471,7 +415,7 @@ int main( int argc, char* args[] )
 							enemy[i]->setMPosY(forY(random_device));
 							enemyOnTheField++;
 							enemyIdOnTheField.push_back(enemy[i]->getId());
-//							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
+//							std::cout<<" СЃСѓС‰РµСЃС‚РІ РЅР° РїРѕР»Рµ:  "<<enemyOnTheField<<std::endl;
 					}
 				}
 				bullet.move(dot);
@@ -485,7 +429,7 @@ int main( int argc, char* args[] )
 				visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
 				visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
 				visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
-//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
+//				std::cout<<" РєРѕРѕСЂРґРёРЅР°С‚С‹ Р»РёРЅРёРё:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
 				SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
 				SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
@@ -527,7 +471,7 @@ int main( int argc, char* args[] )
 				if (clk::now() >= stop){
 
 					for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
-//						std::cout<<" результат функции:  "<<enemy[i]->fitnessFunction()<<"  ";
+//						std::cout<<" СЂРµР·СѓР»СЊС‚Р°С‚ С„СѓРЅРєС†РёРё:  "<<enemy[i]->fitnessFunction()<<"  ";
 						sortEnemy[i] = enemy[i];
 					}
 
@@ -610,7 +554,7 @@ int main( int argc, char* args[] )
 					dot.resetHealth();
 
 
-					std::cout<<"время прошло"<<std::endl;
+					std::cout<<"РІСЂРµРјСЏ РїСЂРѕС€Р»Рѕ"<<std::endl;
 					start = clk::now();
 					stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 				}

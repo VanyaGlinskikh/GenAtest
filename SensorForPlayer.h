@@ -1,7 +1,7 @@
 /*
  * SensorForPlayer.h
  *
- *  Created on: 2 èþí. 2021 ã.
+ *  Created on: 2 Ð¸ÑŽÐ½. 2021 Ð³.
  *      Author: vanya
  */
 

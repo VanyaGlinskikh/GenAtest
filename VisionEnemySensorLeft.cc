@@ -1,7 +1,7 @@
 /*
  * VisionSensor.cc
  *
- *  Created on: 29 ˇÌ‚. 2021 „.
+ *  Created on: 29 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 
@@ -31,13 +31,13 @@ int VisionEnemySensorLeft::location(Enemy &enemy, Dot &dot)
 //	visionEnemyPosY = centerEnemyPosY - VISION_HEIGHT/2;
 //	int pole = -100;
 
-//		std::cout<<"ÁÌ‡˜ÂÌËÂ pAB:  "<<pAB<<std::endl;
-//		std::cout<<"ÁÌ‡˜ÂÌËÂ pBC:  "<<pBC<<std::endl;
-//		std::cout<<"ÁÌ‡˜ÂÌËÂ pCA:  "<<pCA<<std::endl;
+//		std::cout<<"–∑–Ω–∞—á–µ–Ω–∏–µ pAB:  "<<pAB<<std::endl;
+//		std::cout<<"–∑–Ω–∞—á–µ–Ω–∏–µ pBC:  "<<pBC<<std::endl;
+//		std::cout<<"–∑–Ω–∞—á–µ–Ω–∏–µ pCA:  "<<pCA<<std::endl;
 
 		if (pAB < 0 && pBC < 0 && pCA < 0)
 			return 1;
-//			std::cout<<"¬Õ”“–» “–≈”√ŒÀ‹Õ» ¿  "<<std::endl;
+//			std::cout<<"–í–ù–£–¢–†–ò –¢–†–ï–£–ì–û–õ–¨–ù–ò–ö–ê  "<<std::endl;
 
 		return -100;
 

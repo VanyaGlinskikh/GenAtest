@@ -1,7 +1,7 @@
 /*
  * VisionSensor.cc
  *
- *  Created on: 29 ÿíâ. 2021 ã.
+ *  Created on: 29 ÑĞ½Ğ². 2021 Ğ³.
  *      Author: vanya
  */
 
@@ -29,7 +29,7 @@ int VisionDotBulletSensorRight::location(Enemy &enemy, Bullet &bullet)
 	pCA = (centerEnemyPosX-cX)*(kY-cY)-(centerEnemyPosY-cY)*(kX-cX);
 	if (pAB > 0 && pBC > 0 && pCA > 0)
 		return 1;
-			std::cout<<"ÂÍÓÒĞÈ ÒĞÅÓÃÎËÜÍÈÊÀ  "<<std::endl;
+			std::cout<<"Ğ’ĞĞ£Ğ¢Ğ Ğ˜ Ğ¢Ğ Ğ•Ğ£Ğ“ĞĞ›Ğ¬ĞĞ˜ĞšĞ  "<<std::endl;
 
 	return -100;
 

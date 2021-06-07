@@ -1,7 +1,7 @@
 /*
  * bullet.h
  *
- *  Created on: 21 ˇÌ‚. 2021 „.
+ *  Created on: 21 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 
@@ -9,8 +9,8 @@
 #define BULLET_H_
 
 //#include "Dot.h"
-#include "LTexGlobal.h"
 #include "global.h"
+#include "LTexture.h"
 class Dot;
 class Enemy;
 class EnemyBullet;

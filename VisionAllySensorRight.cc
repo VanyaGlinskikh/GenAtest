@@ -1,7 +1,7 @@
 /*
  * VisionSensor.cc
  *
- *  Created on: 29 ˇÌ‚. 2021 „.
+ *  Created on: 29 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 
@@ -33,7 +33,7 @@ int VisionAllySensorRight::location(Enemy &enemy2, std::vector<std::shared_ptr<E
 			pCA = (centerEnemyPosX-cX)*(kY-cY)-(centerEnemyPosY-cY)*(kX-cX);
 			if (pAB > 0 && pBC > 0 && pCA > 0)
 				return 1;
-//					std::cout<<"¬Õ”“–» “–≈”√ŒÀ‹Õ» ¿  "<<std::endl;
+//					std::cout<<"–í–ù–£–¢–†–ò –¢–†–ï–£–ì–û–õ–¨–ù–ò–ö–ê  "<<std::endl;
 		}
 	}
 

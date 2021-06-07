@@ -1,7 +1,7 @@
 /*
  * Enemy.cc
  *
- *  Created on: 23 янв. 2021 г.
+ *  Created on: 23 СЏРЅРІ. 2021 Рі.
  *      Author: vanya
  */
 #include "Enemy.h"
@@ -29,12 +29,12 @@ Enemy::Enemy(unsigned id, Genome &genome)
 	for (unsigned i = 0; i < MAX_STATES; ++i)
 		_action_table[i].resize(1 << PREDICATE_COUNT);
 
-	// Расшифровываем геном
+	// Р Р°СЃС€РёС„СЂРѕРІС‹РІР°РµРј РіРµРЅРѕРј
 
-	// Секция 0 - соответствие акторов состояниям
+	// РЎРµРєС†РёСЏ 0 - СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ Р°РєС‚РѕСЂРѕРІ СЃРѕСЃС‚РѕСЏРЅРёСЏРј
 	for (unsigned i = 0; i < MAX_STATES; ++i)
 		_state_actions[i] = (genome(0, i) & 0x0fffffff) % MAX_ACTORS;
-	// Секция 1 - таблица действий конечного автомата
+	// РЎРµРєС†РёСЏ 1 - С‚Р°Р±Р»РёС†Р° РґРµР№СЃС‚РІРёР№ РєРѕРЅРµС‡РЅРѕРіРѕ Р°РІС‚РѕРјР°С‚Р°
 	for (unsigned i = 0; i < MAX_STATES; ++i)
 		for (unsigned j = 0; j < (1 << PREDICATE_COUNT); ++j)
 			_action_table[i][j] = (genome(1, i * (1 << PREDICATE_COUNT) + j) & 0x0fffffff) % MAX_STATES;
@@ -137,7 +137,7 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 
 void Enemy::moveShot(EnemyBullet &enemyBullet)
 {
-//	std::cout<<" значение Y у пули противника  "<<enemyBullet.getMPosY() << std::endl;
+//	std::cout<<" Р·РЅР°С‡РµРЅРёРµ Y Сѓ РїСѓР»Рё РїСЂРѕС‚РёРІРЅРёРєР°  "<<enemyBullet.getMPosY() << std::endl;
     if (enemyBullet.getMPosY() == -200){
     	upShotCount();
     	enemyBullet.setPosY(-50);
@@ -148,7 +148,7 @@ void Enemy::moveShot(EnemyBullet &enemyBullet)
 
 void Enemy::move(Bullet &bullet)
 {
-//	std::cout<<"координата противника X "<<getMPosX()<<"координата противника Y "<<getMPosY()<<std::endl;
+//	std::cout<<"РєРѕРѕСЂРґРёРЅР°С‚Р° РїСЂРѕС‚РёРІРЅРёРєР° X "<<getMPosX()<<"РєРѕРѕСЂРґРёРЅР°С‚Р° РїСЂРѕС‚РёРІРЅРёРєР° Y "<<getMPosY()<<std::endl;
 	if(mPosY < 100)
 		moveStraight();
 	if ( (bullet.getMPosX()+20 > mPosX &&  bullet.getMPosX() < mPosX+ 20) && bullet.getMPosY() < mPosY)
@@ -169,7 +169,7 @@ void Enemy::move(Bullet &bullet)
 
 }
 
-bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - налево
+bool Enemy::predicatMove(const std::vector<double>& data)// 1 - РЅР°РїСЂР°РІРѕ, 0 - РЅР°Р»РµРІРѕ
 {
 	std::random_device random_device;
 	std::mt19937 engine{ random_device() };
@@ -210,7 +210,7 @@ bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - нал
 
 }
 
-bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
+bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - РµСЃР»Рё РґРІРёРіР°С‚СЊСЃСЏ РїСЂРё РІРёРґРµ РїСѓР»Рё, 0 - РµСЃР»Рё РЅРµС‚
 {
 	if (data[1]+ 20 > mPosX && data[1] < mPosX+20 )
 		return 1;
@@ -218,24 +218,24 @@ bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двиг
 }
 
 
-bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
+bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - РµСЃР»Рё РґРІРёРіР°С‚СЊСЃСЏ РїСЂРё РІРёРґРµ РІСЂР°РіР°, 0 - РµСЃР»Рё РЅРµС‚
 {
 //	if (data[0]+ 20 > mPosX && data[0] < mPosX+20 )
 //		return 0;
 //	return 1;
-	if (data[0] > 0 || data[1] > 0) // если в зоне видимости
+	if (data[0] > 0 || data[1] > 0) // РµСЃР»Рё РІ Р·РѕРЅРµ РІРёРґРёРјРѕСЃС‚Рё
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
+bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - РµСЃР»Рё РІРїСЂР°РІРѕ, 0 - РµСЃР»Рё РЅР°Р»РµРІРѕ
 {
 	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
 		return 1;
 	return 0;
 }
 
-bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
+bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - РµСЃР»Рё РІРїСЂР°РІРѕ, 0 - РµСЃР»Рё РЅР°Р»РµРІРѕ
 {
 	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
 		return 1;
@@ -286,12 +286,12 @@ bool Enemy::predicatCheckAllyRight(const std::vector<double>& data)
 
 unsigned Enemy::input()
 {
-	// Чтение данных с сенсоров
-	std::vector<double> sensor_data(_sensors.size()); // Данные с сенсоров
+	// Р§С‚РµРЅРёРµ РґР°РЅРЅС‹С… СЃ СЃРµРЅСЃРѕСЂРѕРІ
+	std::vector<double> sensor_data(_sensors.size()); // Р”Р°РЅРЅС‹Рµ СЃ СЃРµРЅСЃРѕСЂРѕРІ
 	for (unsigned i = 0; i < sensor_data.size(); ++i)
 		sensor_data[i] = _sensors[i](id());
 
-	// Результаты выполнения функции предиката
+	// Р РµР·СѓР»СЊС‚Р°С‚С‹ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё РїСЂРµРґРёРєР°С‚Р°
 	unsigned pred = 0;
 //	pred |= (predicatCheckBullet(sensor_data));
 //	pred |= (predicatCheckDot(sensor_data)<<1);

@@ -1,7 +1,7 @@
 /*
  * SensorForPlayer.cc
  *
- *  Created on: 2 èþí. 2021 ã.
+ *  Created on: 2 Ð¸ÑŽÐ½. 2021 Ð³.
  *      Author: vanya
  */
 #include "Dot.h"
@@ -22,7 +22,7 @@ int SensorForPlayer::location(Enemy &enemy, int x, int y)
 //	int pole = -100;
 	if ((enemy.getMPosX() < visionDotPosX + VISION_WIDTH && enemy.getMPosY()+enemy.DOT_HEIGHT > visionDotPosY) && (enemy.getMPosX()+ enemy.DOT_WIDTH > visionDotPosX && enemy.getMPosY()+enemy.DOT_HEIGHT > visionDotPosY) && (enemy.getMPosX()+ enemy.DOT_WIDTH > visionDotPosX && enemy.getMPosY() < visionDotPosY+VISION_HEIGHT) && (enemy.getMPosX() < visionDotPosX + VISION_WIDTH  && enemy.getMPosY() < visionDotPosY+VISION_HEIGHT) )
 	{
-//		std::cout<<"èãðîê íàõîäèòñÿ â ïîëå âèäèìîñòè"<<std::endl;
+//		std::cout<<"Ð¸Ð³Ñ€Ð¾Ðº Ð½Ð°Ñ…Ð¾Ð´Ð¸Ñ‚ÑÑ Ð² Ð¿Ð¾Ð»Ðµ Ð²Ð¸Ð´Ð¸Ð¼Ð¾ÑÑ‚Ð¸"<<std::endl;
 
 		return enemy.getMPosX();
 	}

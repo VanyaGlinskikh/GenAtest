@@ -1,7 +1,7 @@
 /*
  * bullet.h
  *
- *  Created on: 21 ˇÌ‚. 2021 „.
+ *  Created on: 21 —è–Ω–≤. 2021 –≥.
  *      Author: vanya
  */
 
@@ -9,7 +9,7 @@
 #define ENEMYBULLET_H_
 
 //#include "Enemy.h"
-#include "LTexGlobal.h"
+#include "global.h"
 class Enemy;
 class Genome;
 class Bullet;
