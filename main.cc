@@ -23,29 +23,10 @@
 #include <functional>
 #include <chrono>
 
-namespace {
-
 const char *GEN_RES_FILE_NAME = "genRes.csv";
-
-}
-
-namespace {
-
 const char *FAVORITE_FILE_NAME = "genFavorite.txt";
-
-}
-
-namespace {
-
 const char *GENOME_FILE_NAME = "gen.txt";
-
-}
-
-namespace {
-
 const char *STATS_FILE_NAME = "stat.txt";
-
-}
 
 bool init();
 
@@ -330,14 +311,6 @@ int main( int argc, char* args[] )
 				genome[i].add_section(sec1);
 				genome[i].add_section(sec2);  // 2^predic* states
 				enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-//				s1 = [&](unsigned id) -> double { return visionEnemySensor->location((*enemy[id]), dot); };
-//				enemy[i] ->add_sensor(s1);
-//				s2 = [&](unsigned id) -> double { return visionDotBulletSensor->location((*enemy[id]), bullet); };
-//				enemy[i] ->add_sensor(s2);
-//				s3 = [&](unsigned id) -> double { return visionAllySensor->location(enemy, (*enemy[id])); };
-//				enemy[i] ->add_sensor(s3);
-//				s4 = [&](unsigned id) -> double { return visionAllyBulletSensor->location(enemyBullet, (*enemy[id])); };
-//				enemy[i] ->add_sensor(s4);
 
 				s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
 				enemy[i] ->add_sensor(s1);
