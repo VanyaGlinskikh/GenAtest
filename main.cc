@@ -221,6 +221,19 @@ void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 	out.close();
 }
 
+std::random_device random_device;
+std::mt19937 engine{ random_device() };
+std::uniform_int_distribution<> dist2(0, 9);
+std::uniform_int_distribution<> forX(1, 620);
+std::uniform_int_distribution<> forY(20, 80);
+
+std::uniform_int_distribution<> forOrder(0, 254);
+std::uniform_int_distribution<> forSplice(0, 7);
+
+constexpr double Pmut = 0.02;
+std::uniform_real_distribution<double> mut(0.0, 1.0);
+
+
 
 int main( int argc, char* args[] )
 {
@@ -235,6 +248,7 @@ int main( int argc, char* args[] )
 	SDL_Color textColor = { 0, 0, 0, 255 };
 
 	SDL_Event e;
+
 
 
 	VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
@@ -260,17 +274,6 @@ int main( int argc, char* args[] )
 
 	std::vector<int> sec1(sec1Length);
 	std::vector<int> sec2(sec2Length);
-	std::random_device random_device;
-	std::mt19937 engine{ random_device() };
-	std::uniform_int_distribution<> dist2(0, 9);
-	std::uniform_int_distribution<> forX(1, 620);
-	std::uniform_int_distribution<> forY(20, 80);
-
-	std::uniform_int_distribution<> forOrder(0, 254);
-	std::uniform_int_distribution<> forSplice(0, 7);
-
-	constexpr double Pmut = 0.02;
-	std::uniform_real_distribution<double> mut(0.0, 1.0);
 
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		for (int k = 0; k < sec1Length; ++k)
