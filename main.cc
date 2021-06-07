@@ -24,9 +24,6 @@
 #include <chrono>
 #include "LTexGlobal.h"
 
-SDL_Window* gWindow = NULL;
-TTF_Font *gFont = NULL;
-
 LTexture gEnemyBulletTexture;
 LTexture gBulletTexture;
 LTexture gEnemyTexture;

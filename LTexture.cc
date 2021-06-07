@@ -5,7 +5,6 @@
  *      Author: vanya
  */
 #include "LTexGlobal.h"
-SDL_Renderer* gRenderer = NULL;
 LTexture::LTexture()
 {
 	//Initialize
