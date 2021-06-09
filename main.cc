@@ -137,13 +137,16 @@ void close()
 	SDL_Quit();
 }
 
-//struct GraficCord
-//{
-//	float generation;        // поколение
-//	float avResFF;    // среднее значение фф у 8 лучших
-//	GraficCord(float g, float a) : generation(g), avResFF(a)
-//	{}
-//};
+struct СoefficientsAndMode
+{
+    std::vector<double> coef;
+    int mode;
+
+    СoefficientsAndMode(std::vector<double> c, double m) : coef(c), mode(m)
+    {}
+};
+
+
 
 void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 		const std::vector<int> &indices)
@@ -151,7 +154,7 @@ void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-	std::cout<<" запись произошла  "<< std::endl;
+//	std::cout<<" запись произошла  "<< std::endl;
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 		out << sortEnemy[indices[i]]->fitnessFunction() << std::endl;
@@ -164,7 +167,7 @@ void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
 	std::ofstream out(GENOME_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-	std::cout<<" запись произошла  "<< std::endl;
+//	std::cout<<" запись произошла  "<< std::endl;
 	for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
 		out <<" существо "<<n<<std::endl;
 		for (unsigned i = 0; i < 2; ++i) {
@@ -187,7 +190,7 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
 		if (not out.is_open()) return;
 
-		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+//		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
 		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
 		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 		out <<"\n";
@@ -200,6 +203,7 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 			out <<"\n";
 		}
 		out.close();
+
 	}
 }
 
@@ -219,6 +223,20 @@ void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 			<< sortEnemy[indices[7]]->fitnessFunction() << std::endl;
 
 	out.close();
+}
+
+void writeCoef(){
+	СoefficientsAndMode cam = {{1.,2.,3.,4.,5.,6.,7.}, 1};
+	std::ofstream camFileout("СoefficientsAndMode.txt");
+//	if (not camFileout.is_open()) return;
+	if (camFileout.is_open())
+		{
+		std::cout<<"SHTO YA NADELAL"<<std::endl;
+			for (unsigned i = 0; i < cam.coef.size(); ++i) {
+				camFileout <<cam.coef[i]<< " "<<std::endl;
+			}
+		}
+	camFileout.close();
 }
 
 std::random_device random_device;
@@ -241,7 +259,6 @@ int main( int argc, char* args[] )
 	if ( not loadMedia()) return 2;
 
 	bool quit = false;
-
 	std::stringstream helthText;
 	std::stringstream generationText;
 
@@ -256,9 +273,10 @@ int main( int argc, char* args[] )
 	VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
 	VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
 
-
 	Dot dot;
 	Bullet bullet;
+
+
 	std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
 	std::vector<Genome> genome(NUMBEROFOPPONENTS);
 	std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
@@ -267,11 +285,14 @@ int main( int argc, char* args[] )
 	Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
 	Enemy::ActorFunc f1, f2, f3, f4, f5;
 
+
 	int sec1Length = (enemy[1]->MAX_STATES);
 	int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
 
 	std::vector<int> sec1(sec1Length);
 	std::vector<int> sec2(sec2Length);
+
+	writeCoef();
 
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		for (int k = 0; k < sec1Length; ++k)
@@ -318,7 +339,6 @@ int main( int argc, char* args[] )
 	std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 	std::vector<uint8_t>  order;
 	std::vector<int> indices(NUMBEROFOPPONENTS);
-
 	std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 
 	double favoriteGen = 0.;
@@ -520,7 +540,7 @@ int main( int argc, char* args[] )
 			dot.resetHealth();
 
 
-			std::cout<<"время прошло"<<std::endl;
+//			std::cout<<"время прошло"<<std::endl;
 			start = clk::now();
 			stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 		}
