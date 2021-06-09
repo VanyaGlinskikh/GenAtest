@@ -7,7 +7,7 @@
 
 class EnemyBullet;
 class Enemy;
-class SensorForPlayer;
+//class SensorForPlayer;
 class Dot
 {
     public:
@@ -46,6 +46,6 @@ class Dot
 		int _helth;
 		bool _shot;
 		bool _voidShot;
-		SensorForPlayer *sensorForPlayer;
+//		SensorForPlayer *sensorForPlayer;
 };
 #endif
