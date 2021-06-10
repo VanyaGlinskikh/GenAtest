@@ -264,21 +264,21 @@ void create_enemies() {
 		genome[i].add_section(sec1);
 		genome[i].add_section(sec2); // 2^predic* states
 		enemy[i] = std::make_shared<Enemy>(i, genome[i]);
-		//		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
-		//		enemy[i] ->add_sensor(s1);
-		//		s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
-		//		enemy[i] ->add_sensor(s2);
-		//		s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
-		//		enemy[i] ->add_sensor(s3);
-		//		s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
-		//		enemy[i] ->add_sensor(s4);
-		//		s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
-		//		enemy[i] ->add_sensor(s5);
-		//		s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
-		//		enemy[i] ->add_sensor(s6);
-		f1 = [&](unsigned id) {
-			enemy[id]->moveStraight();
-		};
+
+		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
+		enemy[i] ->add_sensor(s1);
+		s2 = [&](unsigned id) -> double { return visionEnemySensorRight->location((*enemy[id]), dot); };
+		enemy[i] ->add_sensor(s2);
+		s3 = [&](unsigned id) -> double { return visionDotBulletSensorLeft->location((*enemy[id]), bullet); };
+		enemy[i] ->add_sensor(s3);
+		s4 = [&](unsigned id) -> double { return visionDotBulletSensorRight->location((*enemy[id]), bullet); };
+		enemy[i] ->add_sensor(s4);
+		s5 = [&](unsigned id) -> double { return visionAllySensorLeft->location(*enemy[id], enemy, enemyIdOnTheField); };
+		enemy[i] ->add_sensor(s5);
+		s6 = [&](unsigned id) -> double { return visionAllySensorRight->location(*enemy[id], enemy, enemyIdOnTheField); };
+		enemy[i] ->add_sensor(s6);
+
+		f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 		enemy[i]->add_actor(f1);
 		f2 = [&](unsigned id) {
 			enemy[id]->moveLeft();

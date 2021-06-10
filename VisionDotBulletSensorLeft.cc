@@ -29,7 +29,8 @@ int VisionDotBulletSensorLeft::location(Enemy &enemy, Bullet &bullet)
 	pCA = (centerEnemyPosX-cX)*(kY-cY)-(centerEnemyPosY-cY)*(kX-cX);
 
 		if (pAB < 0 && pBC < 0 && pCA < 0)
-			std::cout<<"ВНУТРИ ТРЕУГОЛЬНИКА  "<<std::endl;
+			return 1;
+//			std::cout<<"ВНУТРИ ТРЕУГОЛЬНИКА  "<<std::endl;
 
 		return -100;
 

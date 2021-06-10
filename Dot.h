@@ -46,6 +46,6 @@ class Dot
 		int _helth;
 		bool _shot;
 		bool _voidShot;
-		SensorForPlayer *sensorForPlayer;
+//		SensorForPlayer *sensorForPlayer;
 };
 #endif

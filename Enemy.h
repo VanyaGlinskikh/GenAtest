@@ -146,8 +146,6 @@ class Enemy
 
 		int getId(){return _id;};
 
-//		bool k1 = getHittingTheDot()  > 0;
-//		bool k2 = getHittingTheAlly() > 0;
 
 		double k1 = 10.;
 		double k2 = 6.;

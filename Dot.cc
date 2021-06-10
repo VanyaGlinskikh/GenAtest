@@ -8,11 +8,11 @@
 #include "Dot.h"
 #include "EnemyBullet.h"
 #include "Enemy.h"
-#include "SensorForPlayer.h"
+//#include "SensorForPlayer.h"
 
 Dot::Dot()
 {
-	sensorForPlayer = new SensorForPlayer;
+//	sensorForPlayer = new SensorForPlayer;
     mPosX = 100;
     mPosY = 340;
     _helth = 100;
