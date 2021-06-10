@@ -152,10 +152,10 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 
 void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {
-	if (	enemyBullet.getMPosX() + EnemyBullet::WIDTH > position().x and
-			enemyBullet.getMPosX() < position().x + WIDTH and
-			enemyBullet.getMPosY() + EnemyBullet::HEIGHT > position().y and
-			enemyBullet.getMPosY() < position().y + HEIGHT )
+	if (	enemyBullet.position().x + EnemyBullet::WIDTH > position().x and
+			enemyBullet.position().x < position().x + WIDTH and
+			enemyBullet.position().y + EnemyBullet::HEIGHT > position().y and
+			enemyBullet.position().y < position().y + HEIGHT )
 	{
 	//	    	std::cout<<"в тебя попали"<<std::endl;
 		if (getHealth() > 0)
@@ -164,8 +164,8 @@ void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 		if (getHealth() == 0) // FIXME: сделать по-человечески
 			setPosition(-100, position().y);
 
-		enemyBullet.setPosY(-200);
-		enemyBullet.setPosX(-200);
+		// FIXME: сделать по-человечески
+		enemyBullet.setPosition(-200, -200);
 		enemy.upHittingTheDot();
 	//	    	enemy.upShotCount();
 

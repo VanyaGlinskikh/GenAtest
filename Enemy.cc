@@ -121,9 +121,10 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 void Enemy::moveShot(EnemyBullet &enemyBullet)
 {
 //	std::cout<<" значение Y у пули противника  "<<enemyBullet.getMPosY() << std::endl;
-    if (enemyBullet.getMPosY() == -200){
+    if (enemyBullet.position().y == -200){
     	upShotCount();
-    	enemyBullet.setPosY(-50);
+    	// FIXME: сделать по-человечески
+    	enemyBullet.setPosition(enemyBullet.position().x, -50);
 		enemyBullet.setVelY(1);
     }
 

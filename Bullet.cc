@@ -66,14 +66,13 @@ void Bullet::hittingTheEnemy(Enemy &enemy)
 
 void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
 {
-	if (	position().x + WIDTH > enemyBullet.getMPosX() and
-			position().x < enemyBullet.getMPosX() + EnemyBullet::WIDTH and
-			position().y < enemyBullet.getMPosY() + EnemyBullet::HEIGHT and
-			position().y + HEIGHT > enemyBullet.getMPosY()) // TODO: заменить на Rectangle2D
+	if (	position().x + WIDTH > enemyBullet.position().x and
+			position().x < enemyBullet.position().x + EnemyBullet::WIDTH and
+			position().y < enemyBullet.position().y + EnemyBullet::HEIGHT and
+			position().y + HEIGHT > enemyBullet.position().y) // TODO: заменить на Rectangle2D
 		{
 //		std::cout<<"убил"<<std::endl;
-		enemyBullet.setPosX(-50);
-		enemyBullet.setPosY(-50);
+			enemyBullet.setPosition(-50, -50); // FIXME: сделать по-человечески
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 //		enemyBullet.setVelY(0);
 			setPosition(-1000, -1000); // FIXME: сделать по-человечески

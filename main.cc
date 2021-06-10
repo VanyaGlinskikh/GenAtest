@@ -517,8 +517,8 @@ int main( int argc, char* args[] )
 						forX(random_device),
 						forY(random_device));
 				enemy[k]->setEnemyOnTheField(false);
-				enemyBullet[k].setPosX(-200);
-				enemyBullet[k].setPosY(-200);
+				// FIXME: сделать по-человечески
+				enemyBullet[k].setPosition(-200, -200);
 
 			}
 
