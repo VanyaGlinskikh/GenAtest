@@ -351,9 +351,8 @@ int main( int argc, char* args[] )
 			dot.handleEvent( e );
 			bullet.handleEvent(e, dot);
 		}
-		if (bullet.getMPosY() == 1000){
-			bullet.setPosY(dot.getMPosY());
-			bullet.setPosX(dot.getMPosX());
+		if (bullet.position().y == 1000){
+			bullet.setPosition(dot.getMPosX(), dot.getMPosY());
 			bullet.setVelY(-5);
 		}
 
@@ -521,7 +520,7 @@ int main( int argc, char* args[] )
 
 			}
 
-			bullet.setPosY(1000);
+			bullet.setPosition(bullet.position().x, 1000); // FIXME: сделать по-человечески
 			enemyOnTheField = 0;
 			generationCounter++;
 			SumFF = 0;

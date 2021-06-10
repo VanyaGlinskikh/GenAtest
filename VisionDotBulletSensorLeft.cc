@@ -18,8 +18,8 @@ int VisionDotBulletSensorLeft::location(Enemy &enemy, Bullet &bullet)
 {
 	centerEnemyPosX = enemy.getMPosX()+(enemy.DOT_WIDTH/2);
 	centerEnemyPosY = enemy.getMPosY()+(enemy.DOT_HEIGHT/2);
-	kX = bullet.getMPosX()+(bullet.BULLET_WIDTH/2);;
-	kY = bullet.getMPosY()+(bullet.BULLET_HEIGHT/2);
+	kX = bullet.position().x+(Bullet::WIDTH/2);
+	kY = bullet.position().y+(Bullet::HEIGHT/2);
 	bX = centerEnemyPosX - 150;
 	bY = centerEnemyPosY + 200;
 	cX = centerEnemyPosX + 10;
