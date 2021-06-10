@@ -37,14 +37,10 @@ Enemy::Enemy(unsigned id, Genome &genome)
 			_action_table[i][j] = (genome(1, i * (1 << PREDICATE_COUNT) + j) & 0x0fffffff) % MAX_STATES;
 
 
-    mPosX = -300;
-    mPosY = -300;
+	// FIXME: сделать по-человечески
+	setPosition(-300, -300);
 
     _enemyOnTheField= false;
-
-
-//    mPosX = rand() % 620 + 1;
-//    mPosY = (rand() % 80 + 20);
 
 
    _tickCount = 0;
@@ -59,21 +55,11 @@ Enemy::Enemy(unsigned id, Genome &genome)
     mVelY = 1;
 }
 
-int Enemy::getMPosX()
-{
-	return mPosX;
-}
-
-int Enemy::getMPosY()
-{
-	return mPosY;
-}
-
 void Enemy::moveStraight()
 {
 	upTotalNumberOfMovements();
-	if (mPosY+20 != SCREEN_HEIGHT){
-		mPosY += mVelY;
+	if (position().y + HEIGHT != SCREEN_HEIGHT){
+		translate(0, mVelY);
 		upNumberOfMovements();
 		upNumberOfDown();
 		resetStandMovements();
@@ -86,8 +72,8 @@ void Enemy::moveStraight()
 void Enemy::moveBack()
 {
 	upTotalNumberOfMovements();
-	if (mPosY != 0){
-		mPosY -= mVelY;
+	if (position().y > 0){
+		translate(0, -mVelY);
 		upNumberOfMovements();
 		resetStandMovements();
 	}
@@ -98,8 +84,8 @@ void Enemy::moveBack()
 void Enemy::moveRight()
 {
 	upTotalNumberOfMovements();
-	if (mPosX+20 != SCREEN_WIDTH){
-		mPosX += mVelX;
+	if (position().x+WIDTH != SCREEN_WIDTH){
+		translate(mVelX, 0);
 		upNumberOfMovements();
 		resetStandMovements();
 	}
@@ -110,8 +96,8 @@ void Enemy::moveRight()
 void Enemy::moveLeft()
 {
 	upTotalNumberOfMovements();
-	if (mPosX != 0){
-		mPosX -= mVelX;
+	if (position().x > 0){
+		translate(-mVelX, 0);
 		upNumberOfMovements();
 		resetStandMovements();
 	}
@@ -124,7 +110,7 @@ void Enemy::moveLeft()
 void Enemy::moveBull(EnemyBullet &enemyBullet)
 {
 
-		enemyBullet.move(mPosX, mPosY);
+		enemyBullet.move(position().x, position().y);
 //		if (enemyBullet.getMPosY() == -200)
 ////			upShotCount();
 		enemyBullet.render();
@@ -146,26 +132,24 @@ void Enemy::moveShot(EnemyBullet &enemyBullet)
 void Enemy::move(Bullet &bullet)
 {
 //	std::cout<<"координата противника X "<<getMPosX()<<"координата противника Y "<<getMPosY()<<std::endl;
-	if(mPosY < 100)
+	if(position().y < 100)
 		moveStraight();
-	if (	bullet.position().x+20 > mPosX and
-			bullet.position().x < mPosX+ 20 and
-			bullet.position().y < mPosY)
+	if (	bullet.position().x + Bullet::WIDTH > position().x and
+			bullet.position().x < position().x + WIDTH and
+			bullet.position().y < position().y)
 	{
-		mPosX = rand() % 620 + 1;
-		mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+		setPosition(
+				rand() % 620 + 1,
+				-SCREEN_HEIGHT - (rand() % 80 + 20)); // FIXME: What is this I don't even
 		mVelY = 0;
 	}
 
-	if( ( mPosY + HEIGHT > SCREEN_HEIGHT ) )
+	if( ( position().y + HEIGHT > SCREEN_HEIGHT ) )
 	{
-		mPosX = rand() % 620 + 1;
-		mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+		setPosition(
+				rand() % 620 + 1,
+				-SCREEN_HEIGHT - (rand() % 80 + 20)); // FIXME: What is this I don't even
 	}
-
-
-
-
 }
 
 bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - налево
@@ -174,31 +158,32 @@ bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 
 	std::mt19937 engine{ random_device() };
 	std::uniform_int_distribution<> rand(0, 1);
 	if (predicatCheckBullet(data))
-	{
-		if ((data[1] ==  mPosX || data[1]+20 > mPosX) && data[1] > 0 && data[1] < mPosX)
+	{ // FIXME: что такое 20 ?
+		if ((data[1] ==  position().x or data[1]+20 > position().x) and
+				data[1] > 0 && data[1] < position().x)
 			return 1;
 		else
 			return 0;
 
 	}
 	else if (predicatCheckDot(data))
-	{
-		if ( data[0]+20 > mPosX && data[0] > 0 && data[0] < mPosX)
+	{ // FIXME: что такое 20 ?
+		if ( data[0]+20 > position().x and data[0] > 0 && data[0] < position().x)
 			return 0;
 		else
 			return 1;
 
 	}
 	else if (predicatCheckAlly(data))
-	{
-		if ( data[2]+20 > mPosX && data[2] > 0 && data[2] < mPosX)
+	{ // FIXME: что такое 20 ?
+		if ( data[2]+20 > position().x && data[2] > 0 && data[2] < position().x)
 			return 1;
 		else
 			return 0;
 	}
 	else if (predicatCheckAllyBullet(data))
-	{
-		if ( data[3]+20 > mPosX && data[3] > 0 && data[3] < mPosX)
+	{ // FIXME: что такое 20 ?
+		if ( data[3]+20 > position().x && data[3] > 0 && data[3] < position().x)
 			return 1;
 		else
 			return 0;
@@ -210,8 +195,8 @@ bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 
 }
 
 bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
-{
-	if (data[1]+ 20 > mPosX && data[1] < mPosX+20 )
+{ // FIXME: что такое 20 ?
+	if (data[1]+ 20 > position().x && data[1] < position().x+20 )
 		return 1;
 	return 0;
 }
@@ -228,15 +213,15 @@ bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если д�
 }
 
 bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
-{
-	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
+{ // FIXME: что такое 20 ?
+	if (data[2]+ 20 > position().x && data[2] < position().x+20 )
 		return 1;
 	return 0;
 }
 
 bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
-{
-	if (data[2]+ 20 > mPosX && data[2] < mPosX+20 )
+{ // FIXME: что такое 20 ?
+	if (data[2]+ 20 > position().x && data[2] < position().x+20 )
 		return 1;
 	return 0;
 }
@@ -333,7 +318,7 @@ void Enemy::tick()
 void Enemy::render(/*double an, int ves*/)
 {
 //	if (ves == -100)
-		gEnemyTexture.render( mPosX, mPosY);
+		gEnemyTexture.render( position().x, position().y);
 //	else
 //		gEnemyTexture.render( mPosX, mPosY, NULL, an);
 }

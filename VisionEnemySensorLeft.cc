@@ -16,10 +16,11 @@
 
 int VisionEnemySensorLeft::location(Enemy &enemy, Dot &dot)
 {
-	centerEnemyPosX = enemy.getMPosX()+(Enemy::WIDTH/2);
-	centerEnemyPosY = enemy.getMPosY()+(Enemy::HEIGHT/2);
-	kX = dot.position().x+(Dot::WIDTH/2);
-	kY = dot.position().y+(Dot::HEIGHT/2);
+	centerEnemyPosX = enemy.position().x + Enemy::WIDTH / 2;
+	centerEnemyPosY = enemy.position().y + Enemy::HEIGHT / 2;
+	kX = dot.position().x + Dot::WIDTH / 2;
+	kY = dot.position().y + Dot::HEIGHT / 2;
+	// FIXME: что это за магические числа?
 	bX = centerEnemyPosX - 150;
 	bY = centerEnemyPosY + 350;
 	cX = centerEnemyPosX + 10;

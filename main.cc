@@ -384,8 +384,9 @@ int main( int argc, char* args[] )
 		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 			if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
 					enemy[i] ->setEnemyOnTheField(true);
-					enemy[i]->setMPosX(forX(random_device));
-					enemy[i]->setMPosY(forY(random_device));
+					enemy[i]->setPosition(
+							forX(random_device),
+							forY(random_device));
 					enemyOnTheField++;
 					enemyIdOnTheField.push_back(enemy[i]->getId());
 //							std::cout<<" существ на поле:  "<<enemyOnTheField<<std::endl;
@@ -512,8 +513,9 @@ int main( int argc, char* args[] )
 				enemy[k]->resetHittingTheAlly();
 				enemy[k]->resetHittingTheDot();
 				enemy[k]->setDead(false);
-				enemy[k]->setMPosX(forX(random_device));
-				enemy[k]->setMPosY(forY(random_device));
+				enemy[k]->setPosition(
+						forX(random_device),
+						forY(random_device));
 				enemy[k]->setEnemyOnTheField(false);
 				enemyBullet[k].setPosX(-200);
 				enemyBullet[k].setPosY(-200);

@@ -67,11 +67,13 @@ void EnemyBullet::move(int eX, int eY)
 
 void EnemyBullet::hittingTheAlly(Enemy &enemy)
 {
-	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY())
+	if (	mPosX + WIDTH > enemy.position().x and
+			mPosX < enemy.position().x + Enemy::WIDTH and
+			mPosY < enemy.position().y)
 			{
 
 //		std::cout<<"убил своего"<<std::endl;
-				enemy.setPosX();
+				enemy.setPosX(); // FIXME: убрать эту гадость!
 				enemy.setPosY();
 	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 				enemy.setVelX(0);
@@ -90,9 +92,9 @@ void EnemyBullet::hittingTheAlly(Enemy &enemy)
 
 void EnemyBullet::hittingTheBullet(Bullet &bullet)
 {
-	if (	mPosX+20 > bullet.position().x and
-			mPosX < bullet.position().x + 20 and
-			mPosY+20 >= bullet.position().y)
+	if (	mPosX+WIDTH > bullet.position().x and
+			mPosX < bullet.position().x + Bullet::WIDTH and
+			mPosY+HEIGHT >= bullet.position().y)
 	{
 
 //		std::cout<<"убил своего"<<std::endl;

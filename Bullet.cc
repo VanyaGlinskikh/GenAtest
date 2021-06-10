@@ -45,13 +45,13 @@ void Bullet::move(Dot &dot)
 }
 void Bullet::hittingTheEnemy(Enemy &enemy)
 {
-	if ( 	position().x + WIDTH > enemy.getMPosX() and
-			position().x < enemy.getMPosX() + Enemy::WIDTH and
-			position().y < enemy.getMPosY() + Enemy::HEIGHT and
-			position().y + HEIGHT > enemy.getMPosY()) // TODO: заменить на Rectangle2D
+	if ( 	position().x + WIDTH > enemy.position().x and
+			position().x < enemy.position().x + Enemy::WIDTH and
+			position().y < enemy.position().y + Enemy::HEIGHT and
+			position().y + HEIGHT > enemy.position().y) // TODO: заменить на Rectangle2D
 		{
 //		std::cout<<"убил"<<std::endl;
-			enemy.setPosX();
+			enemy.setPosX(); // FIXME: убрать эту гадость!
 			enemy.setPosY();
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 			enemy.setVelX(0);
