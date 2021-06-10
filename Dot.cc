@@ -13,24 +13,14 @@
 Dot::Dot()
 {
 //	sensorForPlayer = new SensorForPlayer;
-    mPosX = 100;
-    mPosY = 340;
-    _helth = 100;
+	setPosition(DEFAULT_X, DEFAULT_Y);
+
+    _health = 100;
 
     mVelX = -3;
     mVelY = 0;
     _shot = false;
     _voidShot = false;
-}
-
-int Dot::getMPosX()
-{
-	return mPosX;
-}
-
-int Dot::getMPosY()
-{
-	return mPosY;
 }
 
 void Dot::handleEvent( SDL_Event& e)
@@ -42,10 +32,10 @@ void Dot::handleEvent( SDL_Event& e)
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY -= DOT_VEL; break;
-            case SDLK_DOWN: mVelY += DOT_VEL; break;
-            case SDLK_LEFT: mVelX -= DOT_VEL; break;
-            case SDLK_RIGHT: mVelX += DOT_VEL; break;
+            case SDLK_UP: mVelY -= VELOCITY; break;
+            case SDLK_DOWN: mVelY += VELOCITY; break;
+            case SDLK_LEFT: mVelX -= VELOCITY; break;
+            case SDLK_RIGHT: mVelX += VELOCITY; break;
 //            case SDLK_k: bullet.mVelY -= bullet.BULLET_VEL; break;
 
         }
@@ -57,10 +47,10 @@ void Dot::handleEvent( SDL_Event& e)
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY += DOT_VEL; break;
-            case SDLK_DOWN: mVelY -= DOT_VEL; break;
-            case SDLK_LEFT: mVelX += DOT_VEL; break;
-            case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+            case SDLK_UP: mVelY += VELOCITY; break;
+            case SDLK_DOWN: mVelY -= VELOCITY; break;
+            case SDLK_LEFT: mVelX += VELOCITY; break;
+            case SDLK_RIGHT: mVelX -= VELOCITY; break;
 
         }
     }
@@ -132,9 +122,9 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 //	}
 
 
-    if (mPosX <= 0)
+    if (position().x <= 0)
     	mVelX = 3;
-    if (mPosX + DOT_WIDTH >= SCREEN_WIDTH)
+    if (position().x + WIDTH >= SCREEN_WIDTH)
     	mVelX = -3;
 
 
@@ -147,17 +137,14 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 //        mPosX -= mVelX;
 //    }
 
-    	mPosX += mVelX;
-
-
-    //Move the dot up or down
-    mPosY += mVelY;
+    //Move the dot
+	translate(mVelX, mVelY);
 
     //If the dot went too far up or down
-    if( ( mPosY < 0 ) || ( mPosY + DOT_HEIGHT > SCREEN_HEIGHT ) )
+    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
     {
         //Move back
-        mPosY -= mVelY;
+        translate(0, -mVelY);
     }
 
 }
@@ -165,24 +152,29 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 
 void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {
-	  if ( (enemyBullet.getMPosX()+20 > mPosX &&  enemyBullet.getMPosX() < mPosX+ 20) && enemyBullet.getMPosY()+20 > mPosY && enemyBullet.getMPosY() < mPosY+20 )
-	    {
-//	    	std::cout<<"в тебя попали"<<std::endl;
-	    	if (getHealth() > 0)
-	    		setHealth();
-	    	if (getHealth() == 0)
-				mPosX = -100;
-	    	enemyBullet.setPosY(-200);
-	    	enemyBullet.setPosX(-200);
-	    	enemy.upHittingTheDot();
-//	    	enemy.upShotCount();
+	if (	enemyBullet.getMPosX() + EnemyBullet::WIDTH > position().x and
+			enemyBullet.getMPosX() < position().x + WIDTH and
+			enemyBullet.getMPosY() + EnemyBullet::HEIGHT > position().y and
+			enemyBullet.getMPosY() < position().y + HEIGHT )
+	{
+	//	    	std::cout<<"в тебя попали"<<std::endl;
+		if (getHealth() > 0)
+			setHealth();
 
-	    }
+		if (getHealth() == 0) // FIXME: сделать по-человечески
+			setPosition(-100, position().y);
+
+		enemyBullet.setPosY(-200);
+		enemyBullet.setPosX(-200);
+		enemy.upHittingTheDot();
+	//	    	enemy.upShotCount();
+
+	}
 }
 
 void Dot::render()
 {
-	gDotTexture.render( mPosX, mPosY );
+	gDotTexture.render( position().x, position().y );
 }
 
 

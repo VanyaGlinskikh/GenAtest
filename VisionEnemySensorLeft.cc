@@ -16,10 +16,10 @@
 
 int VisionEnemySensorLeft::location(Enemy &enemy, Dot &dot)
 {
-	centerEnemyPosX = enemy.getMPosX()+(enemy.DOT_WIDTH/2);
-	centerEnemyPosY = enemy.getMPosY()+(enemy.DOT_HEIGHT/2);
-	kX = dot.getMPosX()+(dot.DOT_WIDTH/2);;
-	kY = dot.getMPosY()+(dot.DOT_HEIGHT/2);
+	centerEnemyPosX = enemy.getMPosX()+(Enemy::WIDTH/2);
+	centerEnemyPosY = enemy.getMPosY()+(Enemy::HEIGHT/2);
+	kX = dot.position().x+(Dot::WIDTH/2);
+	kY = dot.position().y+(Dot::HEIGHT/2);
 	bX = centerEnemyPosX - 150;
 	bY = centerEnemyPosY + 350;
 	cX = centerEnemyPosX + 10;

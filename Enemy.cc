@@ -157,7 +157,7 @@ void Enemy::move(Bullet &bullet)
 		mVelY = 0;
 	}
 
-	if( ( mPosY + DOT_HEIGHT > SCREEN_HEIGHT ) )
+	if( ( mPosY + HEIGHT > SCREEN_HEIGHT ) )
 	{
 		mPosX = rand() % 620 + 1;
 		mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);

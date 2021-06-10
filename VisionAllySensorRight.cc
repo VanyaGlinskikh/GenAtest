@@ -18,12 +18,12 @@ int VisionAllySensorRight::location(Enemy &enemy2, std::vector<std::shared_ptr<E
 {
 
 
-	centerEnemyPosX = enemy2.getMPosX()+(enemy2.DOT_WIDTH/2);
-	centerEnemyPosY = enemy2.getMPosY()+(enemy2.DOT_HEIGHT/2);
+	centerEnemyPosX = enemy2.getMPosX()+(enemy2.WIDTH/2);
+	centerEnemyPosY = enemy2.getMPosY()+(enemy2.HEIGHT/2);
 	for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 		if (enemy2.getId() != enemy[enemyIdOnTheField[i]]->getId()){
-			kX = enemy[enemyIdOnTheField[i]]->getMPosX()+(enemy[enemyIdOnTheField[i]]->DOT_WIDTH/2);
-			kY = enemy[enemyIdOnTheField[i]]->getMPosY()+(enemy[enemyIdOnTheField[i]]->DOT_HEIGHT/2);
+			kX = enemy[enemyIdOnTheField[i]]->getMPosX()+(enemy[enemyIdOnTheField[i]]->WIDTH/2);
+			kY = enemy[enemyIdOnTheField[i]]->getMPosY()+(enemy[enemyIdOnTheField[i]]->HEIGHT/2);
 			bX = centerEnemyPosX + 150;
 			bY = centerEnemyPosY + 200;
 			cX = centerEnemyPosX - 10;

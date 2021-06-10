@@ -33,8 +33,8 @@ class Enemy
 		 * Параметр - ID существа.
 		 */
 		using SensorFunc = std::function<double(unsigned)>;
-		static const int DOT_WIDTH = 20;
-		static const int DOT_HEIGHT = 20;
+		static const int WIDTH = 20;
+		static const int HEIGHT = 20;
 		static const int DOT_VEL = 10;
 
 		static constexpr unsigned MAX_ACTORS = 5;

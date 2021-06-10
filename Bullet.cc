@@ -26,7 +26,7 @@ void Bullet::handleEvent(SDL_Event& e, Dot &dot)
 	        //Adjust the velocity
 	        switch( e.key.keysym.sym )
 	        {
-	        case SDLK_z: setPosition(dot.getMPosX(), dot.getMPosY());
+	        case SDLK_z: setPosition(dot.position());
 			 	 	 	 mVelY -= VELOCITY; break;
 	        }
 	    }
@@ -46,8 +46,8 @@ void Bullet::move(Dot &dot)
 void Bullet::hittingTheEnemy(Enemy &enemy)
 {
 	if ( 	position().x + WIDTH > enemy.getMPosX() and
-			position().x < enemy.getMPosX() + Enemy::DOT_WIDTH and
-			position().y < enemy.getMPosY() + Enemy::DOT_HEIGHT and
+			position().x < enemy.getMPosX() + Enemy::WIDTH and
+			position().y < enemy.getMPosY() + Enemy::HEIGHT and
 			position().y + HEIGHT > enemy.getMPosY()) // TODO: заменить на Rectangle2D
 		{
 //		std::cout<<"убил"<<std::endl;
@@ -67,8 +67,8 @@ void Bullet::hittingTheEnemy(Enemy &enemy)
 void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
 {
 	if (	position().x + WIDTH > enemyBullet.getMPosX() and
-			position().x < enemyBullet.getMPosX() + EnemyBullet::BULLET_WIDTH and
-			position().y < enemyBullet.getMPosY() + EnemyBullet::BULLET_HEIGHT and
+			position().x < enemyBullet.getMPosX() + EnemyBullet::WIDTH and
+			position().y < enemyBullet.getMPosY() + EnemyBullet::HEIGHT and
 			position().y + HEIGHT > enemyBullet.getMPosY()) // TODO: заменить на Rectangle2D
 		{
 //		std::cout<<"убил"<<std::endl;

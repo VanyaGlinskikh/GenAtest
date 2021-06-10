@@ -352,7 +352,7 @@ int main( int argc, char* args[] )
 			bullet.handleEvent(e, dot);
 		}
 		if (bullet.position().y == 1000){
-			bullet.setPosition(dot.getMPosX(), dot.getMPosY());
+			bullet.setPosition(dot.position());
 			bullet.setVelY(-5);
 		}
 
