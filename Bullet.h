@@ -34,8 +34,6 @@ class Bullet: public Sprite
 		void hittingTheEnemy(Enemy &enemy);
 		void hittingTheEnemyBullet(EnemyBullet &enemybullet);
 
-		void render();
-
 		inline void setVelY(int v){mVelY = v;};
 
     private:

@@ -16,10 +16,11 @@
 
 int VisionDotBulletSensorRight::location(Enemy &enemy, Bullet &bullet)
 {
-	centerEnemyPosX = enemy.getMPosX()+(enemy.DOT_WIDTH/2);
-	centerEnemyPosY = enemy.getMPosY()+(enemy.DOT_HEIGHT/2);
-	kX = bullet.position().x+(Bullet::WIDTH/2);;
-	kY = bullet.position().y+(Bullet::HEIGHT/2);
+	centerEnemyPosX = enemy.position().x + Enemy::WIDTH / 2;
+	centerEnemyPosY = enemy.position().y + Enemy::HEIGHT / 2;
+	kX = bullet.position().x + Bullet::WIDTH / 2;
+	kY = bullet.position().y + Bullet::HEIGHT / 2;
+	// FIXME: что это за магические числа?
 	bX = centerEnemyPosX + 150;
 	bY = centerEnemyPosY + 200;
 	cX = centerEnemyPosX - 10;
