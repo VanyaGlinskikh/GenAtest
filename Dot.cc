@@ -13,6 +13,8 @@
 Dot::Dot()
 {
 	setTexture(&gDotTexture);
+	setDimensions(WIDTH, HEIGHT);
+
 //	sensorForPlayer = new SensorForPlayer;
 	setPosition(DEFAULT_X, DEFAULT_Y);
 
@@ -153,11 +155,7 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
 
 void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {
-	if (	enemyBullet.position().x + EnemyBullet::WIDTH > position().x and
-			enemyBullet.position().x < position().x + WIDTH and
-			enemyBullet.position().y + EnemyBullet::HEIGHT > position().y and
-			enemyBullet.position().y < position().y + HEIGHT )
-	{
+	if (rect().overlaps(enemyBullet.rect())) {
 	//	    	std::cout<<"в тебя попали"<<std::endl;
 		if (getHealth() > 0)
 			setHealth();

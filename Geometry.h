@@ -15,24 +15,26 @@ template <typename T>
 class Vector2D
 {
 public:
-	T x {}, y {};
+	T u {}, v {};
 	Vector2D() = default;
-	Vector2D(const Vector2D<T>& p): x(p.x), y(p.y) {}
-	Vector2D(T px, T py): x(px), y(py) {}
+	Vector2D(const Vector2D<T>& p): u(p.u), v(p.v) {}
+	Vector2D(T px, T py): u(px), v(py) {}
 
-	inline T length() const { return T(hypot(x, y)); }
+	inline void set(T nu, T nv) { u = nu; v = nv; }
+
+	inline T length() const { return T(hypot(u, v)); }
 
 	inline Vector2D<T> &operator +=(const Vector2D<T> &rhs)
 	{
-		x += rhs.x;
-		y += rhs.y;
+		u += rhs.u;
+		v += rhs.v;
 		return *this;
 	}
 
 	inline Vector2D<T> &operator -=(const Vector2D<T> &rhs)
 	{
-		x -= rhs.x;
-		y -= rhs.y;
+		u -= rhs.u;
+		v -= rhs.v;
 		return *this;
 	}
 };
@@ -40,25 +42,25 @@ public:
 template <typename T>
 inline Vector2D<T> operator +(const Vector2D<T> &lhs, const Vector2D<T> &rhs)
 {
-	return Vector2D<T>(lhs.x + rhs.x, lhs.y + rhs.y);
+	return Vector2D<T>(lhs.u + rhs.u, lhs.v + rhs.v);
 }
 
 template <typename T>
 inline Vector2D<T> operator -(const Vector2D<T> &lhs, const Vector2D<T> &rhs)
 {
-	return Vector2D<T>(lhs.x - rhs.x, lhs.y - rhs.y);
+	return Vector2D<T>(lhs.u - rhs.u, lhs.v - rhs.v);
 }
 
 template <typename T>
 inline Vector2D<T> operator -(const Vector2D<T> &rhs)
 {
-	return Vector2D<T>(-rhs.x, -rhs.y);
+	return Vector2D<T>(-rhs.u, -rhs.v);
 }
 
 template <typename T>
 inline T operator *(const Vector2D<T> &lhs, const Vector2D<T> &rhs)
 {
-	return lhs.x * rhs.x + lhs.y * rhs.y;
+	return lhs.u * rhs.u + lhs.v * rhs.v;
 }
 
 template <typename T>
@@ -72,7 +74,7 @@ public:
 
 	inline void set(T nx, T ny) { x = nx; y = ny; }
 	inline void translate(T dx, T dy) { x += dx; y += dy; }
-	inline void translate(const Vector2D<T>& v) { x += v.x; y += v.y; }
+	inline void translate(const Vector2D<T>& v) { x += v.u; y += v.v; }
 };
 
 template <typename T>
@@ -90,41 +92,70 @@ inline Vector2D<T> operator <<(const Point2D<T> &lhs, const Point2D<T> &rhs)
 template <typename T>
 inline Point2D<T> operator +(const Point2D<T> &lhs, const Vector2D<T> &rhs)
 {
-	return Point2D<T>(lhs.x + rhs.x, lhs.y + rhs.y);
+	return Point2D<T>(lhs.x + rhs.u, lhs.y + rhs.v);
 }
 
 template <typename T>
 class Rectangle2D
 {
 protected:
-	Point2D<T> _topleft, _bottomright;
-	T _width, _height;
+	Point2D<T> _topleft;
+	Point2D<T> _bottomright;
+	Vector2D<T> _size;
+
 public:
 	Rectangle2D() = default;
 	Rectangle2D(const Point2D<T>& topleft, const Vector2D<T>& size):
-		_topleft(topleft), _bottomright(topleft + size),
-		_width(size.x), _height(size.y)
+		_topleft(topleft), _bottomright(topleft + size), _size(size)
 	{
-		assert(size.x > 0);
-		assert(size.y > 0);
+		assert(size.u > 0);
+		assert(size.v > 0);
+	}
+
+	void setTopLeft(T x, T y)
+	{
+		_topleft.set(x, y);
+		_bottomright = _topleft + _size;
+	}
+
+	void setTopLeft(const Point2D<T> p)
+	{
+		_topleft = p;
+		_bottomright = _topleft + _size;
+	}
+
+	void setSize(int w, int h)
+	{
+		_size.set(w, h);
+		_bottomright = _topleft + _size;
+	}
+
+	void setSize(const Vector2D<T> s)
+	{
+		_size = s;
+		_bottomright = _topleft + _size;
+	}
+
+	void translate(T dx, T dy)
+	{
+		Vector2D<T> offset { dx, dy };
+		translate(offset);
 	}
 
 	void translate(const Vector2D<T> &offset)
 	{
-		_topleft += offset;
-		_bottomright += offset;
+		_topleft.translate(offset);
+		_bottomright.translate(offset);
 	}
 
-	inline T width() const { return _width; }
-	inline T height() const { return _height; }
-	inline Point2D<T> topleft() const { return _topleft; }
-	inline Point2D<T> topright() const { return Point2D<T>(_bottomright.x, _topleft.y); }
-	inline Point2D<T> bottomleft() const { return Point2D<T>(_topleft.x, _bottomright.y); }
-	inline Point2D<T> bottomright() const { return _bottomright; }
+	inline T width() const { return _size.u; }
+	inline T height() const { return _size.v; }
+	inline const Point2D<T> &topleft() const { return _topleft; }
+	inline const Point2D<T> &bottomright() const { return _bottomright; }
 
 	inline T area() const { return width() * height(); }
 
-	inline bool contains(const Point2D<T> &p)
+	inline bool contains(const Point2D<T> &p) const
 	{
 		if (	p.x >= _topleft.x and
 				p.x <= _bottomright.x and
@@ -135,7 +166,7 @@ public:
 		return false;
 	}
 
-	inline bool overlaps(const Rectangle2D<T> &r)
+	inline bool overlaps(const Rectangle2D<T> &r) const
 	{
 		if (	r.bottomright().y < topleft().y or
 				r.topleft().y > bottomright().y or

@@ -12,6 +12,7 @@
 Bullet::Bullet()
 {
 	setTexture(&gBulletTexture);
+	setDimensions(WIDTH, HEIGHT);
 	setPosition(0, 1000);
 
 	mVelX = 0;
@@ -35,8 +36,6 @@ void Bullet::handleEvent(SDL_Event& e, Dot &dot)
 
 void Bullet::move(Dot &dot)
 {
-
-
 	 if (position().y >= -10)
 		 translate(0, mVelY);
 	 else {
@@ -46,36 +45,28 @@ void Bullet::move(Dot &dot)
 }
 void Bullet::hittingTheEnemy(Enemy &enemy)
 {
-	if ( 	position().x + WIDTH > enemy.position().x and
-			position().x < enemy.position().x + Enemy::WIDTH and
-			position().y < enemy.position().y + Enemy::HEIGHT and
-			position().y + HEIGHT > enemy.position().y) // TODO: заменить на Rectangle2D
-		{
+	if ( rect().overlaps(enemy.rect())) {
 //		std::cout<<"убил"<<std::endl;
-			enemy.setPosX(); // FIXME: убрать эту гадость!
-			enemy.setPosY();
+		enemy.setPosX(); // FIXME: убрать эту гадость!
+		enemy.setPosY();
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-			enemy.setVelX(0);
-			enemy.setVelY(0);
-			setPosition(-1000, -1000); // FIXME: сделать по-человечески
+		enemy.setVelX(0);
+		enemy.setVelY(0);
+		setPosition(-1000, -1000); // FIXME: сделать по-человечески
 
-			enemy.setDead(true);
-			enemy.setEnemyOnTheField(false);
+		enemy.setDead(true);
+		enemy.setEnemyOnTheField(false);
 
-		}
+	}
 }
 
 void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
 {
-	if (	position().x + WIDTH > enemyBullet.position().x and
-			position().x < enemyBullet.position().x + EnemyBullet::WIDTH and
-			position().y < enemyBullet.position().y + EnemyBullet::HEIGHT and
-			position().y + HEIGHT > enemyBullet.position().y) // TODO: заменить на Rectangle2D
-		{
+	if ( rect().overlaps(enemyBullet.rect())) {
 //		std::cout<<"убил"<<std::endl;
-			enemyBullet.setPosition(-50, -50); // FIXME: сделать по-человечески
+		enemyBullet.setPosition(-50, -50); // FIXME: сделать по-человечески
 //			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
 //		enemyBullet.setVelY(0);
-			setPosition(-1000, -1000); // FIXME: сделать по-человечески
-		}
+		setPosition(-1000, -1000); // FIXME: сделать по-человечески
+	}
 }

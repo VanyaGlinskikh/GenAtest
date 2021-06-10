@@ -12,6 +12,8 @@ Enemy::Enemy(unsigned id, Genome &genome)
 :_id(id), _genome(genome)
 {
 	setTexture(&gEnemyTexture);
+	setDimensions(WIDTH, HEIGHT);
+
 	_sensors.resize(MAX_SENSORS);
 	_actors.resize(MAX_ACTORS);
 

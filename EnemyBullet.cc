@@ -10,6 +10,8 @@
 EnemyBullet::EnemyBullet()
 {
 	setTexture(&gEnemyBulletTexture);
+	setDimensions(WIDTH, HEIGHT);
+
 	//Initialize the offsets
 	setPosition(-200, -200); // FIXME: убрать эту магию, сделать по-человечески
 
@@ -36,35 +38,25 @@ void EnemyBullet::move(int eX, int eY)
 
 void EnemyBullet::hittingTheAlly(Enemy &enemy)
 {
-	if (	position().x + WIDTH > enemy.position().x and
-			position().x < enemy.position().x + Enemy::WIDTH and
-			position().y < enemy.position().y)
-			{
-
+	if ( rect().overlaps(enemy.rect()) ) {
 //		std::cout<<"убил своего"<<std::endl;
-				enemy.setPosX(); // FIXME: убрать эту гадость!
-				enemy.setPosY();
-	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-				enemy.setVelX(0);
-				enemy.setVelY(0);
-				// FIXME: сделать по-человечески
-				setPosition(-200, -200);
-				enemy.setDead(true);
-				enemy.setEnemyOnTheField(false);
-				enemy.upHittingTheAlly();
-				enemy.upShotCount();
-
-
-	//			mVelY = 0;
-			}
+		enemy.setPosX(); // FIXME: убрать эту гадость!
+		enemy.setPosY();
+//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+		enemy.setVelX(0);
+		enemy.setVelY(0);
+		// FIXME: сделать по-человечески
+		setPosition(-200, -200);
+		enemy.setDead(true);
+		enemy.setEnemyOnTheField(false);
+		enemy.upHittingTheAlly();
+		enemy.upShotCount();
+	}
 }
 
 void EnemyBullet::hittingTheBullet(Bullet &bullet)
 {
-	if (	position().x + WIDTH > bullet.position().x and
-			position().x < bullet.position().x + Bullet::WIDTH and
-			position().y + HEIGHT >= bullet.position().y)
-	{
+	if ( rect().overlaps(bullet.rect()) ) {
 //		std::cout<<"убил своего"<<std::endl;
 		bullet.setPosition(-50, -50);
 		// FIXME: сделать по-человечески
