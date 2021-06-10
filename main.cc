@@ -137,16 +137,13 @@ void close()
 	SDL_Quit();
 }
 
-struct СoefficientsAndMode
-{
-    std::vector<double> coef;
-    int mode;
-
-    СoefficientsAndMode(std::vector<double> c, double m) : coef(c), mode(m)
-    {}
-};
-
-
+//struct GraficCord
+//{
+//	float generation;        // поколение
+//	float avResFF;    // среднее значение фф у 8 лучших
+//	GraficCord(float g, float a) : generation(g), avResFF(a)
+//	{}
+//};
 
 void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 		const std::vector<int> &indices)
@@ -154,7 +151,7 @@ void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-//	std::cout<<" запись произошла  "<< std::endl;
+	std::cout<<" запись произошла  "<< std::endl;
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 		out << sortEnemy[indices[i]]->fitnessFunction() << std::endl;
@@ -167,7 +164,7 @@ void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
 	std::ofstream out(GENOME_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-//	std::cout<<" запись произошла  "<< std::endl;
+	std::cout<<" запись произошла  "<< std::endl;
 	for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
 		out <<" существо "<<n<<std::endl;
 		for (unsigned i = 0; i < 2; ++i) {
@@ -190,7 +187,7 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
 		if (not out.is_open()) return;
 
-//		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
 		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
 		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 		out <<"\n";
@@ -203,7 +200,6 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 			out <<"\n";
 		}
 		out.close();
-
 	}
 }
 
@@ -225,20 +221,6 @@ void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 	out.close();
 }
 
-void writeCoef(){
-	СoefficientsAndMode cam = {{1.,2.,3.,4.,5.,6.,7.}, 1};
-	std::ofstream camFileout("СoefficientsAndMode.txt");
-//	if (not camFileout.is_open()) return;
-	if (camFileout.is_open())
-		{
-		std::cout<<"SHTO YA NADELAL"<<std::endl;
-			for (unsigned i = 0; i < cam.coef.size(); ++i) {
-				camFileout <<cam.coef[i]<< " "<<std::endl;
-			}
-		}
-	camFileout.close();
-}
-
 std::random_device random_device;
 std::mt19937 engine{ random_device() };
 std::uniform_int_distribution<> dist2(0, 9);
@@ -251,57 +233,36 @@ std::uniform_int_distribution<> forSplice(0, 7);
 constexpr double Pmut = 0.02;
 std::uniform_real_distribution<double> mut(0.0, 1.0);
 
+std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
+std::vector<Genome> genome(NUMBEROFOPPONENTS);
+std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
+std::vector<int> enemyIdOnTheField;
+
+VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
+VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
+VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
+VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
+VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
+VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
 
 
-int main( int argc, char* args[] )
-{
-	if ( not init() ) return 1;
-	if ( not loadMedia()) return 2;
+Dot dot;
+Bullet bullet;
 
-	bool quit = false;
-	std::stringstream helthText;
-	std::stringstream generationText;
-
-	SDL_Color textColor = { 0, 0, 0, 255 };
-
-	SDL_Event e;
-
-	VisionEnemySensorLeft *visionEnemySensorLeft = new VisionEnemySensorLeft;
-	VisionEnemySensorRight *visionEnemySensorRight = new VisionEnemySensorRight;
-	VisionAllySensorLeft *visionAllySensorLeft = new VisionAllySensorLeft;
-	VisionAllySensorRight *visionAllySensorRight = new VisionAllySensorRight;
-	VisionDotBulletSensorLeft *visionDotBulletSensorLeft = new VisionDotBulletSensorLeft;
-	VisionDotBulletSensorRight *visionDotBulletSensorRight = new VisionDotBulletSensorRight;
-
-	Dot dot;
-	Bullet bullet;
-
-
-	std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
-	std::vector<Genome> genome(NUMBEROFOPPONENTS);
-	std::vector<std::shared_ptr<Enemy>> enemy(NUMBEROFOPPONENTS);
-	std::vector<int> enemyIdOnTheField;
-
+void create_enemies() {
 	Enemy::SensorFunc s1, s2, s3, s4, s5, s6;
 	Enemy::ActorFunc f1, f2, f3, f4, f5;
-
-
 	int sec1Length = (enemy[1]->MAX_STATES);
-	int sec2Length = (2<<enemy[1]->PREDICATE_COUNT)* (enemy[1]->MAX_STATES);
-
+	int sec2Length = (2 << enemy[1]->PREDICATE_COUNT) * (enemy[1]->MAX_STATES);
 	std::vector<int> sec1(sec1Length);
 	std::vector<int> sec2(sec2Length);
-
-	writeCoef();
-
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		for (int k = 0; k < sec1Length; ++k)
-			sec1[k] =  dist2(random_device);
+			sec1[k] = dist2(random_device);
 		for (int j = 0; j < sec2Length; ++j)
-			sec2[j] =  dist2(random_device);
-
+			sec2[j] = dist2(random_device);
 		genome[i].add_section(sec1);
-		genome[i].add_section(sec2);  // 2^predic* states
+		genome[i].add_section(sec2); // 2^predic* states
 		enemy[i] = std::make_shared<Enemy>(i, genome[i]);
 
 		s1 = [&](unsigned id) -> double { return visionEnemySensorLeft->location((*enemy[id]), dot); };
@@ -319,17 +280,43 @@ int main( int argc, char* args[] )
 
 		f1 = [&](unsigned id){ enemy[id]->moveStraight(); };
 		enemy[i]->add_actor(f1);
-		f2 = [&](unsigned id){ enemy[id]->moveLeft(); };
+		f2 = [&](unsigned id) {
+			enemy[id]->moveLeft();
+		};
 		enemy[i]->add_actor(f2);
-		f3 = [&](unsigned id){ enemy[id]->moveRight(); };
+		f3 = [&](unsigned id) {
+			enemy[id]->moveRight();
+		};
 		enemy[i]->add_actor(f3);
-		f4 = [&](unsigned id){ enemy[id]->moveBack(); };
+		f4 = [&](unsigned id) {
+			enemy[id]->moveBack();
+		};
 		enemy[i]->add_actor(f4);
-		f5 = [&, i](unsigned id){ enemy[id]->moveShot(enemyBullet[i]); };
+		f5 = [&, i](unsigned id) {
+			enemy[id]->moveShot(enemyBullet[i]);
+		};
 		enemy[i]->add_actor(f5);
-
 		enemy[i]->resetTickCount();
 	}
+}
+
+int main( int argc, char* args[] )
+{
+	if ( not init() ) return 1;
+	if ( not loadMedia()) return 2;
+
+	bool quit = false;
+
+	std::stringstream helthText;
+	std::stringstream generationText;
+
+	SDL_Color textColor = { 0, 0, 0, 255 };
+
+	SDL_Event e;
+
+
+	create_enemies();
+
 	using clk = std::chrono::high_resolution_clock;
 	auto start = clk::now();
 	auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
@@ -339,6 +326,7 @@ int main( int argc, char* args[] )
 	std::vector<Genome> sortG(NUMBEROFOPPONENTS);
 	std::vector<uint8_t>  order;
 	std::vector<int> indices(NUMBEROFOPPONENTS);
+
 	std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
 
 	double favoriteGen = 0.;
@@ -363,9 +351,8 @@ int main( int argc, char* args[] )
 			dot.handleEvent( e );
 			bullet.handleEvent(e, dot);
 		}
-		if (bullet.getMPosY() == 1000){
-			bullet.setPosY(dot.getMPosY());
-			bullet.setPosX(dot.getMPosX());
+		if (bullet.position().y == 1000){
+			bullet.setPosition(dot.getMPosX(), dot.getMPosY());
 			bullet.setVelY(-5);
 		}
 
@@ -533,14 +520,14 @@ int main( int argc, char* args[] )
 
 			}
 
-			bullet.setPosY(1000);
+			bullet.setPosition(bullet.position().x, 1000); // FIXME: сделать по-человечески
 			enemyOnTheField = 0;
 			generationCounter++;
 			SumFF = 0;
 			dot.resetHealth();
 
 
-//			std::cout<<"время прошло"<<std::endl;
+			std::cout<<"время прошло"<<std::endl;
 			start = clk::now();
 			stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 		}

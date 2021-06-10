@@ -11,16 +11,17 @@
 //#include "Dot.h"
 #include "global.h"
 #include "LTexture.h"
+#include "Geometry.h"
 class Dot;
 class Enemy;
 class EnemyBullet;
 class Bullet
 {
     public:
-		static const int BULLET_WIDTH = 20;
-		static const int BULLET_HEIGHT = 20;
+		static const int WIDTH = 20;
+		static const int HEIGHT = 20;
 
-		static const int BULLET_VEL = 10;
+		static const int VELOCITY = 10;
 
 		Bullet();
 
@@ -33,14 +34,13 @@ class Bullet
 
 		void render();
 
-		int getMPosX();
-		int getMPosY();
-		void setPosY(int v){mPosY = v;};
-		void setPosX(int v){mPosX = v;};
-		void setVelY(int v){mVelY = v;};
+		inline auto &position() const { return mPosition; }
+		inline void setPosition(const Point2D<int> &pos) { mPosition = pos; }
+		inline void setPosition(int nx, int ny) { mPosition.set(nx, ny); }
+		inline void setVelY(int v){mVelY = v;};
 
     private:
-		int mPosX, mPosY;
+		Point2D<int> mPosition;
 
 		int mVelX, mVelY;
 };

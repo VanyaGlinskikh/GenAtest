@@ -7,7 +7,7 @@
 
 class EnemyBullet;
 class Enemy;
-//class SensorForPlayer;
+class SensorForPlayer;
 class Dot
 {
     public:

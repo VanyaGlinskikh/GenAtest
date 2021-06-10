@@ -147,9 +147,9 @@ class Enemy
 		int getId(){return _id;};
 
 
-		double k1 = 40.;
-		double k2 = 50.;
-		double k3 = 0.01;
+		double k1 = 10.;
+		double k2 = 6.;
+		double k3 = 0.06;
 		double k4 = 2.;
 		double k5 = 0.01;
 		double k6 = 0.01;
@@ -157,8 +157,7 @@ class Enemy
 
 //		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
 		double fitnessFunction(){
-			return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 - getStandMovements()* k7;
-		};
+			return getHittingTheDot() * k1 - getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 - getStandMovements()* k7; };
 
 
 

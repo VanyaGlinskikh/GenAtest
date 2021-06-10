@@ -148,7 +148,9 @@ void Enemy::move(Bullet &bullet)
 //	std::cout<<"координата противника X "<<getMPosX()<<"координата противника Y "<<getMPosY()<<std::endl;
 	if(mPosY < 100)
 		moveStraight();
-	if ( (bullet.getMPosX()+20 > mPosX &&  bullet.getMPosX() < mPosX+ 20) && bullet.getMPosY() < mPosY)
+	if (	bullet.position().x+20 > mPosX and
+			bullet.position().x < mPosX+ 20 and
+			bullet.position().y < mPosY)
 	{
 		mPosX = rand() % 620 + 1;
 		mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
