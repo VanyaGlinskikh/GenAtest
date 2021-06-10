@@ -137,21 +137,13 @@ void close()
 	SDL_Quit();
 }
 
-//struct GraficCord
-//{
-//	float generation;        // поколение
-//	float avResFF;    // среднее значение фф у 8 лучших
-//	GraficCord(float g, float a) : generation(g), avResFF(a)
-//	{}
-//};
-
 void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 		const std::vector<int> &indices)
 {
 	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-	std::cout<<" запись произошла  "<< std::endl;
+	//std::cout<<" запись произошла  "<< std::endl;
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
 		out << sortEnemy[indices[i]]->fitnessFunction() << std::endl;
@@ -164,7 +156,7 @@ void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
 	std::ofstream out(GENOME_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
 
-	std::cout<<" запись произошла  "<< std::endl;
+	//std::cout<<" запись произошла  "<< std::endl;
 	for (int n = 0; n < NUMBEROFOPPONENTS; ++n) {
 		out <<" существо "<<n<<std::endl;
 		for (unsigned i = 0; i < 2; ++i) {
@@ -187,7 +179,7 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
 		if (not out.is_open()) return;
 
-		std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
+		//std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
 		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
 		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
 		out <<"\n";
@@ -220,6 +212,10 @@ void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 
 	out.close();
 }
+
+
+
+
 
 std::random_device random_device;
 std::mt19937 engine{ random_device() };
@@ -313,7 +309,6 @@ int main( int argc, char* args[] )
 	SDL_Color textColor = { 0, 0, 0, 255 };
 
 	SDL_Event e;
-
 
 	create_enemies();
 
@@ -527,7 +522,7 @@ int main( int argc, char* args[] )
 			dot.resetHealth();
 
 
-			std::cout<<"время прошло"<<std::endl;
+			//std::cout<<"время прошло"<<std::endl;
 			start = clk::now();
 			stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
 		}
