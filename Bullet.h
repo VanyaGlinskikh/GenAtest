@@ -11,11 +11,13 @@
 //#include "Dot.h"
 #include "global.h"
 #include "LTexture.h"
-#include "Geometry.h"
+#include "Sprite.h"
+
 class Dot;
 class Enemy;
 class EnemyBullet;
-class Bullet
+
+class Bullet: public Sprite
 {
     public:
 		static const int WIDTH = 20;
@@ -34,14 +36,9 @@ class Bullet
 
 		void render();
 
-		inline auto &position() const { return mPosition; }
-		inline void setPosition(const Point2D<int> &pos) { mPosition = pos; }
-		inline void setPosition(int nx, int ny) { mPosition.set(nx, ny); }
 		inline void setVelY(int v){mVelY = v;};
 
     private:
-		Point2D<int> mPosition;
-
 		int mVelX, mVelY;
 };
 
