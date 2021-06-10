@@ -11,6 +11,7 @@
 
 Bullet::Bullet()
 {
+	setTexture(&gBulletTexture);
 	setPosition(0, 1000);
 
 	mVelX = 0;
@@ -78,11 +79,3 @@ void Bullet::hittingTheEnemyBullet(EnemyBullet &enemyBullet)
 			setPosition(-1000, -1000); // FIXME: сделать по-человечески
 		}
 }
-
-void Bullet::render()
-{
-    //Show the dot
-	gBulletTexture.render(position().x, position().y);
-}
-
-

@@ -30,9 +30,6 @@ public:
 	void hittingTheAlly(Enemy &enemy);
 	void hittingTheBullet(Bullet &bullet);
 
-
-	void render();
-
 	void setVelY(int v){mVelY = v;};
 
 private:

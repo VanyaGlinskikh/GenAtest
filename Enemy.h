@@ -57,9 +57,6 @@ class Enemy: public Sprite
 		unsigned id() const { return _id; }
 		void move(Bullet &bullet);
 
-		void render(/*double an, int ves*/);
-
-
 		bool predicatCheckBulletLeft(const std::vector<double>& data);
 		bool predicatCheckBulletRight(const std::vector<double>& data);
 		bool predicatCheckDotLeft(const std::vector<double>& data);

@@ -12,6 +12,7 @@
 
 Dot::Dot()
 {
+	setTexture(&gDotTexture);
 //	sensorForPlayer = new SensorForPlayer;
 	setPosition(DEFAULT_X, DEFAULT_Y);
 
@@ -171,11 +172,3 @@ void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 
 	}
 }
-
-void Dot::render()
-{
-	gDotTexture.render( position().x, position().y );
-}
-
-
-

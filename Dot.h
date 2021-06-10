@@ -25,7 +25,6 @@ public:
 	void move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
 	void hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy);
 
-	void render();
 	int getHealth(){return _health;};
 	void setHealth(){ _health--;};
 	void resetHealth(){ _health = 100;};

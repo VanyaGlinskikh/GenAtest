@@ -9,6 +9,7 @@
 #include "Bullet.h"
 EnemyBullet::EnemyBullet()
 {
+	setTexture(&gEnemyBulletTexture);
 	//Initialize the offsets
 	setPosition(-200, -200); // FIXME: убрать эту магию, сделать по-человечески
 
@@ -70,11 +71,3 @@ void EnemyBullet::hittingTheBullet(Bullet &bullet)
 		setPosition(-200, -200);
 	}
 }
-
-void EnemyBullet::render()
-{
-    //Show the dot
-	gEnemyBulletTexture.render(position().x, position().y);
-}
-
-

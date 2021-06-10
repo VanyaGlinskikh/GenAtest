@@ -8,6 +8,7 @@
 #ifndef SPRITE_H_
 #define SPRITE_H_
 
+#include "LTexture.h"
 #include "Geometry.h"
 
 class Sprite {
@@ -20,7 +21,17 @@ public:
 	inline void setPosition(int nx, int ny) { mPosition.set(nx, ny); }
 	inline void translate(int dx, int dy) { mPosition.translate(dx, dy); }
 
+	virtual void render()
+	{
+		if (mTexture)
+			mTexture->render(position().x, position().y);
+	}
+
+protected:
+	void setTexture(LTexture * tex) { mTexture = tex; }
+
 private:
+	LTexture * mTexture { nullptr };
 	Point2D<int> mPosition;
 };
 

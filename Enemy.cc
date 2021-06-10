@@ -11,6 +11,7 @@
 Enemy::Enemy(unsigned id, Genome &genome)
 :_id(id), _genome(genome)
 {
+	setTexture(&gEnemyTexture);
 	_sensors.resize(MAX_SENSORS);
 	_actors.resize(MAX_ACTORS);
 
@@ -315,14 +316,3 @@ void Enemy::tick()
 	_actors[action](_id);
 	upTickCount();
 }
-
-void Enemy::render(/*double an, int ves*/)
-{
-//	if (ves == -100)
-		gEnemyTexture.render( position().x, position().y);
-//	else
-//		gEnemyTexture.render( mPosX, mPosY, NULL, an);
-}
-
-
-
