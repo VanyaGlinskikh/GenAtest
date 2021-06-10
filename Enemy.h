@@ -15,12 +15,14 @@
 #include <functional>
 #include "memory"
 #include <chrono>
+#include "Sprite.h"
 
 class Sensor;
 class Bullet;
 class EnemyBullet;
 class Dot;
-class Enemy
+
+class Enemy: public Sprite
 {
 	public:
 		/*
@@ -33,9 +35,9 @@ class Enemy
 		 * Параметр - ID существа.
 		 */
 		using SensorFunc = std::function<double(unsigned)>;
-		static const int DOT_WIDTH = 20;
-		static const int DOT_HEIGHT = 20;
-		static const int DOT_VEL = 10;
+		static constexpr int WIDTH = 20;
+		static constexpr int HEIGHT = 20;
+		static constexpr int VELOCITY = 10;
 
 		static constexpr unsigned MAX_ACTORS = 5;
 		static_assert(MAX_ACTORS > 0, "MAX_ACTORS must not be zero");
@@ -54,9 +56,6 @@ class Enemy
 		void tick();
 		unsigned id() const { return _id; }
 		void move(Bullet &bullet);
-
-		void render(/*double an, int ves*/);
-
 
 		bool predicatCheckBulletLeft(const std::vector<double>& data);
 		bool predicatCheckBulletRight(const std::vector<double>& data);
@@ -92,19 +91,13 @@ class Enemy
 
 //		void funk(std::vector<std::shared_ptr<Sensor>> sensors, Enemy &enemy, Bullet &bullet, Dot &dot);
 		unsigned getSizeActors (){ return _actors.size();};
-		void setMPosX(int r){ mPosX= r;};
-//		mPosX = rand() % 620 + 1;
-		void setMPosY(int r){mPosY= r; };
-//		mPosY = (rand() % 80 + 20);
 
-		void setPosX(){ mPosX = -100;};
-		void setPosY(){ mPosY = -100;};
+		// FIXME: убрать эту гадость!
+		void setPosX(){ setPosition(-100, position().y); };
+		void setPosY(){ setPosition(position().x, -100); };
 
 		void setVelX(int v){ mVelX = v;};
 		void setVelY(int v){ mVelY = v;};
-
-		int getMPosX();
-		int getMPosY();
 
 		void setDead(bool v){_dead = v; };
 		bool getDead(){return _dead; };
@@ -193,7 +186,6 @@ class Enemy
 		int _standMovements;
 		int _numberOfDown;
 	private:
-		int mPosX, mPosY;
 		int mVelX, mVelY;
 
 };

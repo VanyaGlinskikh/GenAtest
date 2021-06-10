@@ -9,117 +9,57 @@
 #include "Bullet.h"
 EnemyBullet::EnemyBullet()
 {
+	setTexture(&gEnemyBulletTexture);
+	setDimensions(WIDTH, HEIGHT);
+
 	//Initialize the offsets
+	setPosition(-200, -200); // FIXME: убрать эту магию, сделать по-человечески
 
-	    mPosX = -200;
-	    mPosY = -200;
-
-	    //Initialize the velocity
-	    mVelX = 0;
-	    mVelY = 0;
+	//Initialize the velocity
+	mVelX = 0;
+	mVelY = 0;
 }
 
 //void EnemyBullet::move(Enemy &enemy)
 void EnemyBullet::move(int eX, int eY)
 {
-		if (mPosY == -50){
-//			mPosX = enemy.getMPosX();
-//			mPosY = enemy.getMPosY();
-			mPosX = eX;
-			mPosY = eY;
+	// FIXME: убрать отсюда всю магию
+	if (position().y == -50){
+		setPosition(eX, eY);
+	}
 
-		}
+	if(position().y >= SCREEN_HEIGHT){
+		setPosition(-200, -200);
+		mVelY = 0;
+	}
 
-		if(mPosY >= SCREEN_HEIGHT){
-//			mPosX = enemy.getMPosX();
-////			mPosY = enemy.getMPosY();
-			mPosX = -200;
-			mPosY = -200;
-			mVelY = 0;
-
-//
-		}
-//		if (enemy.getMPosY() <= 0)
-//		if (eY <= 0)
-//		{
-//////			mPosX = enemy.getMPosX();
-//////			mPosY = enemy.getMPosY();
-//			mPosX = -200;
-//			mPosY = -200;
-//			mVelY = 0;
-//		}
-
-
-//		if (enemy.getMPosY() == 0)
-//		if (eY== 0)
-//		{
-//////			mPosX = enemy.getMPosX();
-//////			mPosY = enemy.getMPosY();
-//			mPosX = eX;
-//			mPosY = eY;
-//			mVelY = 1;
-//		}
-
-
-		mPosY+=mVelY;
-
+	translate(0, mVelY);
 }
 
 void EnemyBullet::hittingTheAlly(Enemy &enemy)
 {
-	if ( (mPosX+20 > enemy.getMPosX() &&  mPosX < enemy.getMPosX()+ 20) && mPosY < enemy.getMPosY())
-			{
-
+	if ( rect().overlaps(enemy.rect()) ) {
 //		std::cout<<"убил своего"<<std::endl;
-				enemy.setPosX();
-				enemy.setPosY();
-	//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-				enemy.setVelX(0);
-				enemy.setVelY(0);
-				mPosY = -200;
-				mPosX = -200;
-				enemy.setDead(true);
-				enemy.setEnemyOnTheField(false);
-				enemy.upHittingTheAlly();
-				enemy.upShotCount();
-
-
-	//			mVelY = 0;
-			}
+		enemy.setPosX(); // FIXME: убрать эту гадость!
+		enemy.setPosY();
+//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
+		enemy.setVelX(0);
+		enemy.setVelY(0);
+		// FIXME: сделать по-человечески
+		setPosition(-200, -200);
+		enemy.setDead(true);
+		enemy.setEnemyOnTheField(false);
+		enemy.upHittingTheAlly();
+		enemy.upShotCount();
+	}
 }
 
 void EnemyBullet::hittingTheBullet(Bullet &bullet)
 {
-	if (	mPosX+20 > bullet.position().x and
-			mPosX < bullet.position().x + 20 and
-			mPosY+20 >= bullet.position().y)
-	{
-
+	if ( rect().overlaps(bullet.rect()) ) {
 //		std::cout<<"убил своего"<<std::endl;
 		bullet.setPosition(-50, -50);
-//			mPosY = -SCREEN_HEIGHT - (rand() % 80 + 20);
-		mPosY = -200;
-		mPosX = -200;
-
-
-//			mVelY = 0;
+		// FIXME: сделать по-человечески
+		setPosition(-200, -200);
 	}
 }
-
-int EnemyBullet::getMPosX()
-{
-	return mPosX;
-}
-
-int EnemyBullet::getMPosY()
-{
-	return mPosY;
-}
-
-void EnemyBullet::render()
-{
-    //Show the dot
-	gEnemyBulletTexture.render(mPosX, mPosY);
-}
-
-
