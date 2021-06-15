@@ -4,6 +4,7 @@
 #include "LTexture.h"
 #include "Dot.h"
 #include "Bullet.h"
+#include "Timer.h"
 
 #include "Sensor.h"
 #include "VisionEnemySensorLeft.h"
@@ -138,7 +139,7 @@ void close()
 }
 
 void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
-		const std::vector<int> &indices)
+		const std::vector<int> &indices, std::vector<double> &conf)
 {
 	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
@@ -146,7 +147,7 @@ void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 	//std::cout<<" запись произошла  "<< std::endl;
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
-		out << sortEnemy[indices[i]]->fitnessFunction() << std::endl;
+		out << sortEnemy[indices[i]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << std::endl;
 	}
 	out.close();
 }
@@ -172,16 +173,16 @@ void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
 
 void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 		std::vector<Genome> &genome, std::vector<int> &indices,
-		int &generationCounter, double &favoriteGen)
+		int &generationCounter, double &favoriteGen, std::vector<double> &conf)
 {
-	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction()){
-		favoriteGen = sortEnemy[indices[0]]->fitnessFunction();
+	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6])){
+		favoriteGen = sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
 		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
 		if (not out.is_open()) return;
 
 		//std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
 		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction()<< " ";
+		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6])<< " ";
 		out <<"\n";
 		out <<" геном этого существа: "<<std::endl;
 		for (unsigned i = 0; i < 2; ++i) {
@@ -196,24 +197,46 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 }
 
 void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
-		std::vector<int> &indices, int &generationCounter,double &SumFF)
+		std::vector<int> &indices, int &generationCounter,double &SumFF, std::vector<double> &conf)
 {
 	std::ofstream out(GEN_RES_FILE_NAME, std::ios::app); // окрываем файл для записи
 	if (not out.is_open()) return;
 
 	out.imbue(std::locale(""));
 	for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-		SumFF += sortEnemy[indices[i]]->fitnessFunction();
+		SumFF += sortEnemy[indices[i]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
 	}
 	//						SumFF /= numberOfEnemyInOneGroup;
 	out << generationCounter << ";" << SumFF / NUMBER_OF_ENEMY_IN_ONE_GROUP
-			<< ";" << sortEnemy[indices[0]]->fitnessFunction() << ";"
-			<< sortEnemy[indices[7]]->fitnessFunction() << std::endl;
+			<< ";" << sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << ";"
+			<< sortEnemy[indices[7]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << std::endl;
 
 	out.close();
 }
 
+void config( std::vector<double> &conf){
+	 std::string line;
 
+
+	 double n;
+
+
+
+	    std::ifstream in("Configuration.txt"); // окрываем файл для чтения
+	    if (in.is_open())
+	    {
+	        while (getline(in, line))
+	        {
+	        	std::istringstream ss(line);
+	        	while(ss >> n) conf.push_back(n);
+//	            std::cout << line << std::endl;
+	        }
+	        for(auto i : conf)
+	                std::cout << i << std::endl;
+	    }
+	    in.close();     // закрываем файл
+
+}
 
 
 
@@ -310,6 +333,12 @@ int main( int argc, char* args[] )
 
 	SDL_Event e;
 
+	//The frames per second timer
+	LTimer fpsTimer;
+	//The frames per second cap timer
+	LTimer capTimer;
+
+
 	create_enemies();
 
 	using clk = std::chrono::high_resolution_clock;
@@ -329,14 +358,24 @@ int main( int argc, char* args[] )
 	int counterGroup = 1;
 	int counterGroupGenome = 0;
 	double SumFF = 0.;
-
+	std::vector<double> conf;
+	config(conf);
+	if (conf[7] == 1)
+		dot.setVelX();
 	// Создание пустого файла
 	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
 
 	int generationCounter=0;
 
+	//Start counting frames per second
+	int countedFrames = 0;
+	fpsTimer.start();
+
 	while( !quit )
 	{
+
+		//Start cap timer
+		capTimer.start();
 		while( SDL_PollEvent( &e ) != 0 )
 		{
 			if( e.type == SDL_QUIT )
@@ -346,6 +385,14 @@ int main( int argc, char* args[] )
 			dot.handleEvent( e );
 			bullet.handleEvent(e, dot);
 		}
+
+		//Calculate and correct fps
+		float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );
+		if( avgFPS > 2000000 )
+		{
+			avgFPS = 0;
+		}
+
 		if (bullet.position().y == 1000){
 			bullet.setPosition(dot.position());
 			bullet.setVelY(-5);
@@ -388,7 +435,10 @@ int main( int argc, char* args[] )
 			}
 		}
 		bullet.move(dot);
-		dot.move(enemy, enemyIdOnTheField, enemyBullet);
+		if (conf[7] == 1)
+			dot.move(enemy, enemyIdOnTheField, enemyBullet);
+		else
+			dot.move2(enemy, enemyIdOnTheField, enemyBullet);
 		bullet.render();
 		dot.render();
 
@@ -399,17 +449,17 @@ int main( int argc, char* args[] )
 		visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
 		visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
 //				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
-		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
-
-		SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
-
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
-		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
+//		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
+//
+//		SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
+//
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
+//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
 
 //				SDL_RenderDrawLine(gRenderer, visionAllySensorLeft->kX, visionAllySensorLeft->kY, visionAllySensorLeft->centerEnemyPosX, visionAllySensorLeft->centerEnemyPosY); // KA
 		for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
@@ -446,12 +496,12 @@ int main( int argc, char* args[] )
 
 			for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
 			std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
-			  return sortEnemy[a]->fitnessFunction() > sortEnemy[b]->fitnessFunction();
+			  return sortEnemy[a]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) > sortEnemy[b]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
 			});
-			writeStats(sortEnemy, indices);
+			writeStats(sortEnemy, indices, conf);
 			writeGenome(genome, indices);
-			writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen);
-			writeGenRes(sortEnemy, indices, generationCounter, SumFF);
+			writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen, conf);
+			writeGenRes(sortEnemy, indices, generationCounter, SumFF, conf);
 
 			order.resize(genome.size());
 			for (unsigned i = 0; i < order.size(); ++i) {
@@ -530,6 +580,17 @@ int main( int argc, char* args[] )
 		}
 
 		SDL_RenderPresent( gRenderer );
+		++countedFrames;
+
+		//If frame finished early
+		if(conf[7] == 0){
+			int frameTicks = capTimer.getTicks();
+			if( frameTicks < SCREEN_TICK_PER_FRAME )
+			{
+				//Wait remaining time
+				SDL_Delay( SCREEN_TICK_PER_FRAME - frameTicks );
+			}
+		}
 	}
 
 	close();

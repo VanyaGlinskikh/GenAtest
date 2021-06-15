@@ -64,12 +64,10 @@ void Enemy::moveStraight()
 	if (position().y + HEIGHT != SCREEN_HEIGHT){
 		translate(0, mVelY);
 		upNumberOfMovements();
-		upNumberOfDown();
 		resetStandMovements();
 	}
 	else
 		upStandMovements();
-
 }
 
 void Enemy::moveBack()
@@ -77,6 +75,7 @@ void Enemy::moveBack()
 	upTotalNumberOfMovements();
 	if (position().y > 0){
 		translate(0, -mVelY);
+		upNumberOfDown();
 		upNumberOfMovements();
 		resetStandMovements();
 	}
@@ -114,8 +113,6 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 {
 
 		enemyBullet.move(position().x, position().y);
-//		if (enemyBullet.getMPosY() == -200)
-////			upShotCount();
 		enemyBullet.render();
 
 }
@@ -123,7 +120,6 @@ void Enemy::moveBull(EnemyBullet &enemyBullet)
 
 void Enemy::moveShot(EnemyBullet &enemyBullet)
 {
-//	std::cout<<" значение Y у пули противника  "<<enemyBullet.getMPosY() << std::endl;
     if (enemyBullet.position().y == -200){
     	upShotCount();
     	// FIXME: сделать по-человечески
@@ -281,25 +277,14 @@ unsigned Enemy::input()
 
 	// Результаты выполнения функции предиката
 	unsigned pred = 0;
-//	pred |= (predicatCheckBullet(sensor_data));
-//	pred |= (predicatCheckDot(sensor_data)<<1);
-//	pred |= (predicatCheckAlly(sensor_data)<<2);
-//	pred |= (predicatMove(sensor_data)<<3);
+
 	pred |= (predicatCheckBulletLeft(sensor_data));
 	pred |= (predicatCheckBulletRight(sensor_data)<<1);
 	pred |= (predicatCheckAllyLeft(sensor_data)<<2);
 	pred |= (predicatCheckAllyRight(sensor_data)<<3);
 	pred |= (predicatCheckDotLeft(sensor_data)<<4);
 	pred |= (predicatCheckDotRight(sensor_data)<<5);
-//	pred |= (predicatAL(sensor_data));
-//	pred |= (predicatAR(sensor_data) << 1);
-//	pred |= (predicatIS(sensor_data) << 2);
-//	pred |= (predicatCheckBulletRight(sensor_data) << 3);
-//	pred |= (predicatCheckBulletLeft(sensor_data) << 4);
-//	pred |= (predicatCheckWallRight(sensor_data) << 5);
-//	pred |= (predicatCheckWallLeft(sensor_data) << 6);
-//	pred |= (predicatCheckWallUp(sensor_data) << 7);
-//	pred |= (predicatCheckWallDown(sensor_data) << 8);
+
 
 	return pred;
 }

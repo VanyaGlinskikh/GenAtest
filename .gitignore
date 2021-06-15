@@ -3,3 +3,4 @@
 *.csv
 /Linux Debug/
 /MinGW Debug/
+/MinGW Release/
