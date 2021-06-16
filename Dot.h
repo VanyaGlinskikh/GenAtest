@@ -28,7 +28,7 @@ public:
 	void move8(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
 	void hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy);
 
-	void setVelX(){ mVelX = -3;};
+	void setVelX(int v){ mVelX = v;};
 
 	int getHealth(){return _health;};
 	void setHealth(){ _health--;};

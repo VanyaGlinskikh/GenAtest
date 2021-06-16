@@ -362,7 +362,7 @@ int main( int argc, char* args[] )
 	std::vector<double> conf;
 	config(conf);
 	if (conf[7] == 1 || conf[7] == 3 || conf[7] == 5 || conf[7] == 6 || conf[7] == 7 || conf[7] == 8)
-		dot.setVelX();
+		dot.setVelX(-3);
 	// Создание пустого файла
 	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
 	if (conf[7] == 7 || conf[7] == 8)
@@ -396,11 +396,13 @@ int main( int argc, char* args[] )
 						case SDLK_6: conf[7] = 6; break;
 						case SDLK_7: conf[7] = 7; break;
 						case SDLK_8: conf[7] = 8; break;
+						case SDLK_0: conf[7] = 0; break;
 					}
 			    }
 			dot.handleEvent( e );
 			bullet.handleEvent(e, dot);
 		}
+
 
 		//Calculate and correct fps
 		float avgFPS = countedFrames / ( fpsTimer.getTicks() / 1000.f );

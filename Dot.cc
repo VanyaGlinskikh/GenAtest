@@ -86,7 +86,7 @@ void Dot::move2(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &ene
 {
 
 //    if (position().x + WIDTH != SCREEN_WIDTH)
-//    	position().x -= mVelX;
+//    	translate(-mVelX, 0);
 
     if( ( position().x < 0 ) || ( position().x + WIDTH > SCREEN_WIDTH ) )
     {
