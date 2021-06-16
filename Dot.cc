@@ -69,16 +69,6 @@ void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enem
     if (position().x + WIDTH >= SCREEN_WIDTH)
     	mVelX = -3;
 
-
-//    if (mPosX + DOT_WIDTH != SCREEN_WIDTH)
-//		mPosX -= mVelX;
-//    If the dot went too far to the left or right
-//    if( ( mPosX < 0 ) || ( mPosX + DOT_WIDTH > SCREEN_WIDTH ) )
-//    {
-////        //Move back
-//        mPosX -= mVelX;
-//    }
-
     //Move the dot
 	translate(mVelX, mVelY);
 
@@ -102,6 +92,50 @@ void Dot::move2(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &ene
 
     	translate(-mVelX, 0);
     }
+
+    //Move the dot
+	translate(mVelX, mVelY);
+
+    //If the dot went too far up or down
+    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
+    {
+        //Move back
+        translate(0, -mVelY);
+    }
+
+}
+
+void Dot::move6(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
+{
+
+
+
+    if (position().x <= 0)
+    	mVelX = 3;
+    if (position().x + WIDTH >= SCREEN_WIDTH/2)
+    	mVelX = -3;
+
+    //Move the dot
+	translate(mVelX, mVelY);
+
+    //If the dot went too far up or down
+    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
+    {
+        //Move back
+        translate(0, -mVelY);
+    }
+
+}
+
+void Dot::move8(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
+{
+
+
+
+    if (position().x <= SCREEN_WIDTH/2)
+    	mVelX = 3;
+    if (position().x + WIDTH >= SCREEN_WIDTH)
+    	mVelX = -3;
 
     //Move the dot
 	translate(mVelX, mVelY);

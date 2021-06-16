@@ -360,11 +360,12 @@ int main( int argc, char* args[] )
 	double SumFF = 0.;
 	std::vector<double> conf;
 	config(conf);
-	if (conf[7] == 1)
+	if (conf[7] == 1 || conf[7] == 3 || conf[7] == 5 || conf[7] == 6 || conf[7] == 7 || conf[7] == 8)
 		dot.setVelX();
 	// Создание пустого файла
 	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
-
+	if (conf[7] == 7 || conf[7] == 8)
+		dot.setPosition(350, 340);
 	int generationCounter=0;
 
 	//Start counting frames per second
@@ -393,10 +394,12 @@ int main( int argc, char* args[] )
 			avgFPS = 0;
 		}
 
-		if (bullet.position().y == 1000){
-			bullet.setPosition(dot.position());
-			bullet.setVelY(-5);
-		}
+
+		if (conf[7] == 1 || conf[7] == 2 || conf[7] == 6 || conf[7] == 8)
+			if (bullet.position().y == 1000){
+				bullet.setPosition(dot.position());
+				bullet.setVelY(-5);
+			}
 
 		//Clear screen
 		SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -435,8 +438,12 @@ int main( int argc, char* args[] )
 			}
 		}
 		bullet.move(dot);
-		if (conf[7] == 1)
+		if (conf[7] == 1 || conf[7] == 3)
 			dot.move(enemy, enemyIdOnTheField, enemyBullet);
+		else if (conf[7] == 5 || conf[7] == 6)
+			dot.move6(enemy, enemyIdOnTheField, enemyBullet);
+		else if (conf[7] == 7 || conf[7] == 8)
+			dot.move8(enemy, enemyIdOnTheField, enemyBullet);
 		else
 			dot.move2(enemy, enemyIdOnTheField, enemyBullet);
 		bullet.render();
