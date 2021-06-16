@@ -39,6 +39,7 @@ void Dot::handleEvent( SDL_Event& e)
             case SDLK_DOWN: mVelY += VELOCITY; break;
             case SDLK_LEFT: mVelX -= VELOCITY; break;
             case SDLK_RIGHT: mVelX += VELOCITY; break;
+
 //            case SDLK_k: bullet.mVelY -= bullet.BULLET_VEL; break;
 
         }

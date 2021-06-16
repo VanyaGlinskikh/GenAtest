@@ -54,6 +54,7 @@ extern LTexture gBGTexture;
 extern LTexture gPanelTexture;
 extern LTexture gTextTexture;
 extern LTexture gTextGenerationTexture;
+extern LTexture gTextModeTexture;
 
 void displayResourceError(const char * resource,
 		const char * message, const char * additional = nullptr);

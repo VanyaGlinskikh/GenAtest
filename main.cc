@@ -328,6 +328,7 @@ int main( int argc, char* args[] )
 
 	std::stringstream helthText;
 	std::stringstream generationText;
+	std::stringstream modeText;
 
 	SDL_Color textColor = { 0, 0, 0, 255 };
 
@@ -383,6 +384,20 @@ int main( int argc, char* args[] )
 			{
 				quit = true;
 			}
+			if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
+			    {
+					switch( e.key.keysym.sym )
+					{
+						case SDLK_1: conf[7] = 1; break;
+						case SDLK_2: conf[7] = 2; break;
+						case SDLK_3: conf[7] = 3; break;
+						case SDLK_4: conf[7] = 4; break;
+						case SDLK_5: conf[7] = 5; break;
+						case SDLK_6: conf[7] = 6; break;
+						case SDLK_7: conf[7] = 7; break;
+						case SDLK_8: conf[7] = 8; break;
+					}
+			    }
 			dot.handleEvent( e );
 			bullet.handleEvent(e, dot);
 		}
@@ -413,7 +428,16 @@ int main( int argc, char* args[] )
 		generationText.str("");
 		generationText << "generation: " << generationCounter;
 
+		modeText.str("");
+		modeText << "mode: " << conf[7];
+
 		//Render text
+		if( !gTextModeTexture.loadFromRenderedText( modeText.str().c_str(), textColor ) )
+		{
+			printf( "Unable to render time texture!\n" );
+		}
+		gTextModeTexture.render( 645, 80);
+
 		if( !gTextTexture.loadFromRenderedText( helthText.str().c_str(), textColor ) )
 		{
 			printf( "Unable to render time texture!\n" );

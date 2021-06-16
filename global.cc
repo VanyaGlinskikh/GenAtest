@@ -21,6 +21,7 @@ LTexture gBGTexture;
 LTexture gPanelTexture;
 LTexture gTextTexture;
 LTexture gTextGenerationTexture;
+LTexture gTextModeTexture;
 
 void displayError(const char *message, const char *additional)
 {
