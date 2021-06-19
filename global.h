@@ -56,6 +56,28 @@ extern LTexture gTextTexture;
 extern LTexture gTextGenerationTexture;
 extern LTexture gTextModeTexture;
 
+constexpr int PARAMS_COUNT = 7;
+extern const double DEFAULT_PARAMS[PARAMS_COUNT];
+
+struct ConfigData
+{
+	std::vector<double> param;
+	int mode;
+};
+
+enum {
+	CTRL_MODE_MANUAL = 0,
+	CTRL_MODE_1,
+	CTRL_MODE_2,
+	CTRL_MODE_3,
+	CTRL_MODE_4,
+	CTRL_MODE_5,
+	CTRL_MODE_6,
+	CTRL_MODE_7,
+	CTRL_MODE_8,
+};
+constexpr int CTRL_MODE_DEFAULT = CTRL_MODE_6;
+
 void displayResourceError(const char * resource,
 		const char * message, const char * additional = nullptr);
 void displayError(const char * error, const char * additional = nullptr);

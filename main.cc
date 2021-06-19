@@ -139,7 +139,7 @@ void close()
 }
 
 void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
-		const std::vector<int> &indices, std::vector<double> &conf)
+		const std::vector<int> &indices, const std::vector<double> &param)
 {
 	std::ofstream out(STATS_FILE_NAME); // окрываем файл для записи
 	if (not out.is_open()) return;
@@ -147,7 +147,7 @@ void writeStats(const std::vector<std::shared_ptr<Enemy>> &sortEnemy,
 	//std::cout<<" запись произошла  "<< std::endl;
 	for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 		out << " существо " << i << ", у которого количество попаданий по игроку= "<<sortEnemy[indices[i]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[i]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[i]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[i]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[i]]->getTickCount()<<", а количество движений вниз="<<sortEnemy[indices[i]]->getNumberOfDown()<<", а количество пропущенных шагов "<<sortEnemy[indices[i]]->getStandMovements()<< std::endl;
-		out << sortEnemy[indices[i]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << std::endl;
+		out << sortEnemy[indices[i]]->fitnessFunction(param) << std::endl;
 	}
 	out.close();
 }
@@ -173,16 +173,16 @@ void writeGenome(std::vector<Genome> &genome, std::vector<int> &indices)
 
 void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 		std::vector<Genome> &genome, std::vector<int> &indices,
-		int &generationCounter, double &favoriteGen, std::vector<double> &conf)
+		int &generationCounter, double &favoriteGen, const std::vector<double> &param)
 {
-	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6])){
-		favoriteGen = sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
+	if (favoriteGen < sortEnemy[indices[0]]->fitnessFunction(param)){
+		favoriteGen = sortEnemy[indices[0]]->fitnessFunction(param);
 		std::ofstream out(FAVORITE_FILE_NAME); // окрываем файл для записи
 		if (not out.is_open()) return;
 
 		//std::cout<<" запись в genFavorite произошла на итерации "<<generationCounter<< std::endl;
 		out <<"итерация: "<<generationCounter<<"\n существо, у которого количество попаданий по игроку= "<<sortEnemy[indices[0]]->getHittingTheDot()<<", а количество попаданий по союзнику="<<sortEnemy[indices[0]]->getHittingTheAlly()<<", а количество выстрелов= "<<sortEnemy[indices[0]]->getShotCount()<<", а количество движений  "<<sortEnemy[indices[0]]->getNumberOfMovements()<<", а время= "<<sortEnemy[indices[0]]->getTickCount()<< std::endl;
-		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6])<< " ";
+		out <<"Резульатат функции = "<<sortEnemy[indices[0]]->fitnessFunction(param)<< " ";
 		out <<"\n";
 		out <<" геном этого существа: "<<std::endl;
 		for (unsigned i = 0; i < 2; ++i) {
@@ -197,48 +197,56 @@ void writeFavorite(std::vector<std::shared_ptr<Enemy>> sortEnemy,
 }
 
 void writeGenRes(std::vector<std::shared_ptr<Enemy>> sortEnemy,
-		std::vector<int> &indices, int &generationCounter,double &SumFF, std::vector<double> &conf)
+		std::vector<int> &indices, int &generationCounter,double &SumFF, std::vector<double> &param)
 {
 	std::ofstream out(GEN_RES_FILE_NAME, std::ios::app); // окрываем файл для записи
 	if (not out.is_open()) return;
 
 	out.imbue(std::locale(""));
 	for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-		SumFF += sortEnemy[indices[i]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
+		SumFF += sortEnemy[indices[i]]->fitnessFunction(param);
 	}
 	//						SumFF /= numberOfEnemyInOneGroup;
 	out << generationCounter << ";" << SumFF / NUMBER_OF_ENEMY_IN_ONE_GROUP
-			<< ";" << sortEnemy[indices[0]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << ";"
-			<< sortEnemy[indices[7]]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) << std::endl;
+			<< ";" << sortEnemy[indices[0]]->fitnessFunction(param) << ";"
+			<< sortEnemy[indices[7]]->fitnessFunction(param) << std::endl;
 
 	out.close();
 }
 
-void config( std::vector<double> &conf){
+void read_config(ConfigData &conf)
+{
 	 std::string line;
-
-
 	 double n;
 
+	 std::ifstream in("Configuration.txt"); // окрываем файл для чтения
+	 if (in.is_open())
+	 {
+		 // Чтение параметров формулы приспособленности
+		 if (std::getline(in, line)) {
+			 std::istringstream ss(line);
+			 while (ss >> n) conf.param.push_back(n);
+		 }
+		 // Добавление незаданных параметров
+		 for (int i = conf.param.size(); i < PARAMS_COUNT; ++i) {
+			 conf.param.push_back(DEFAULT_PARAMS[i]);
+		 }
 
-
-	    std::ifstream in("Configuration.txt"); // окрываем файл для чтения
-	    if (in.is_open())
-	    {
-	        while (getline(in, line))
-	        {
-	        	std::istringstream ss(line);
-	        	while(ss >> n) conf.push_back(n);
-//	            std::cout << line << std::endl;
-	        }
-	        for(auto i : conf)
-	                std::cout << i << std::endl;
-	    }
-	    in.close();     // закрываем файл
-
+		 // Чтение режима
+		 conf.mode = CTRL_MODE_DEFAULT; // режим по умолчанию
+		 if (std::getline(in, line)) {
+			 std::istringstream ss(line);
+			 ss >> conf.mode;
+		 }
+		 in.close();     // закрываем файл
+	 } else {
+		 // Задание параметров по умолчанию
+		 for (int i = conf.param.size(); i < PARAMS_COUNT; ++i) {
+			 conf.param.push_back(DEFAULT_PARAMS[i]);
+		 }
+		 conf.mode = CTRL_MODE_DEFAULT; // режим по умолчанию
+	 }
 }
-
-
 
 std::random_device random_device;
 std::mt19937 engine{ random_device() };
@@ -359,13 +367,18 @@ int main( int argc, char* args[] )
 	int counterGroup = 1;
 	int counterGroupGenome = 0;
 	double SumFF = 0.;
-	std::vector<double> conf;
-	config(conf);
-	if (conf[7] == 1 || conf[7] == 3 || conf[7] == 5 || conf[7] == 6 || conf[7] == 7 || conf[7] == 8)
+	ConfigData conf;
+	read_config(conf);
+	if (	conf.mode == CTRL_MODE_1 or
+			conf.mode == CTRL_MODE_3 or
+			conf.mode == CTRL_MODE_5 or
+			conf.mode == CTRL_MODE_6 or
+			conf.mode == CTRL_MODE_7 or
+			conf.mode == CTRL_MODE_8)
 		dot.setVelX(-3);
 	// Создание пустого файла
 	{ std::ofstream empty_gen_res(GEN_RES_FILE_NAME); }
-	if (conf[7] == 7 || conf[7] == 8)
+	if (conf.mode == CTRL_MODE_7 or conf.mode == CTRL_MODE_8)
 		dot.setPosition(350, 340);
 	int generationCounter=0;
 
@@ -388,15 +401,15 @@ int main( int argc, char* args[] )
 			    {
 					switch( e.key.keysym.sym )
 					{
-						case SDLK_1: conf[7] = 1; break;
-						case SDLK_2: conf[7] = 2; break;
-						case SDLK_3: conf[7] = 3; break;
-						case SDLK_4: conf[7] = 4; break;
-						case SDLK_5: conf[7] = 5; break;
-						case SDLK_6: conf[7] = 6; break;
-						case SDLK_7: conf[7] = 7; break;
-						case SDLK_8: conf[7] = 8; break;
-						case SDLK_0: conf[7] = 0; break;
+						case SDLK_1: conf.mode = CTRL_MODE_1; break;
+						case SDLK_2: conf.mode = CTRL_MODE_2; break;
+						case SDLK_3: conf.mode = CTRL_MODE_3; break;
+						case SDLK_4: conf.mode = CTRL_MODE_4; break;
+						case SDLK_5: conf.mode = CTRL_MODE_5; break;
+						case SDLK_6: conf.mode = CTRL_MODE_6; break;
+						case SDLK_7: conf.mode = CTRL_MODE_7; break;
+						case SDLK_8: conf.mode = CTRL_MODE_8; break;
+						case SDLK_0: conf.mode = CTRL_MODE_MANUAL; break;
 					}
 			    }
 			dot.handleEvent( e );
@@ -412,7 +425,10 @@ int main( int argc, char* args[] )
 		}
 
 
-		if (conf[7] == 1 || conf[7] == 2 || conf[7] == 6 || conf[7] == 8)
+		if (	conf.mode == CTRL_MODE_1 or
+				conf.mode == CTRL_MODE_2 or
+				conf.mode == CTRL_MODE_6 or
+				conf.mode == CTRL_MODE_8)
 			if (bullet.position().y == 1000){
 				bullet.setPosition(dot.position());
 				bullet.setVelY(-5);
@@ -431,7 +447,7 @@ int main( int argc, char* args[] )
 		generationText << "generation: " << generationCounter;
 
 		modeText.str("");
-		modeText << "mode: " << conf[7];
+		modeText << "mode: " << conf.mode;
 
 		//Render text
 		if( !gTextModeTexture.loadFromRenderedText( modeText.str().c_str(), textColor ) )
@@ -464,11 +480,13 @@ int main( int argc, char* args[] )
 			}
 		}
 		bullet.move(dot);
-		if (conf[7] == 1 || conf[7] == 3)
+		if (	conf.mode == CTRL_MODE_1 or
+				conf.mode == CTRL_MODE_3)
 			dot.move(enemy, enemyIdOnTheField, enemyBullet);
-		else if (conf[7] == 5 || conf[7] == 6)
+		else if (	conf.mode == CTRL_MODE_5 or
+					conf.mode == CTRL_MODE_6)
 			dot.move6(enemy, enemyIdOnTheField, enemyBullet);
-		else if (conf[7] == 7 || conf[7] == 8)
+		else if (conf.mode == CTRL_MODE_7 || conf.mode == CTRL_MODE_8)
 			dot.move8(enemy, enemyIdOnTheField, enemyBullet);
 		else
 			dot.move2(enemy, enemyIdOnTheField, enemyBullet);
@@ -529,12 +547,12 @@ int main( int argc, char* args[] )
 
 			for (unsigned i = 0; i < indices.size(); ++i) indices[i] = i;
 			std::sort(std::begin(indices), std::end(indices), [&](int a, int b) -> int {
-			  return sortEnemy[a]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]) > sortEnemy[b]->fitnessFunction(conf[0], conf[1], conf[2], conf[3], conf[4], conf[5], conf[6]);
+			  return sortEnemy[a]->fitnessFunction(conf.param) > sortEnemy[b]->fitnessFunction(conf.param);
 			});
-			writeStats(sortEnemy, indices, conf);
+			writeStats(sortEnemy, indices, conf.param);
 			writeGenome(genome, indices);
-			writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen, conf);
-			writeGenRes(sortEnemy, indices, generationCounter, SumFF, conf);
+			writeFavorite(sortEnemy, genome, indices, generationCounter, favoriteGen, conf.param);
+			writeGenRes(sortEnemy, indices, generationCounter, SumFF, conf.param);
 
 			order.resize(genome.size());
 			for (unsigned i = 0; i < order.size(); ++i) {
@@ -616,7 +634,7 @@ int main( int argc, char* args[] )
 		++countedFrames;
 
 		//If frame finished early
-		if(conf[7] == 0){
+		if(conf.mode == CTRL_MODE_MANUAL){
 			int frameTicks = capTimer.getTicks();
 			if( frameTicks < SCREEN_TICK_PER_FRAME )
 			{
