@@ -1,6 +1,7 @@
 /Debug/
 *.txt
 *.csv
+!Configuration.txt
 /Linux Debug/
 /MinGW Debug/
 /MinGW Release/
