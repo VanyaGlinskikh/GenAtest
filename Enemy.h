@@ -139,8 +139,15 @@ class Enemy: public Sprite
 
 		int getId(){return _id;};
 
-		double fitnessFunction(double k1, double k2, double k3, double k4, double k5, double k6, double k7){
-			return getHittingTheDot() * k1 + getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 + getStandMovements()* k7; };
+		double fitnessFunction(const std::vector<double>& k){
+			return	getHittingTheDot() * k[0] +
+					getHittingTheAlly() * k[1] +
+					getTickCount() * k[2] +
+					getShotCount() * k[3] +
+					getNumberOfMovements() * k[4] +
+					getNumberOfDown()* k[5] +
+					getStandMovements()* k[6];
+		};
 
 
 	protected:

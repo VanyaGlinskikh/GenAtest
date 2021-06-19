@@ -23,6 +23,9 @@ LTexture gTextTexture;
 LTexture gTextGenerationTexture;
 LTexture gTextModeTexture;
 
+
+const double DEFAULT_PARAMS[] = { 20, -6, 0.06, 2, 0.01, 0.01, 2 };
+
 void displayError(const char *message, const char *additional)
 {
 	std::cerr << "An error has occurred:\n" << message << std::endl;
