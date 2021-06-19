@@ -32,7 +32,7 @@ public:
 
 	int getHealth(){return _health;};
 	void setHealth(){ _health--;};
-	void resetHealth(){ _health = 100;};
+	void resetHealth(){ _health = 1000;};
 
 	void resetShot(){ _shot = 0; };
 	bool getShot(){return _shot; };

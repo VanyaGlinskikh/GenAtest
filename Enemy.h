@@ -139,18 +139,8 @@ class Enemy: public Sprite
 
 		int getId(){return _id;};
 
-
-//		double k1 = 10.;
-//		double k2 = 6.;
-//		double k3 = 0.06;
-//		double k4 = 2.;
-//		double k5 = 0.01;
-//		double k6 = 0.01;
-//		double k7 = 2;
-
-//		double fitnessFunction(){ return ((getHittingTheDot() *(k1? 2. : 1.)) - (getHittingTheAlly() * (k2? 2. : 1.)) + (1./getTickCount()) ); };
 		double fitnessFunction(double k1, double k2, double k3, double k4, double k5, double k6, double k7){
-			return getHittingTheDot() * k1 + getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 - getStandMovements()* k7; };
+			return getHittingTheDot() * k1 + getHittingTheAlly() * k2 + getTickCount()*k3 + getShotCount() * k4 + getNumberOfMovements()*k5 + getNumberOfDown()* k6 + getStandMovements()* k7; };
 
 
 	protected:

@@ -18,7 +18,7 @@ Dot::Dot()
 //	sensorForPlayer = new SensorForPlayer;
 	setPosition(DEFAULT_X, DEFAULT_Y);
 
-    _health = 100;
+    _health = 1000;
 
     mVelX = 0;
     mVelY = 0;
