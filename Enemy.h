@@ -53,7 +53,7 @@ class Enemy: public Sprite
 
 		Enemy(unsigned id, Genome &genome);
 		unsigned input();
-		void tick();
+		void tick(Genome &genome);
 		unsigned id() const { return _id; }
 		void move(Bullet &bullet);
 

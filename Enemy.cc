@@ -152,79 +152,6 @@ void Enemy::move(Bullet &bullet)
 	}
 }
 
-bool Enemy::predicatMove(const std::vector<double>& data)// 1 - направо, 0 - налево
-{
-	std::random_device random_device;
-	std::mt19937 engine{ random_device() };
-	std::uniform_int_distribution<> rand(0, 1);
-	if (predicatCheckBullet(data))
-	{ // FIXME: что такое 20 ?
-		if ((data[1] ==  position().x or data[1]+20 > position().x) and
-				data[1] > 0 && data[1] < position().x)
-			return 1;
-		else
-			return 0;
-
-	}
-	else if (predicatCheckDot(data))
-	{ // FIXME: что такое 20 ?
-		if ( data[0]+20 > position().x and data[0] > 0 && data[0] < position().x)
-			return 0;
-		else
-			return 1;
-
-	}
-	else if (predicatCheckAlly(data))
-	{ // FIXME: что такое 20 ?
-		if ( data[2]+20 > position().x && data[2] > 0 && data[2] < position().x)
-			return 1;
-		else
-			return 0;
-	}
-	else if (predicatCheckAllyBullet(data))
-	{ // FIXME: что такое 20 ?
-		if ( data[3]+20 > position().x && data[3] > 0 && data[3] < position().x)
-			return 1;
-		else
-			return 0;
-	}
-	else
-		return rand(random_device);
-
-
-}
-
-bool Enemy::predicatCheckBullet(const std::vector<double>& data)// 1 - если двигаться при виде пули, 0 - если нет
-{ // FIXME: что такое 20 ?
-	if (data[1]+ 20 > position().x && data[1] < position().x+20 )
-		return 1;
-	return 0;
-}
-
-
-bool Enemy::predicatCheckDot(const std::vector<double>& data)// 1 - если двигаться при виде врага, 0 - если нет
-{
-//	if (data[0]+ 20 > mPosX && data[0] < mPosX+20 )
-//		return 0;
-//	return 1;
-	if (data[0] > 0 || data[1] > 0) // если в зоне видимости
-		return 1;
-	return 0;
-}
-
-bool Enemy::predicatCheckAlly(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
-{ // FIXME: что такое 20 ?
-	if (data[2]+ 20 > position().x && data[2] < position().x+20 )
-		return 1;
-	return 0;
-}
-
-bool Enemy::predicatCheckAllyBullet(const std::vector<double>& data)// 1 - если вправо, 0 - если налево
-{ // FIXME: что такое 20 ?
-	if (data[2]+ 20 > position().x && data[2] < position().x+20 )
-		return 1;
-	return 0;
-}
 
 bool Enemy::predicatCheckBulletLeft(const std::vector<double>& data)
 {
@@ -289,13 +216,15 @@ unsigned Enemy::input()
 	return pred;
 }
 
-void Enemy::tick()
+void Enemy::tick(Genome &genome)
 {
 	if (getStandMovements() > IDLE_LIMIT){
 		setDead(true);
 		setEnemyOnTheField(false);
 	}
 	if (_dead) return;
+	if (genome.getWithoutСhanges() > 5)
+		setTexture(&gEnemyOldTexture);
 	unsigned inp = input();
 	unsigned new_state = _action_table[_state][inp] % MAX_STATES;
 	_state = new_state;

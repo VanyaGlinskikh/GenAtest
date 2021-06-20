@@ -103,6 +103,7 @@ bool loadMedia()
 	if ( not gBulletTexture.loadFromFile( "bulletDot.bmp" ) ) return false;
 	if ( not gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
 	if ( not gEnemyTexture.loadFromFile( "enemy.bmp" ) ) return false;
+	if ( not gEnemyOldTexture.loadFromFile( "enemyOld.bmp" ) ) return false;
 	if ( not gBGTexture.loadFromFile( "bg.png" ) ) return false;
 	if ( not gPanelTexture.loadFromFile( "panel.png" ) ) return false;
 
@@ -471,6 +472,8 @@ int main( int argc, char* args[] )
 		}
 		gTextGenerationTexture.render( 645, 20 );
 
+
+
 		for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
 			gTextLiveGenomeTexture[i].render( 645, 120 + i*30);
 		}
@@ -502,7 +505,7 @@ int main( int argc, char* args[] )
 		visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
 
 		for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
-			enemy[enemyIdOnTheField[i]] ->tick();
+			enemy[enemyIdOnTheField[i]] ->tick(genome[enemyIdOnTheField[i]]);
 			bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
 			dot.hittingTheDot(enemyBullet[enemyIdOnTheField[i]], *enemy[enemyIdOnTheField[i]]);
 			enemy[enemyIdOnTheField[i]] ->render();

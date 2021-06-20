@@ -16,6 +16,7 @@ TTF_Font *gFont = NULL;
 LTexture gEnemyBulletTexture;
 LTexture gDotTexture;
 LTexture gBulletTexture;
+LTexture gEnemyOldTexture;
 LTexture gEnemyTexture;
 LTexture gBGTexture;
 LTexture gPanelTexture;
