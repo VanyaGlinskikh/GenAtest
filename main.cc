@@ -561,16 +561,13 @@ int main( int argc, char* args[] )
 			for (unsigned i = 0; i < order.size(); ++i) {
 				order[i] = forOrder(random_device);
 			}
-			for (int q = 0; q < (NUMBEROFOPPONENTS/NUMBER_OF_ENEMY_IN_ONE_GROUP); ++q) {
+			for (int q = 1; q < (NUMBEROFOPPONENTS/NUMBER_OF_ENEMY_IN_ONE_GROUP); ++q) {
 
 				for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-					if(i == (NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)+1){
-						counterGroup++;
-						counterGroupGenome = 0;
-					}
-					genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1 ]]=genome[indices[counterGroupGenome]];
+					genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*q-1 ]]=genome[indices[counterGroupGenome]];
 					counterGroupGenome++;
 				}
+				counterGroupGenome = 0;
 			}
 			counterGroup = 1;
 			counterGroupGenome = 0;
