@@ -13,6 +13,9 @@ Genome::Genome(const Genome& g)
 		_data[i].resize(g._data[i].size());
 		std::copy(g._data[i].begin(), g._data[i].end(), _data[i].begin());
 	}
+
+	_withoutСhanges = 0;
+	_fwithoutСhanges = false;
 }
 
 

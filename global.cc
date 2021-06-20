@@ -22,6 +22,7 @@ LTexture gPanelTexture;
 LTexture gTextTexture;
 LTexture gTextGenerationTexture;
 LTexture gTextModeTexture;
+std::vector<LTexture> gTextLiveGenomeTexture;
 
 
 const double DEFAULT_PARAMS[] = { 20, -6, 0.06, 2, 0.01, 0.01, 2 };

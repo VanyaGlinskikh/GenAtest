@@ -22,8 +22,12 @@ public:
 	using genome_structure_type = std::vector<section_type>;
 protected:
 	genome_structure_type _data {};
+	int _withoutСhanges;
+
+	bool _fwithoutСhanges;
+
 public:
-	Genome() {}
+	Genome() {_withoutСhanges = 0; _fwithoutСhanges = false;}
 	Genome(const Genome& g);
 
 	void add_section(const section_type & section_data)
@@ -50,6 +54,13 @@ public:
 	void mutate(unsigned section, unsigned location, unsigned bit);
 
 	friend Genome splice(const Genome& g1, const Genome& g2, const std::vector<uint8_t> & order);
+
+	void resetWithoutСhanges(){_withoutСhanges = 0; };
+	int getWithoutСhanges(){return _withoutСhanges; };
+	void upWithoutСhanges(){ _withoutСhanges++; };
+
+	void setFWithoutСhanges(bool v){_fwithoutСhanges = v; };
+	bool getFWithoutСhanges(){return _fwithoutСhanges; };
 };
 
 

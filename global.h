@@ -55,6 +55,7 @@ extern LTexture gPanelTexture;
 extern LTexture gTextTexture;
 extern LTexture gTextGenerationTexture;
 extern LTexture gTextModeTexture;
+extern std::vector<LTexture> gTextLiveGenomeTexture;
 
 constexpr int PARAMS_COUNT = 7;
 extern const double DEFAULT_PARAMS[PARAMS_COUNT];

@@ -337,6 +337,7 @@ int main( int argc, char* args[] )
 	std::stringstream helthText;
 	std::stringstream generationText;
 	std::stringstream modeText;
+	std::vector<std::stringstream> liveGenomeText;
 
 	SDL_Color textColor = { 0, 0, 0, 255 };
 
@@ -552,12 +553,18 @@ int main( int argc, char* args[] )
 			counterGroupGenome = 0;
 			for (int i = 1; i <= NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
 				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order) ;
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]].setFWithoutСhanges(true);
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*counterGroup-1]].resetWithoutСhanges();
 				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]] =  splice(genome[forSplice(random_device)], genome[forSplice(random_device)], order);
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].setFWithoutСhanges(true);
+				genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].resetWithoutСhanges();
 				for (unsigned s = 0; s < 2; ++s) {
 				  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 					for (unsigned b = 0; b < 4; ++b) {
 					  if (mut(random_device) < Pmut) {
 						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].mutate(s, w, b);
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].setFWithoutСhanges(true);
+						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].resetWithoutСhanges();
 					  }
 					}
 				  }
@@ -574,6 +581,24 @@ int main( int argc, char* args[] )
 				if (i == NUMBER_OF_ENEMY_IN_ONE_GROUP * counterGroup)
 					counterGroup = 5;
 			}
+
+			for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
+				if (genome[i].getFWithoutСhanges() == false){
+					genome[i].upWithoutСhanges();
+				}
+			}
+
+			for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+				liveGenomeText[i].str("");
+				liveGenomeText[i]<< "live generation: " <<genome[indices[i]].getWithoutСhanges();
+				if( !gTextLiveGenomeTexture[i].loadFromRenderedText( liveGenomeText[i].str().c_str(), textColor ) )
+				{
+					printf( "Unable to render time texture!\n" );
+				}
+				gTextLiveGenomeTexture[i].render( 645, 120 + i*30);
+				std::cout<<i<<" геном живет без изменений "<<genome[indices[i]].getWithoutСhanges()<<" поколений"<<std::endl;
+			}
+
 			counterGroup = 1;
 			for (int k = 0; k < NUMBEROFOPPONENTS; ++k)
 			{
@@ -592,8 +617,8 @@ int main( int argc, char* args[] )
 						forX(random_device),
 						forY(random_device));
 				enemy[k]->setEnemyOnTheField(false);
-				// FIXME: сделать по-человечески
 				enemyBullet[k].setPosition(-200, -200);
+				genome[k].setFWithoutСhanges(false);
 
 			}
 
