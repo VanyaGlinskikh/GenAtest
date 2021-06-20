@@ -21,7 +21,7 @@
 #include <memory>
 
 //Screen dimension constants
-const int SCREEN_WIDTH2 = 840;
+const int SCREEN_WIDTH2 = 1020;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 

@@ -337,7 +337,8 @@ int main( int argc, char* args[] )
 	std::stringstream helthText;
 	std::stringstream generationText;
 	std::stringstream modeText;
-	std::vector<std::stringstream> liveGenomeText;
+
+	std::stringstream liveGenomeText;
 
 	SDL_Color textColor = { 0, 0, 0, 255 };
 
@@ -362,6 +363,7 @@ int main( int argc, char* args[] )
 	std::vector<int> indices(NUMBEROFOPPONENTS);
 
 	std::vector<bool> enemyOnTheFieldVector(NUMBEROFOPPONENTS);
+
 
 	double favoriteGen = 0.;
 	int enemyOnTheField = 0;
@@ -468,6 +470,12 @@ int main( int argc, char* args[] )
 			printf( "Unable to render time texture!\n" );
 		}
 		gTextGenerationTexture.render( 645, 20 );
+
+		for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
+			gTextLiveGenomeTexture[i].render( 645, 120 + i*30);
+		}
+
+
 
 		for (int i = 0; i < NUMBEROFOPPONENTS; ++i) {
 			if (!(enemy[i] ->getDead()) && enemyOnTheField < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD && !enemy[i]->getEnemyOnTheField()){
@@ -589,9 +597,9 @@ int main( int argc, char* args[] )
 			}
 
 			for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
-				liveGenomeText[i].str("");
-				liveGenomeText[i]<<i+1<< " genome unchanged  " <<genome[indices[i]].getWithoutСhanges() << "generation";
-				if( !gTextLiveGenomeTexture[i].loadFromRenderedText( liveGenomeText[i].str().c_str(), textColor ) )
+				liveGenomeText.str("");
+				liveGenomeText<<i+1<< " genome unchanged " <<genome[indices[i]].getWithoutСhanges() << " generation";
+				if( !gTextLiveGenomeTexture[i].loadFromRenderedText( liveGenomeText.str().c_str(), textColor ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
