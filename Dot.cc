@@ -60,96 +60,68 @@ void Dot::handleEvent( SDL_Event& e)
     }
 }
 
-void Dot::move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
+void Dot::move(	std::vector<std::shared_ptr<Enemy> > &enemy,
+				std::vector<int> &enemyIdOnTheField,
+				std::vector<EnemyBullet> &enemyBullet,
+				int control_mode)
 {
+	switch(control_mode) {
+	// Туда-сюда по всему экрану
+	case CTRL_MODE_1:
+	case CTRL_MODE_3:
+	    if (position().x <= 0)
+	    	mVelX = 3;
+	    if (position().x + WIDTH >= SCREEN_WIDTH)
+	    	mVelX = -3;
+	    break;
 
+	// Туда-сюда в левой части экрана
+	case CTRL_MODE_5:
+	case CTRL_MODE_6:
+	    if (position().x <= 0)
+	    	mVelX = 3;
+	    if (position().x + WIDTH >= SCREEN_WIDTH/2)
+	    	mVelX = -3;
+	    break;
 
+	// Туда-сюда в правой части экрана
+	case CTRL_MODE_7:
+	case CTRL_MODE_8:
+	    if (position().x <= SCREEN_WIDTH/2)
+	    	mVelX = 3;
+	    if (position().x + WIDTH >= SCREEN_WIDTH)
+	    	mVelX = -3;
+	    break;
 
-    if (position().x <= 0)
-    	mVelX = 3;
-    if (position().x + WIDTH >= SCREEN_WIDTH)
-    	mVelX = -3;
+	case CTRL_MODE_2:
+	case CTRL_MODE_4:
+		mVelX = 0;
+	    if (position().x < SCREEN_WIDTH / 2)
+	    	mVelX = 3;
+	    if (position().x > SCREEN_WIDTH / 2 + abs(mVelX))
+	    	mVelX = -3;
+	    break;
 
-    //Move the dot
+	case CTRL_MODE_MANUAL:
+		;
+
+	default:
+		;
+	}
+
+    // Перемещаемся
 	translate(mVelX, mVelY);
 
-    //If the dot went too far up or down
-    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
-    {
-        //Move back
-        translate(0, -mVelY);
-    }
+	if (control_mode == CTRL_MODE_MANUAL) {
+		// Если уехали слишком далеко по вертикали, возвращаемся обратно
+		if( ( position().y < 0 ) || ( position().y + HEIGHT >= SCREEN_HEIGHT ) )
+			translate(0, -mVelY);
 
+		// Если уехали слишком далеко по горизонтали, возвращаемся обратно
+		if( ( position().x < 0 ) || ( position().x + WIDTH >= SCREEN_WIDTH ) )
+			translate(-mVelX, 0);
+	}
 }
-
-void Dot::move2(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
-{
-
-//    if (position().x + WIDTH != SCREEN_WIDTH)
-//    	translate(-mVelX, 0);
-
-    if( ( position().x < 0 ) || ( position().x + WIDTH > SCREEN_WIDTH ) )
-    {
-
-    	translate(-mVelX, 0);
-    }
-
-    //Move the dot
-	translate(mVelX, mVelY);
-
-    //If the dot went too far up or down
-    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
-    {
-        //Move back
-        translate(0, -mVelY);
-    }
-
-}
-
-void Dot::move6(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
-{
-
-
-
-    if (position().x <= 0)
-    	mVelX = 3;
-    if (position().x + WIDTH >= SCREEN_WIDTH/2)
-    	mVelX = -3;
-
-    //Move the dot
-	translate(mVelX, mVelY);
-
-    //If the dot went too far up or down
-    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
-    {
-        //Move back
-        translate(0, -mVelY);
-    }
-
-}
-
-void Dot::move8(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet)
-{
-
-
-
-    if (position().x <= SCREEN_WIDTH/2)
-    	mVelX = 3;
-    if (position().x + WIDTH >= SCREEN_WIDTH)
-    	mVelX = -3;
-
-    //Move the dot
-	translate(mVelX, mVelY);
-
-    //If the dot went too far up or down
-    if( ( position().y < 0 ) || ( position().y + HEIGHT > SCREEN_HEIGHT ) )
-    {
-        //Move back
-        translate(0, -mVelY);
-    }
-
-}
-
 
 void Dot::hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy)
 {

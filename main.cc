@@ -401,15 +401,15 @@ int main( int argc, char* args[] )
 			    {
 					switch( e.key.keysym.sym )
 					{
-						case SDLK_1: conf.mode = CTRL_MODE_1; break;
-						case SDLK_2: conf.mode = CTRL_MODE_2; break;
-						case SDLK_3: conf.mode = CTRL_MODE_3; break;
-						case SDLK_4: conf.mode = CTRL_MODE_4; break;
-						case SDLK_5: conf.mode = CTRL_MODE_5; break;
-						case SDLK_6: conf.mode = CTRL_MODE_6; break;
-						case SDLK_7: conf.mode = CTRL_MODE_7; break;
-						case SDLK_8: conf.mode = CTRL_MODE_8; break;
-						case SDLK_0: conf.mode = CTRL_MODE_MANUAL; break;
+						case SDLK_1: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_1; break;
+						case SDLK_2: dot.setVelX(0);             conf.mode = CTRL_MODE_2; break;
+						case SDLK_3: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_3; break;
+						case SDLK_4: dot.setVelX(0);             conf.mode = CTRL_MODE_4; break;
+						case SDLK_5: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_5; break;
+						case SDLK_6: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_6; break;
+						case SDLK_7: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_7; break;
+						case SDLK_8: dot.setVelX(Dot::VELOCITY); conf.mode = CTRL_MODE_8; break;
+						case SDLK_0: dot.setVelX(0);             conf.mode = CTRL_MODE_MANUAL; break;
 					}
 			    }
 			dot.handleEvent( e );
@@ -480,16 +480,8 @@ int main( int argc, char* args[] )
 			}
 		}
 		bullet.move(dot);
-		if (	conf.mode == CTRL_MODE_1 or
-				conf.mode == CTRL_MODE_3)
-			dot.move(enemy, enemyIdOnTheField, enemyBullet);
-		else if (	conf.mode == CTRL_MODE_5 or
-					conf.mode == CTRL_MODE_6)
-			dot.move6(enemy, enemyIdOnTheField, enemyBullet);
-		else if (conf.mode == CTRL_MODE_7 || conf.mode == CTRL_MODE_8)
-			dot.move8(enemy, enemyIdOnTheField, enemyBullet);
-		else
-			dot.move2(enemy, enemyIdOnTheField, enemyBullet);
+		dot.move(enemy, enemyIdOnTheField, enemyBullet, conf.mode);
+
 		bullet.render();
 		dot.render();
 

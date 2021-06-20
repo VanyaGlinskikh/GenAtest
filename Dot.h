@@ -22,10 +22,11 @@ public:
 
 	void handleEvent( SDL_Event& e);
 
-	void move(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
-	void move2(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
-	void move6(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
-	void move8(std::vector<std::shared_ptr<Enemy>> enemy, std::vector<int> &enemyIdOnTheField, std::vector<EnemyBullet> &enemyBullet);
+	void move(	std::vector<std::shared_ptr<Enemy>> &enemy,
+				std::vector<int> &enemyIdOnTheField,
+				std::vector<EnemyBullet> &enemyBullet,
+				int control_mode);
+
 	void hittingTheDot(EnemyBullet &enemyBullet, Enemy &enemy);
 
 	void setVelX(int v){ mVelX = v;};
