@@ -239,6 +239,17 @@ void read_config(ConfigData &conf)
 			 std::istringstream ss(line);
 			 ss >> conf.mode;
 		 }
+
+		 conf.pmut = Pmut; // шанс мутации по умолчанию
+		 if (std::getline(in, line)) {
+			 std::istringstream ss(line);
+			 ss >> conf.pmut;
+		 }
+		 conf.time = TIME_OF_ONE_GENERATION; // время итерации по умолчанию
+		 if (std::getline(in, line)) {
+			 std::istringstream ss(line);
+			 ss >> conf.time;
+		 }
 		 in.close();     // закрываем файл
 	 } else {
 		 // Задание параметров по умолчанию
@@ -246,6 +257,8 @@ void read_config(ConfigData &conf)
 			 conf.param.push_back(DEFAULT_PARAMS[i]);
 		 }
 		 conf.mode = CTRL_MODE_DEFAULT; // режим по умолчанию
+		 conf.pmut = Pmut; // шанс мутации по умолчанию
+		 conf.time = TIME_OF_ONE_GENERATION; // время итерации по умолчанию
 	 }
 }
 
@@ -258,7 +271,7 @@ std::uniform_int_distribution<> forY(20, 80);
 std::uniform_int_distribution<> forOrder(0, 254);
 std::uniform_int_distribution<> forSplice(0, 7);
 
-constexpr double Pmut = 0.02;
+
 std::uniform_real_distribution<double> mut(0.0, 1.0);
 
 std::vector<EnemyBullet> enemyBullet(NUMBEROFOPPONENTS);
@@ -352,11 +365,11 @@ int main( int argc, char* args[] )
 
 
 	create_enemies();
-
+	ConfigData conf;
+	read_config(conf);
 	using clk = std::chrono::high_resolution_clock;
 	auto start = clk::now();
-	auto stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
-
+	auto stop = start + std::chrono::seconds(conf.time);
 	std::vector<std::shared_ptr<Enemy>> favoriteEnemy(8);
 	std::vector<std::shared_ptr<Enemy>> sortEnemy(NUMBEROFOPPONENTS);
 	std::vector<Genome> sortG(NUMBEROFOPPONENTS);
@@ -371,8 +384,7 @@ int main( int argc, char* args[] )
 	int counterGroup = 1;
 	int counterGroupGenome = 0;
 	double SumFF = 0.;
-	ConfigData conf;
-	read_config(conf);
+
 	if (	conf.mode == CTRL_MODE_1 or
 			conf.mode == CTRL_MODE_3 or
 			conf.mode == CTRL_MODE_5 or
@@ -572,7 +584,7 @@ int main( int argc, char* args[] )
 				for (unsigned s = 0; s < 2; ++s) {
 				  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 					for (unsigned b = 0; b < 4; ++b) {
-					  if (mut(random_device) < Pmut) {
+					  if (mut(random_device) < conf.pmut) {
 						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].mutate(s, w, b);
 						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].setFWithoutСhanges(true);
 						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+1)-1]].resetWithoutСhanges();
@@ -583,7 +595,7 @@ int main( int argc, char* args[] )
 				for (unsigned s = 0; s < 2; ++s) {
 				  for (unsigned w = 0; w < genome[0].section_size(s); ++w) {
 					for (unsigned b = 0; b < 4; ++b) {
-					  if (mut(random_device) < Pmut) {
+					  if (mut(random_device) < conf.pmut) {
 						genome[indices[i+NUMBER_OF_ENEMY_IN_ONE_GROUP*(counterGroup+2)-1]].mutate(s, w, b);
 					  }
 					}
@@ -642,7 +654,7 @@ int main( int argc, char* args[] )
 
 			//std::cout<<"время прошло"<<std::endl;
 			start = clk::now();
-			stop = start + std::chrono::seconds(TIME_OF_ONE_GENERATION);
+			stop = start + std::chrono::seconds(conf.time);
 		}
 
 		SDL_RenderPresent( gRenderer );

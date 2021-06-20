@@ -60,11 +60,14 @@ extern LTexture gEnemyOldTexture;
 
 constexpr int PARAMS_COUNT = 7;
 extern const double DEFAULT_PARAMS[PARAMS_COUNT];
+constexpr double Pmut = 0.02;
 
 struct ConfigData
 {
 	std::vector<double> param;
 	int mode;
+	double pmut;
+	int time;
 };
 
 enum {

@@ -223,8 +223,10 @@ void Enemy::tick(Genome &genome)
 		setEnemyOnTheField(false);
 	}
 	if (_dead) return;
-	if (genome.getWithoutСhanges() > 5)
+	if (genome.getWithoutСhanges() > 10)
 		setTexture(&gEnemyOldTexture);
+	else
+		setTexture(&gEnemyTexture);
 	unsigned inp = input();
 	unsigned new_state = _action_table[_state][inp] % MAX_STATES;
 	_state = new_state;
