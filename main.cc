@@ -590,7 +590,7 @@ int main( int argc, char* args[] )
 
 			for (int i = 0; i < NUMBER_OF_ENEMY_IN_ONE_GROUP; ++i) {
 				liveGenomeText[i].str("");
-				liveGenomeText[i]<< "live generation: " <<genome[indices[i]].getWithoutСhanges();
+				liveGenomeText[i]<<i+1<< " genome unchanged  " <<genome[indices[i]].getWithoutСhanges() << "generation";
 				if( !gTextLiveGenomeTexture[i].loadFromRenderedText( liveGenomeText[i].str().c_str(), textColor ) )
 				{
 					printf( "Unable to render time texture!\n" );
