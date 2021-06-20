@@ -100,7 +100,7 @@ bool init()
 bool loadMedia()
 {
 	if ( not gDotTexture.loadFromFile( "dot.bmp" ) ) return false;
-	if ( not gBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
+	if ( not gBulletTexture.loadFromFile( "bulletDot.bmp" ) ) return false;
 	if ( not gEnemyBulletTexture.loadFromFile( "bullet.bmp" ) ) return false;
 	if ( not gEnemyTexture.loadFromFile( "enemy.bmp" ) ) return false;
 	if ( not gBGTexture.loadFromFile( "bg.png" ) ) return false;
@@ -491,20 +491,7 @@ int main( int argc, char* args[] )
 		visionAllySensorRight->location(*enemy[enemyIdOnTheField[0]], enemy, enemyIdOnTheField);
 		visionDotBulletSensorLeft->location(*enemy[enemyIdOnTheField[0]], bullet);
 		visionDotBulletSensorRight->location(*enemy[enemyIdOnTheField[0]], bullet);
-//				std::cout<<" координаты линии:  "<< visionEnemySensorLeft->bX<<" "<<visionEnemySensorLeft->bY<<" "<<visionEnemySensorLeft->centerEnemyPosX<<" "<<visionEnemySensorLeft->centerEnemyPosY<<std::endl;
-//		SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // BA
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // CA
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->cX, visionEnemySensorLeft->cY, visionEnemySensorLeft->bX, visionEnemySensorLeft->bY); // CB
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorLeft->kX, visionEnemySensorLeft->kY, visionEnemySensorLeft->centerEnemyPosX, visionEnemySensorLeft->centerEnemyPosY); // KA
-//
-//		SDL_RenderDrawLine(gRenderer, visionDotBulletSensorLeft->kX, visionDotBulletSensorLeft->kY, visionDotBulletSensorLeft->centerEnemyPosX, visionDotBulletSensorLeft->centerEnemyPosY); // KA
-//
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->bX, visionEnemySensorRight->bY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // BA
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->centerEnemyPosX, visionEnemySensorRight->centerEnemyPosY); // CA
-//		SDL_RenderDrawLine(gRenderer, visionEnemySensorRight->cX, visionEnemySensorRight->cY, visionEnemySensorRight->bX, visionEnemySensorRight->bY); // CB
 
-//				SDL_RenderDrawLine(gRenderer, visionAllySensorLeft->kX, visionAllySensorLeft->kY, visionAllySensorLeft->centerEnemyPosX, visionAllySensorLeft->centerEnemyPosY); // KA
 		for (int i = 0; i < SIMULTANEOUS_NUMBER_OF_ENEMY_ON_THE_FIELD; ++i) {
 			enemy[enemyIdOnTheField[i]] ->tick();
 			bullet.hittingTheEnemy(*enemy[enemyIdOnTheField[i]]);
