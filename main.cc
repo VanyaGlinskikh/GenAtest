@@ -119,6 +119,20 @@ bool loadMedia()
 
 void close()
 {
+	gEnemyBulletTexture.free();
+	gDotTexture.free();
+	gBulletTexture.free();
+	gEnemyTexture.free();
+	gBGTexture.free();
+	gPanelTexture.free();
+	gTextTexture.free();
+	gTextGenerationTexture.free();
+	gTextModeTexture.free();
+	for (auto &&t: gTextLiveGenomeTexture) {
+		t.free();
+	}
+	gEnemyOldTexture.free();
+
 	if (gRenderer) {
 		SDL_DestroyRenderer( gRenderer );
 		gRenderer = NULL;
