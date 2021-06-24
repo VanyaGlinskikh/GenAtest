@@ -8,8 +8,8 @@
 #ifndef SPRITE_H_
 #define SPRITE_H_
 
-#include "LTexture.h"
 #include "Geometry.h"
+#include "Texture.h"
 
 class Sprite {
 public:
@@ -34,10 +34,10 @@ public:
 	}
 
 protected:
-	void setTexture(LTexture * tex) { mTexture = tex; }
+	void setTexture(Texture * tex) { mTexture = tex; }
 
 private:
-	LTexture * mTexture { nullptr };
+	Texture * mTexture { nullptr };
 	Rectangle2D<int> mRect;
 };
 

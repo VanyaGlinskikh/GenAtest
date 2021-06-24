@@ -7,23 +7,24 @@
 
 #include <iostream>
 #include "global.h"
-#include "LTexture.h"
+
+#include "Texture.h"
 
 SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 TTF_Font *gFont = NULL;
 
-LTexture gEnemyBulletTexture;
-LTexture gDotTexture;
-LTexture gBulletTexture;
-LTexture gEnemyOldTexture;
-LTexture gEnemyTexture;
-LTexture gBGTexture;
-LTexture gPanelTexture;
-LTexture gTextTexture;
-LTexture gTextGenerationTexture;
-LTexture gTextModeTexture;
-std::vector<LTexture> gTextLiveGenomeTexture(8);
+Texture gEnemyBulletTexture;
+Texture gDotTexture;
+Texture gBulletTexture;
+Texture gEnemyOldTexture;
+Texture gEnemyTexture;
+Texture gBGTexture;
+Texture gPanelTexture;
+Texture gTextTexture;
+Texture gTextGenerationTexture;
+Texture gTextModeTexture;
+std::vector<Texture> gTextLiveGenomeTexture(8);
 
 
 const double DEFAULT_PARAMS[] = { 20, -6, 0.06, 2, 0.01, 0.01, 2 };

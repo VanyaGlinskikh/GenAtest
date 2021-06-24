@@ -4,130 +4,104 @@
  *  Created on: 23 янв. 2021 г.
  *      Author: vanya
  */
-#include "LTexture.h"
-LTexture::LTexture()
+#include "Texture.h"
+Texture::Texture()
 {
-	//Initialize
 	mTexture = NULL;
-	mWidth = 0;
-	mHeight = 0;
 }
 
-LTexture::~LTexture()
+Texture::~Texture()
 {
-	//Deallocate
 	free();
 }
 
-bool LTexture::loadFromFile(const std::string &path )
+bool Texture::loadFromFile(const std::string &path )
 {
-	//Get rid of preexisting texture
+	// Если уже есть текстура - освобождаем
 	free();
 
-	//The final texture
 	SDL_Texture* newTexture = NULL;
 
-	//Load image at specified path
+	// Загрузка
 	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
 	if( loadedSurface == NULL ) {
 		displayResourceError(path.c_str(), "Unable to load image!", SDL_GetError());
 		return false;
 	}
 
-	//Color key image
+	// Задание "прозрачного" цвета
 	SDL_SetColorKey( loadedSurface, SDL_TRUE, SDL_MapRGB( loadedSurface->format, 0, 0xFF, 0xFF ) );
 
-	//Create texture from surface pixels
+	// Создание текстуры
 	newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
 	if( newTexture == NULL ) {
 		displayResourceError(path.c_str(), "Unable to create texture!", SDL_GetError());
 		return false;
 	}
 
-	mWidth = loadedSurface->w;
-	mHeight = loadedSurface->h;
+	mSize.set(loadedSurface->w, loadedSurface->h);
 
-	//Get rid of old loaded surface
+	// Освобождение загруженного изображения
 	SDL_FreeSurface( loadedSurface );
 
-	//Return success
 	mTexture = newTexture;
 	return mTexture != NULL;
 }
 
 
-void LTexture::free()
+void Texture::free()
 {
-	//Free texture if it exists
+	// Освобождаем текстуру, если она есть
 	if( mTexture != NULL )
 	{
 		SDL_DestroyTexture( mTexture );
 		mTexture = NULL;
-		mWidth = 0;
-		mHeight = 0;
+		mSize.set(0, 0);
 	}
 }
 
-void LTexture::render( int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip )
+void Texture::render( int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip )
 {
-	//Set rendering space and render to screen
-	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+	// Куда будет рисоваться текстура
+	SDL_Rect renderQuad = { x, y, width(), height() };
 
-	//Set clip rendering dimensions
+	// Обрезка, если требуется
 	if( clip != NULL )
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
 
-	//Render to screen
+	// Рисование
 	SDL_RenderCopyEx( gRenderer, mTexture, clip, &renderQuad, angle, center, flip );
 }
 
-bool LTexture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor )
+bool Texture::loadFromRenderedText(const std::string &textureText, SDL_Color textColor )
 {
-    //Get rid of preexisting texture
     free();
 
-    //Render text surface
+    // Создаём изображение надписи
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText.c_str(), textColor );
     if( textSurface == NULL )
     {
-        printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
-    }
-    else
-    {
-        //Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-        if( mTexture == NULL )
-        {
-            printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
-        }
-        else
-        {
-            //Get image dimensions
-            mWidth = textSurface->w;
-            mHeight = textSurface->h;
-        }
-
-        //Get rid of old surface
-        SDL_FreeSurface( textSurface );
+    	displayError( "Unable to render text surface!", TTF_GetError() );
+    	goto finish;
     }
 
-    //Return success
+	// Создаём текстуру из изображения
+	mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+	if( mTexture == NULL )
+	{
+		displayError("Unable to create texture from rendered text!", SDL_GetError());
+		goto finish;
+	}
+
+	// Получаем размеры
+	mSize.set(textSurface->w, textSurface->h);
+
+finish:
+	// Удаляем изображение за ненадобностью
+	SDL_FreeSurface( textSurface );
+
     return mTexture != NULL;
 }
-
-
-int LTexture::getWidth()
-{
-	return mWidth;
-}
-
-int LTexture::getHeight()
-{
-	return mHeight;
-}
-
-
-

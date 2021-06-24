@@ -45,18 +45,18 @@ extern SDL_Renderer* gRenderer;
 //Globally used font
 extern TTF_Font *gFont;
 
-class LTexture;
-extern LTexture gEnemyBulletTexture;
-extern LTexture gDotTexture;
-extern LTexture gBulletTexture;
-extern LTexture gEnemyTexture;
-extern LTexture gBGTexture;
-extern LTexture gPanelTexture;
-extern LTexture gTextTexture;
-extern LTexture gTextGenerationTexture;
-extern LTexture gTextModeTexture;
-extern std::vector<LTexture> gTextLiveGenomeTexture;
-extern LTexture gEnemyOldTexture;
+class Texture;
+extern Texture gEnemyBulletTexture;
+extern Texture gDotTexture;
+extern Texture gBulletTexture;
+extern Texture gEnemyTexture;
+extern Texture gBGTexture;
+extern Texture gPanelTexture;
+extern Texture gTextTexture;
+extern Texture gTextGenerationTexture;
+extern Texture gTextModeTexture;
+extern std::vector<Texture> gTextLiveGenomeTexture;
+extern Texture gEnemyOldTexture;
 
 constexpr int PARAMS_COUNT = 7;
 extern const double DEFAULT_PARAMS[PARAMS_COUNT];
