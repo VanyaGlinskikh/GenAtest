@@ -10,8 +10,8 @@
 
 //#include "Dot.h"
 #include "global.h"
-#include "LTexture.h"
 #include "Sprite.h"
+#include "Texture.h"
 
 class Dot;
 class Enemy;

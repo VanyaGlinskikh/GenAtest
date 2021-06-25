@@ -1,7 +1,6 @@
 #include "global.h"
 #include "Enemy.h"
 #include "EnemyBullet.h"
-#include "LTexture.h"
 #include "Dot.h"
 #include "Bullet.h"
 #include "Timer.h"
@@ -18,6 +17,7 @@
 
 #include <functional>
 #include <chrono>
+#include "Texture.h"
 
 const char *GEN_RES_FILE_NAME = "genRes.csv";
 const char *FAVORITE_FILE_NAME = "genFavorite.txt";
